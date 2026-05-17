@@ -1,237 +1,235 @@
 ---
 name: ckm:design
-description: "Comprehensive design skill: brand identity, design tokens, UI styling, logo generation (55 styles, Gemini AI), corporate identity program (50 deliverables, CIP mockups), HTML presentations (Chart.js), banner design (22 styles, social/ads/web/print), icon design (15 styles, SVG, Gemini 3.1 Pro), social photos (HTML→screenshot, multi-platform). Actions: design logo, create CIP, generate mockups, build slides, design banner, generate icon, create social photos, social media images, brand identity, design system. Platforms: Facebook, Twitter, LinkedIn, YouTube, Instagram, Pinterest, TikTok, Threads, Google Ads."
+description: "Comprehensive design skill: brand identity, design tokens, UI styling, logo design (55 styles, 30 palettes), corporate identity program (50 deliverables, CIP mockups), HTML presentations (Chart.js), banner design (22 styles, social/ads/web/print), icon design (15 styles, SVG), social photos (multi-platform), visual audit (10 dimensions), AI slop detection. The AI model generates all assets directly — no external tools required."
 argument-hint: "[design-type] [context]"
 license: MIT
 metadata:
-  author: claudekit
-  version: "2.1.0"
+  author: sitiohoy
+  version: "3.0.0"
 ---
 
 # Design
 
-Unified design skill: brand, tokens, UI, logo, CIP, slides, banners, social photos, icons.
+Unified design skill: brand, tokens, UI, logo, CIP, slides, banners, social photos, icons, visual audit.
+
+**Filosofía:** El modelo AI genera todos los assets directamente usando las referencias como base de conocimiento. No se requieren herramientas externas, APIs, ni scripts. El output es código listo para usar: SVG, CSS, HTML, TSX.
 
 ## When to Use
 
 - Brand identity, voice, assets
-- Design system tokens and specs
+- Design system tokens and CSS custom properties
 - UI styling with shadcn/ui + Tailwind
-- Logo design and AI generation
+- Logo design (SVG/CSS inline)
 - Corporate identity program (CIP) deliverables
-- Presentations and pitch decks
+- Presentations and pitch decks (HTML + Chart.js)
 - Banner design for social media, ads, web, print
 - Social photos for Instagram, Facebook, LinkedIn, Twitter, Pinterest, TikTok
+- Icon sets (SVG)
+- Visual audit and AI slop detection
 
 ## Sub-skill Routing
 
-| Task | Sub-skill | Details |
-|------|-----------|---------|
-| Brand identity, voice, assets | `brand` | External skill |
-| Tokens, specs, CSS vars | `design-system` | External skill |
-| shadcn/ui, Tailwind, code | `ui-styling` | External skill |
-| Logo creation, AI generation | Logo (built-in) | `references/logo-design.md` |
-| CIP mockups, deliverables | CIP (built-in) | `references/cip-design.md` |
-| Presentations, pitch decks | Slides (built-in) | `references/slides.md` |
-| Banners, covers, headers | Banner (built-in) | `references/banner-sizes-and-styles.md` |
-| Social media images/photos | Social Photos (built-in) | `references/social-photos-design.md` |
-| SVG icons, icon sets | Icon (built-in) | `references/icon-design.md` |
+| Task | Mode | Knowledge Base |
+|------|------|----------------|
+| Brand identity, voice, assets | Brand | Project briefing + intake.json |
+| Tokens, specs, CSS custom properties | Design System | `references/design-routing.md` |
+| Logo creation | Logo | `references/logo-design.md`, `references/logo-style-guide.md` |
+| CIP mockups, deliverables | CIP | `references/cip-design.md`, `references/cip-style-guide.md` |
+| Presentations, pitch decks | Slides | `references/slides-create.md` |
+| Banners, covers, headers | Banner | `references/banner-sizes-and-styles.md` |
+| Social media images | Social Photos | `references/social-photos-design.md` |
+| SVG icons, icon sets | Icon | `references/icon-design.md` |
+| Visual consistency check | Audit | See "Mode: Visual Audit" below |
+| Generic AI pattern detection | Slop Check | See "Mode: AI Slop Detection" below |
 
-## Logo Design (Built-in)
+---
 
-55+ styles, 30 color palettes, 25 industry guides. Gemini Nano Banana models.
+## Logo Design
 
-### Logo: Generate Design Brief
+55+ styles, 30 color palettes, 25 industry guides.
 
-```bash
-python3 ~/.claude/skills/design/scripts/logo/search.py "tech startup modern" --design-brief -p "BrandName"
-```
+### Workflow
 
-### Logo: Search Styles/Colors/Industries
+1. Read `references/logo-design.md` and `references/logo-style-guide.md` for style options
+2. Read `references/logo-color-psychology.md` for color decisions
+3. Read `references/logo-prompt-engineering.md` for composition principles
+4. Consultar data en `data/logo/styles.csv`, `data/logo/colors.csv`, `data/logo/industries.csv`
+5. **Generar el logo directamente como SVG inline** o CSS art
+6. Presentar variantes al usuario (mínimo 2-3 opciones)
 
-```bash
-python3 ~/.claude/skills/design/scripts/logo/search.py "minimalist clean" --domain style
-python3 ~/.claude/skills/design/scripts/logo/search.py "tech professional" --domain color
-python3 ~/.claude/skills/design/scripts/logo/search.py "healthcare medical" --domain industry
-```
+### Output Format
 
-### Logo: Generate with AI
+- **SVG preferido** — código SVG limpio, optimizado, viewBox correcto
+- **Variantes:** logo completo, isotipo, versión horizontal, versión vertical
+- **Colores:** versión full color + monocromática + sobre fondo oscuro
+- **SIEMPRE fondo blanco** en las versiones principales
 
-**ALWAYS** generate output logo images with white background.
+### Top Styles (de 55+)
 
-```bash
-python3 ~/.claude/skills/design/scripts/logo/generate.py --brand "TechFlow" --style minimalist --industry tech
-python3 ~/.claude/skills/design/scripts/logo/generate.py --prompt "coffee shop vintage badge" --style vintage
-```
+| Style | Best For |
+|-------|----------|
+| Minimalist | SaaS, tech startups |
+| Vintage/Retro | Food, restaurants, craft |
+| Geometric | Fintech, architecture |
+| Handwritten | Personal brands, creative |
+| Bold/Modern | E-commerce, fashion |
+| Gradient | Apps, digital products |
+| Negative Space | Clever branding, logos with hidden meanings |
 
-**IMPORTANT:** When scripts fail, try to fix them directly.
+---
 
-After generation, **ALWAYS** ask user about HTML preview via `AskUserQuestion`. If yes, invoke `/ui-ux-pro-max` for gallery.
+## CIP Design (Corporate Identity Program)
 
-## CIP Design (Built-in)
+50+ deliverables, 20 styles, 20 industries.
 
-50+ deliverables, 20 styles, 20 industries. Gemini Nano Banana (Flash/Pro).
+### Workflow
 
-### CIP: Generate Brief
+1. Read `references/cip-design.md` for the complete deliverable catalog
+2. Read `references/cip-style-guide.md` for style options
+3. Read `references/cip-deliverable-guide.md` for specs per item
+4. Consultar `data/cip/deliverables.csv`, `data/cip/styles.csv`, `data/cip/industries.csv`
+5. **Generar mockups como HTML autocontenido** (un archivo por deliverable)
+6. Cada HTML incluye la imagen/diseño renderizado en el contexto correcto
 
-```bash
-python3 ~/.claude/skills/design/scripts/cip/search.py "tech startup" --cip-brief -b "BrandName"
-```
+### Key Deliverables
 
-### CIP: Search Domains
+| Category | Items |
+|----------|-------|
+| Print | Business card, letterhead, envelope, invoice, folder |
+| Digital | Email signature, social covers, favicon, app icon |
+| Marketing | Brochure, flyer, poster, presentation template |
+| Signage | Storefront, roll-up banner, vehicle wrap |
+| Merchandise | T-shirt, mug, notebook, tote bag |
 
-```bash
-python3 ~/.claude/skills/design/scripts/cip/search.py "business card letterhead" --domain deliverable
-python3 ~/.claude/skills/design/scripts/cip/search.py "luxury premium elegant" --domain style
-python3 ~/.claude/skills/design/scripts/cip/search.py "hospitality hotel" --domain industry
-python3 ~/.claude/skills/design/scripts/cip/search.py "office reception" --domain mockup
-```
+### Output
 
-### CIP: Generate Mockups
+- HTML files auto-contenidos (sin dependencias externas)
+- Cada mockup muestra el logo/brand en contexto realista
+- Incluir CSS que respete los design tokens del proyecto
 
-```bash
-# With logo (RECOMMENDED)
-python3 ~/.claude/skills/design/scripts/cip/generate.py --brand "TopGroup" --logo /path/to/logo.png --deliverable "business card" --industry "consulting"
+---
 
-# Full CIP set
-python3 ~/.claude/skills/design/scripts/cip/generate.py --brand "TopGroup" --logo /path/to/logo.png --industry "consulting" --set
+## Slides (HTML Presentations)
 
-# Pro model (4K text)
-python3 ~/.claude/skills/design/scripts/cip/generate.py --brand "TopGroup" --logo logo.png --deliverable "business card" --model pro
+Strategic presentations with Chart.js, design tokens, copywriting formulas.
 
-# Without logo
-python3 ~/.claude/skills/design/scripts/cip/generate.py --brand "TechFlow" --deliverable "business card" --no-logo-prompt
-```
+### Workflow
 
-Models: `flash` (default, `gemini-2.5-flash-image`), `pro` (`gemini-3-pro-image-preview`)
+1. Load `references/slides-create.md` for the creation workflow
+2. Use `references/slides-layout-patterns.md` for slide structure
+3. Use `references/slides-html-template.md` as HTML base
+4. Apply `references/slides-copywriting-formulas.md` for persuasive copy
+5. Reference `references/slides-strategies.md` for narrative arc
 
-### CIP: Render HTML Presentation
+### Output
 
-```bash
-python3 ~/.claude/skills/design/scripts/cip/render-html.py --brand "TopGroup" --industry "consulting" --images /path/to/cip-output
-```
+- Single HTML file, self-contained (CSS + JS inline)
+- Chart.js for data visualization
+- Keyboard navigation (← → arrows)
+- Print-friendly with `@media print`
+- Responsive for projection and screen
 
-**Tip:** If no logo exists, use Logo Design section above first.
+---
 
-## Slides (Built-in)
+## Banner Design
 
-Strategic HTML presentations with Chart.js, design tokens, copywriting formulas.
+22 art direction styles across social, ads, web, print.
 
-Load `references/slides-create.md` for the creation workflow.
+### Workflow
 
-### Slides: Knowledge Base
+1. Load `references/banner-sizes-and-styles.md` for complete sizes and styles
+2. Gather requirements: purpose, platform, content, brand, style
+3. Generate as HTML/CSS at exact pixel dimensions
+4. Export-ready (screenshot at final size)
 
-| Topic | File |
-|-------|------|
-| Creation Guide | `references/slides-create.md` |
-| Layout Patterns | `references/slides-layout-patterns.md` |
-| HTML Template | `references/slides-html-template.md` |
-| Copywriting | `references/slides-copywriting-formulas.md` |
-| Strategies | `references/slides-strategies.md` |
-
-## Banner Design (Built-in)
-
-22 art direction styles across social, ads, web, print. Uses `frontend-design`, `ai-artist`, `ai-multimodal`, `chrome-devtools` skills.
-
-Load `references/banner-sizes-and-styles.md` for complete sizes and styles reference.
-
-### Banner: Workflow
-
-1. **Gather requirements** via `AskUserQuestion` — purpose, platform, content, brand, style, quantity
-2. **Research** — Activate `ui-ux-pro-max`, browse Pinterest for references
-3. **Design** — Create HTML/CSS banner with `frontend-design`, generate visuals with `ai-artist`/`ai-multimodal`
-4. **Export** — Screenshot to PNG at exact dimensions via `chrome-devtools`
-5. **Present** — Show all options side-by-side, iterate on feedback
-
-### Banner: Quick Size Reference
+### Quick Size Reference
 
 | Platform | Type | Size (px) |
 |----------|------|-----------|
-| Facebook | Cover | 820 x 312 |
-| Twitter/X | Header | 1500 x 500 |
-| LinkedIn | Personal | 1584 x 396 |
-| YouTube | Channel art | 2560 x 1440 |
-| Instagram | Story | 1080 x 1920 |
-| Instagram | Post | 1080 x 1080 |
-| Google Ads | Med Rectangle | 300 x 250 |
-| Website | Hero | 1920 x 600-1080 |
+| Facebook | Cover | 820 × 312 |
+| Twitter/X | Header | 1500 × 500 |
+| LinkedIn | Personal | 1584 × 396 |
+| YouTube | Channel art | 2560 × 1440 |
+| Instagram | Story | 1080 × 1920 |
+| Instagram | Post | 1080 × 1080 |
+| Google Ads | Med Rectangle | 300 × 250 |
+| Website | Hero | 1920 × 600-1080 |
 
-### Banner: Top Art Styles
+### Design Rules
+
+- Safe zones: critical content in central 70-80%
+- One CTA per banner, bottom-right, min 44px height
+- Max 2 fonts, min 16px body, ≥32px headline
+- Text under 20% for Meta ads (penalization rule)
+- Print: 300 DPI, CMYK, 3-5mm bleed
+
+### Top Art Styles (de 22)
 
 | Style | Best For |
 |-------|----------|
 | Minimalist | SaaS, tech |
 | Bold Typography | Announcements |
 | Gradient | Modern brands |
-| Photo-Based | Lifestyle, e-com |
+| Photo-Based | Lifestyle, e-commerce |
 | Geometric | Tech, fintech |
-| Glassmorphism | SaaS, apps |
 | Neon/Cyberpunk | Gaming, events |
+| Retro/Vintage | Food, craft brands |
 
-### Banner: Design Rules
+---
 
-- Safe zones: critical content in central 70-80%
-- One CTA per banner, bottom-right, min 44px height
-- Max 2 fonts, min 16px body, ≥32px headline
-- Text under 20% for ads (Meta penalizes)
-- Print: 300 DPI, CMYK, 3-5mm bleed
+## Icon Design
 
-## Icon Design (Built-in)
+15 styles, 12 categories. Output: SVG optimizado.
 
-15 styles, 12 categories. Gemini 3.1 Pro Preview generates SVG text output.
+### Workflow
 
-### Icon: Generate Single Icon
+1. Read `references/icon-design.md` for style definitions and best practices
+2. Consultar `data/icon/styles.csv` for available styles
+3. **Generar SVG directamente** — viewBox="0 0 24 24", stroke o fill según style
+4. Mantener consistencia en stroke-width, radios, y proporciones
 
-```bash
-python3 ~/.claude/skills/design/scripts/icon/generate.py --prompt "settings gear" --style outlined
-python3 ~/.claude/skills/design/scripts/icon/generate.py --prompt "shopping cart" --style filled --color "#6366F1"
-python3 ~/.claude/skills/design/scripts/icon/generate.py --name "dashboard" --category navigation --style duotone
+### Output Format
+
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- paths here -->
+</svg>
 ```
 
-### Icon: Generate Batch Variations
-
-```bash
-python3 ~/.claude/skills/design/scripts/icon/generate.py --prompt "cloud upload" --batch 4 --output-dir ./icons
-```
-
-### Icon: Multi-size Export
-
-```bash
-python3 ~/.claude/skills/design/scripts/icon/generate.py --prompt "user profile" --sizes "16,24,32,48" --output-dir ./icons
-```
-
-### Icon: Top Styles
+### Top Styles
 
 | Style | Best For |
 |-------|----------|
-| outlined | UI interfaces, web apps |
-| filled | Mobile apps, nav bars |
-| duotone | Marketing, landing pages |
-| rounded | Friendly apps, health |
-| sharp | Tech, fintech, enterprise |
-| flat | Material design, Google-style |
-| gradient | Modern brands, SaaS |
+| Outlined | UI interfaces, web apps |
+| Filled | Mobile apps, nav bars |
+| Duotone | Marketing, landing pages |
+| Rounded | Friendly apps, health |
+| Sharp | Tech, fintech, enterprise |
+| Flat | Material design |
+| Gradient | Modern SaaS brands |
 
-**Model:** `gemini-3.1-pro-preview` — text-only output (SVG is XML text). No image generation API needed.
+### Rules
 
-## Social Photos (Built-in)
+- Grid: 24×24px base, 2px stroke default
+- Optical balance: adjust weight visually, not mathematically
+- Consistency: same stroke-width across the set
+- Simplicity: max 3-4 paths per icon, recognizable at 16px
 
-Multi-platform social image design: HTML/CSS → screenshot export. Uses `ui-ux-pro-max`, `brand`, `design-system`, `chrome-devtools` skills.
+---
 
-Load `references/social-photos-design.md` for sizes, templates, best practices.
+## Social Photos
 
-### Social Photos: Workflow
+Multi-platform social image design. Output: HTML/CSS at exact platform dimensions.
 
-1. **Orchestrate** — `project-management` skill for TODO tasks; parallel subagents for independent work
-2. **Analyze** — Parse prompt: subject, platforms, style, brand context, content elements
-3. **Ideate** — 3-5 concepts, present via `AskUserQuestion`
-4. **Design** — `/ckm:brand` → `/ckm:design-system` → randomly invoke `/ck:ui-ux-pro-max` OR `/ck:frontend-design`; HTML per idea × size
-5. **Export** — `chrome-devtools` or Playwright screenshot at exact px (2x deviceScaleFactor)
-6. **Verify** — Use Chrome MCP or `chrome-devtools` skill to visually inspect exported designs; fix layout/styling issues and re-export
-7. **Report** — Summary to `plans/reports/` with design decisions
-8. **Organize** — Invoke `assets-organizing` skill to sort output files and reports
+### Workflow
 
-### Social Photos: Key Sizes
+1. Load `references/social-photos-design.md` for sizes, templates, best practices
+2. Analyze requirements: subject, platforms, style, brand context
+3. Ideate 3-5 concepts
+4. Generate as HTML at exact pixel dimensions per platform
+5. Each HTML is self-contained, screenshot-ready
+
+### Key Sizes
 
 | Platform | Size (px) | Platform | Size (px) |
 |----------|-----------|----------|-----------|
@@ -240,19 +238,133 @@ Load `references/social-photos-design.md` for sizes, templates, best practices.
 | IG Carousel | 1080×1350 | LinkedIn | 1200×627 |
 | YT Thumb | 1280×720 | Pinterest | 1000×1500 |
 
-## Workflows
+---
 
-### Complete Brand Package
+## Mode: Visual Audit
 
-1. **Logo** → `scripts/logo/generate.py` → Generate logo variants
-2. **CIP** → `scripts/cip/generate.py --logo ...` → Create deliverable mockups
-3. **Presentation** → Load `references/slides-create.md` → Build pitch deck
+Scores UI across 10 dimensions (0-10 each):
 
-### New Design System
+| # | Dimension | What to Check |
+|---|-----------|---------------|
+| 1 | Color consistency | Using palette or random hex values? |
+| 2 | Typography hierarchy | Clear h1 > h2 > h3 > body > caption? |
+| 3 | Spacing rhythm | Consistent scale (4/8/16px) or arbitrary? |
+| 4 | Component consistency | Similar elements look similar? |
+| 5 | Responsive behavior | Fluid or broken at breakpoints? |
+| 6 | Dark mode | Complete or half-done? |
+| 7 | Animation | Purposeful or gratuitous? |
+| 8 | Accessibility | Contrast ratios, focus states, touch targets? |
+| 9 | Information density | Cluttered or clean? |
+| 10 | Polish | Hover states, transitions, loading/empty states? |
 
-1. **Brand** (brand skill) → Define colors, typography, voice
-2. **Tokens** (design-system skill) → Create semantic token layers
-3. **Implement** (ui-styling skill) → Configure Tailwind, shadcn/ui
+Each dimension gets: score, specific examples, fix with exact file:line.
+
+### Usage
+
+```
+/ckm:design audit --url http://localhost:3000 --pages / /pricing /docs
+```
+
+---
+
+## Mode: AI Slop Detection
+
+Identifies generic AI-generated design patterns that make sites look templated:
+
+**Red flags:**
+- Gratuitous gradients on everything
+- Purple-to-blue defaults (the "AI purple")
+- Glassmorphism cards with no purpose
+- Rounded corners on things that shouldn't be rounded
+- Excessive scroll animations
+- Generic hero with centered text over stock gradient
+- Sans-serif font stack with no personality (Inter/Roboto/Lato default)
+- Decorative floating orbs/blobs
+- Unmotivated dark mode
+- Stock illustration characters (undraw-style)
+
+**Usage:**
+```
+/ckm:design slop-check
+```
+
+---
+
+## Design Tokens Generation
+
+Cuando se usa dentro del flujo SitioHoy, genera `styles/tokens.css`:
+
+```css
+:root {
+  /* Colors */
+  --color-primary: #FFAB39;
+  --color-secondary: #C92331;
+  --color-background: #FFFFFF;
+  --color-surface: #F8F9FA;
+  --color-text: #1A1A1A;
+  --color-text-muted: #6B7280;
+
+  /* Typography */
+  --font-heading: 'Font Name', sans-serif;
+  --font-body: 'Font Name', sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.07);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 350ms ease;
+}
+```
+
+Los valores se derivan del briefing del proyecto (colores, mood, estilo).
+
+---
+
+## Complete Workflows
+
+### Brand Package (Logo + CIP + Slides)
+
+1. **Logo** → Generar variantes SVG usando style guides
+2. **CIP** → Crear mockups HTML con el logo aplicado
+3. **Slides** → Presentación HTML del brand package completo
+
+### New Design System (for SitioHoy projects)
+
+1. **Briefing** → Leer `intake.json` y `DESIGN.md`
+2. **Tokens** → Generar `styles/tokens.css` basado en la identidad visual
+3. **Components** → TSX + Tailwind usando tokens como CSS vars
+4. **Audit** → Verificar consistencia con Visual Audit mode
+
+---
 
 ## References
 
@@ -275,28 +387,3 @@ Load `references/social-photos-design.md` for sizes, templates, best practices.
 | Banner Sizes & Styles | `references/banner-sizes-and-styles.md` |
 | Social Photos Guide | `references/social-photos-design.md` |
 | Icon Design Guide | `references/icon-design.md` |
-
-## Scripts
-
-| Script | Purpose |
-|--------|---------|
-| `scripts/logo/search.py` | Search logo styles, colors, industries |
-| `scripts/logo/generate.py` | Generate logos with Gemini AI |
-| `scripts/logo/core.py` | BM25 search engine for logo data |
-| `scripts/cip/search.py` | Search CIP deliverables, styles, industries |
-| `scripts/cip/generate.py` | Generate CIP mockups with Gemini |
-| `scripts/cip/render-html.py` | Render HTML presentation from CIP mockups |
-| `scripts/cip/core.py` | BM25 search engine for CIP data |
-| `scripts/icon/generate.py` | Generate SVG icons with Gemini 3.1 Pro |
-
-## Setup
-
-```bash
-export GEMINI_API_KEY="your-key"  # https://aistudio.google.com/apikey
-pip install google-genai pillow
-```
-
-## Integration
-
-**External sub-skills:** brand, design-system, ui-styling
-**Related Skills:** frontend-design, ui-ux-pro-max, ai-multimodal, chrome-devtools
