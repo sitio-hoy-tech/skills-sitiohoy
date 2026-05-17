@@ -1,0 +1,1091 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SitioHoy Skills - Guia tecnica del flujo</title>
+  <meta name="description" content="Documento tecnico y navegable sobre las skills de SitioHoy, flujo de creacion de sitios, tecnologias, modulos, QA y mejoras futuras.">
+  <style>
+    :root {
+      --bg: #f7f8f5;
+      --surface: #ffffff;
+      --surface-2: #eef5ec;
+      --ink: #172017;
+      --muted: #617064;
+      --line: #dce5dc;
+      --brand: #22a35b;
+      --brand-dark: #14763e;
+      --accent: #f0b429;
+      --danger: #c2410c;
+      --code: #102116;
+      --shadow: 0 18px 50px rgba(20, 40, 24, 0.08);
+      --radius: 14px;
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        linear-gradient(135deg, rgba(34, 163, 91, 0.11), transparent 34%),
+        radial-gradient(circle at 90% 5%, rgba(240, 180, 41, 0.16), transparent 28%),
+        var(--bg);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    code,
+    pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: 16px;
+      top: -80px;
+      z-index: 50;
+      padding: 10px 12px;
+      background: var(--ink);
+      color: white;
+      border-radius: 8px;
+    }
+
+    .skip-link:focus {
+      top: 16px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(16px);
+      background: rgba(247, 248, 245, 0.88);
+      border-bottom: 1px solid rgba(220, 229, 220, 0.9);
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      background: var(--brand);
+      color: white;
+      font-weight: 900;
+      box-shadow: 0 10px 24px rgba(34, 163, 91, 0.24);
+    }
+
+    .nav {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      padding: 8px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .nav a:hover,
+    .nav a:focus {
+      background: var(--surface-2);
+      color: var(--brand-dark);
+      outline: none;
+    }
+
+    .hero {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 70px 22px 34px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      gap: 32px;
+      align-items: end;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.75);
+      color: var(--brand-dark);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    h1,
+    h2,
+    h3 {
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 820px;
+      font-size: clamp(42px, 7vw, 88px);
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: clamp(30px, 4vw, 54px);
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 21px;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .lead {
+      margin-top: 22px;
+      max-width: 760px;
+      color: var(--muted);
+      font-size: 19px;
+    }
+
+    .hero-panel {
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-panel h2 {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .metric {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    main {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 22px 80px;
+    }
+
+    section {
+      scroll-margin-top: 92px;
+      margin-top: 44px;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .section-head p {
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid.cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid.cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid.cols-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .card,
+    .flow-step,
+    .module-row,
+    .tech-row {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 10px 28px rgba(20, 40, 24, 0.045);
+    }
+
+    .card {
+      padding: 18px;
+    }
+
+    .card p,
+    .flow-step p,
+    .module-row p,
+    .tech-row p,
+    li {
+      color: var(--muted);
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--surface-2);
+      color: var(--brand-dark);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .tag.warn {
+      background: #fff5db;
+      color: #8a5a00;
+    }
+
+    .tag.danger {
+      background: #fff1ea;
+      color: var(--danger);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      counter-reset: flow;
+    }
+
+    .flow-step {
+      position: relative;
+      padding: 18px;
+      min-height: 170px;
+    }
+
+    .flow-step::before {
+      counter-increment: flow;
+      content: counter(flow);
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      margin-bottom: 18px;
+      border-radius: 50%;
+      background: var(--brand);
+      color: white;
+      font-weight: 900;
+    }
+
+    .module-table {
+      display: grid;
+      gap: 10px;
+    }
+
+    .module-row {
+      display: grid;
+      grid-template-columns: 88px 1.1fr 1.15fr 1.25fr;
+      gap: 14px;
+      padding: 16px;
+      align-items: start;
+    }
+
+    .module-id {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 58px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--code);
+      color: white;
+      font-weight: 900;
+    }
+
+    .module-row ul,
+    .tech-row ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .module-row li + li,
+    .tech-row li + li {
+      margin-top: 5px;
+    }
+
+    .tech-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .tech-row {
+      display: grid;
+      grid-template-columns: 190px 1.1fr 1.3fr;
+      gap: 14px;
+      padding: 16px;
+    }
+
+    .kbd {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-bottom-width: 2px;
+      border-radius: 8px;
+      padding: 2px 7px;
+      background: white;
+      color: var(--ink);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .code-block {
+      position: relative;
+      margin: 14px 0 0;
+      overflow: auto;
+      border-radius: 12px;
+      background: var(--code);
+      color: #dff6e8;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .code-block pre {
+      margin: 0;
+      padding: 16px;
+      font-size: 13px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .note {
+      padding: 16px;
+      border: 1px solid #f0dc9e;
+      border-radius: var(--radius);
+      background: #fffaf0;
+      color: #684a05;
+    }
+
+    .note strong {
+      color: #4a3200;
+    }
+
+    .two-column {
+      display: grid;
+      grid-template-columns: minmax(0, 0.78fr) minmax(280px, 0.42fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .toc-card {
+      position: sticky;
+      top: 86px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .toc-card a {
+      display: block;
+      padding: 8px 0;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 750;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .toc-card a:last-child {
+      border-bottom: 0;
+    }
+
+    details {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.92);
+      overflow: hidden;
+    }
+
+    details + details {
+      margin-top: 10px;
+    }
+
+    summary {
+      cursor: pointer;
+      padding: 16px 18px;
+      font-weight: 850;
+      list-style: none;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary::after {
+      content: "+";
+      float: right;
+      font-weight: 900;
+      color: var(--brand-dark);
+    }
+
+    details[open] summary::after {
+      content: "-";
+    }
+
+    .details-body {
+      padding: 0 18px 18px;
+      color: var(--muted);
+    }
+
+    .checklist {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .check {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .check strong {
+      color: var(--ink);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .footer {
+      border-top: 1px solid var(--line);
+      padding: 28px 22px;
+      color: var(--muted);
+      text-align: center;
+      background: rgba(255, 255, 255, 0.65);
+    }
+
+    @media (max-width: 980px) {
+      .hero,
+      .two-column {
+        grid-template-columns: 1fr;
+      }
+
+      .flow,
+      .grid.cols-3,
+      .grid.cols-4,
+      .grid.cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .module-row,
+      .tech-row {
+        grid-template-columns: 1fr;
+      }
+
+      .toc-card {
+        position: static;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar-inner {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .hero {
+        padding-top: 42px;
+      }
+
+      .flow,
+      .grid.cols-3,
+      .grid.cols-4,
+      .grid.cols-2,
+      .metric-grid,
+      .checklist {
+        grid-template-columns: 1fr;
+      }
+
+      .section-head {
+        display: block;
+      }
+
+      h1 {
+        font-size: 42px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+
+  <header class="topbar" aria-label="Navegacion principal">
+    <div class="topbar-inner">
+      <div class="brand" aria-label="SitioHoy">
+        <span class="brand-mark">S</span>
+        <span>SitioHoy Skills</span>
+      </div>
+      <nav class="nav">
+        <a href="#flujo">Flujo</a>
+        <a href="#skills">Skills</a>
+        <a href="#modulos">Modulos</a>
+        <a href="#stack">Tecnologias</a>
+        <a href="#qa">QA</a>
+        <a href="#instalacion">Instalacion</a>
+        <a href="#mejoras">Mejoras</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div>
+      <span class="eyebrow">Guia tecnica navegable del repositorio</span>
+      <h1>Como se construye un sitio con las skills de SitioHoy</h1>
+      <p class="lead">
+        Este documento explica que skills intervienen, cuando se cargan, que archivos generan,
+        que tecnologias se usan y que controles evitan errores en diseño, Supabase, pagos,
+        envios, QA y deploy.
+      </p>
+    </div>
+    <aside class="hero-panel" aria-label="Resumen ejecutivo">
+      <h2>Lectura rapida</h2>
+      <p>El flujo esta organizado como una linea de produccion: briefing, direccion visual, scaffold, base de datos, modulos por plan, QA, launch y auditoria.</p>
+      <div class="metric-grid">
+        <div class="metric"><strong>7</strong><span>skills SitioHoy principales</span></div>
+        <div class="metric"><strong>3</strong><span>planes de sitio</span></div>
+        <div class="metric"><strong>5</strong><span>viewports de QA visual</span></div>
+        <div class="metric"><strong>E2E</strong><span>Playwright antes de deploy</span></div>
+      </div>
+    </aside>
+  </div>
+
+  <main id="contenido">
+    <section id="flujo">
+      <div class="section-head">
+        <div>
+          <h2>Flujo General</h2>
+          <p>El proceso esta pensado para que la IA no improvise: cada etapa produce artefactos concretos y deja gates de cierre antes de avanzar.</p>
+        </div>
+      </div>
+
+      <div class="flow">
+        <article class="flow-step">
+          <h3>Briefing</h3>
+          <p>Se abre un formulario local de 7 pasos, el cliente carga alcance, objetivo, catalogo, diseño, contacto y assets. El servidor genera intake, config y brief.</p>
+          <div class="tag-row"><span class="tag">sitio-hoy-briefing</span><span class="tag">intake.json</span></div>
+        </article>
+        <article class="flow-step">
+          <h3>Direccion</h3>
+          <p>Se generan packs de contexto e inspiration board para ahorrar tokens y mantener el criterio visual consistente.</p>
+          <div class="tag-row"><span class="tag">project-director</span><span class="tag">design</span></div>
+        </article>
+        <article class="flow-step">
+          <h3>Base</h3>
+          <p>Se crea Next.js, tokens, scripts QA, Supabase clients, env validation, migraciones, seed admin e ISR on-demand multitenant.</p>
+          <div class="tag-row"><span class="tag">scaffold</span><span class="tag">pg_net ISR</span></div>
+        </article>
+        <article class="flow-step">
+          <h3>Modulos</h3>
+          <p>Se ejecutan en orden segun plan. Cada modulo tiene checks obligatorios, tracking y validaciones antes de cerrar.</p>
+          <div class="tag-row"><span class="tag">module-close</span><span class="tag">tracking</span></div>
+        </article>
+        <article class="flow-step">
+          <h3>QA</h3>
+          <p>Build, validacion estatica, secret scan, visual audit responsive, E2E de usuario real, smoke tests de integraciones y reporte.</p>
+          <div class="tag-row"><span class="tag">sitio-hoy-qa</span><span class="tag">sitiohoy:e2e</span></div>
+        </article>
+        <article class="flow-step">
+          <h3>Launch</h3>
+          <p>Se prepara GitHub, Supabase CLI, tenant, usuario admin, productos demo, Vercel, webhooks y compra/formulario de prueba.</p>
+          <div class="tag-row"><span class="tag">launch-automation</span><span class="tag">audit</span></div>
+        </article>
+        <article class="flow-step">
+          <h3>Auditoria</h3>
+          <p>El tracking queda con fechas Argentina -03:00, comandos, checks, decisiones, estimaciones, bloqueos, costos y errores reales corregidos para mejorar skills futuras.</p>
+          <div class="tag-row"><span class="tag">audit-ready</span><span class="tag">errores-corregidos</span></div>
+        </article>
+        <article class="flow-step">
+          <h3>Actualizacion</h3>
+          <p>Cada cambio en skills, scripts o proceso debe actualizar este HTML y el README para conservar la trazabilidad.</p>
+          <div class="tag-row"><span class="tag warn">docs</span><span class="tag warn">README</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="section-head">
+        <div>
+          <h2>Skills Principales</h2>
+          <p>Estas son las skills que se usan directamente para generar sitios web SitioHoy. Las skills SEO del repo quedan como soporte especializado cuando hace falta contenido, auditoria o schema avanzado.</p>
+        </div>
+      </div>
+
+      <div class="grid cols-3">
+        <article class="card">
+          <h3>sitio-hoy</h3>
+          <p>Skill orquestadora. Define identidad, protocolo de inicio, orden de planes, reglas permanentes, carga de core docs y criterio para avanzar de modulo.</p>
+          <div class="tag-row"><span class="tag">orquestacion</span><span class="tag">planes</span><span class="tag">gates</span></div>
+        </article>
+        <article class="card">
+          <h3>sitio-hoy-briefing</h3>
+          <p>Genera un formulario de ingreso mas rapido, intake estructurado, config inicial y brief. Tambien cubre objetivo del sitio, productos, pesos, imagenes, referencias visuales e integraciones.</p>
+          <div class="tag-row"><span class="tag">brief.md</span><span class="tag">intake</span><span class="tag">formulario</span></div>
+        </article>
+        <article class="card">
+          <h3>sitio-hoy-project-director</h3>
+          <p>Reduce contexto y mejora consistencia. Crea context packs por modulo, direction visual, layout recipe, token seed e inspiration board.</p>
+          <div class="tag-row"><span class="tag">context packs</span><span class="tag">diseño</span><span class="tag">referencias</span></div>
+        </article>
+        <article class="card">
+          <h3>sitio-hoy-scaffold</h3>
+          <p>Crea la base tecnica: Next.js, Supabase clients, env validation, tokens, carpetas, scripts QA, error states y checklist machine-readable.</p>
+          <div class="tag-row"><span class="tag">Next.js</span><span class="tag">scripts</span><span class="tag">tokens</span></div>
+        </article>
+        <article class="card">
+          <h3>sitio-hoy-database</h3>
+          <p>Genera el schema Supabase multitenant, RLS, storage, seeds, usuario admin seguro, productos con peso/dimensiones y campos de envios.</p>
+          <div class="tag-row"><span class="tag">Supabase CLI</span><span class="tag">RLS</span><span class="tag">migrations</span></div>
+        </article>
+        <article class="card">
+          <h3>sitio-hoy-qa</h3>
+          <p>Ejecuta preflight, build, validacion estatica, secret scan, visual audit, smoke tests, reporte QA y auditoria final.</p>
+          <div class="tag-row"><span class="tag">QA</span><span class="tag">visual</span><span class="tag">audit</span></div>
+        </article>
+        <article class="card">
+          <h3>sitio-hoy-launch-automation</h3>
+          <p>Automatiza la ultima milla: GitHub, Vercel, Supabase provisioning, tenant/admin, productos demo, webhooks y comandos de go-live.</p>
+          <div class="tag-row"><span class="tag">launch</span><span class="tag">Vercel</span><span class="tag">webhooks</span></div>
+        </article>
+        <article class="card">
+          <h3>seo/*</h3>
+          <p>Familia complementaria para auditorias, contenido, schema, sitemap, imagenes, local SEO, GEO y analisis competitivo cuando el alcance lo requiere.</p>
+          <div class="tag-row"><span class="tag warn">opcional</span><span class="tag">SEO</span><span class="tag">schema</span></div>
+        </article>
+        <article class="card">
+          <h3>ckm-design</h3>
+          <p>Skill auxiliar de diseño si se necesita profundizar en criterios visuales o componentes. No reemplaza el flujo visual de SitioHoy.</p>
+          <div class="tag-row"><span class="tag warn">opcional</span><span class="tag">diseño</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="carga">
+      <div class="section-head">
+        <div>
+          <h2>Como se Componen y Cargan las Skills</h2>
+          <p>Una skill no es solo un prompt. Es un paquete local con instrucciones, referencias, scripts, assets y templates que la IA lee de manera progresiva.</p>
+        </div>
+      </div>
+
+      <div class="two-column">
+        <div class="grid">
+          <article class="card">
+            <h3>Estructura interna</h3>
+            <div class="code-block"><pre>skills/sitio-hoy-*/
+├── SKILL.md                  # frontmatter + workflow principal
+├── references/               # contratos, checklists o docs de apoyo
+├── scripts/                  # automatizaciones ejecutables
+├── assets/                   # HTML, templates, formularios, snippets
+└── data/                     # indices, templates curados, componentes</pre></div>
+          </article>
+          <article class="card">
+            <h3>Carga progresiva</h3>
+            <p>La IA primero lee el `SKILL.md`. Solo abre referencias o scripts cuando el flujo lo pide. Eso evita cargar todo el repo en contexto y reduce errores por saturacion.</p>
+            <div class="checklist">
+              <div class="check"><strong>1. Activacion</strong>El usuario invoca la skill o el caso de uso coincide.</div>
+              <div class="check"><strong>2. Frontmatter</strong>La IA identifica nombre, descripcion y proposito.</div>
+              <div class="check"><strong>3. Workflow</strong>Ejecuta pasos en orden y respeta gates.</div>
+              <div class="check"><strong>4. Referencias</strong>Carga solo los archivos necesarios para el modulo.</div>
+            </div>
+          </article>
+        </div>
+        <aside class="toc-card">
+          <h3>Regla clave</h3>
+          <p>El flujo principal no carga todas las skills a la vez. `sitio-hoy` orquesta, `project-director` reduce contexto y cada modulo carga su pack minimo.</p>
+          <div class="tag-row"><span class="tag">menos tokens</span><span class="tag">menos errores</span><span class="tag">mas trazabilidad</span></div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="modulos">
+      <div class="section-head">
+        <div>
+          <h2>Skills por Modulo</h2>
+          <p>Los planes comparten base y divergen en checkout, envios, SEO tecnico y launch. Cada modulo debe cerrar con checks, tracking y QA.</p>
+        </div>
+      </div>
+
+      <div class="module-table" aria-label="Skills por modulo">
+        <article class="module-row">
+          <div><span class="module-id">Pre</span></div>
+          <div><h3>Briefing e intake</h3><p>Antes del modulo 0.</p></div>
+          <div><ul><li>sitio-hoy</li><li>sitio-hoy-briefing</li><li>sitio-hoy-project-director</li></ul></div>
+          <div><ul><li>Formulario de 7 pasos para plan, negocio, catalogo, diseño, contenido, assets y revision.</li><li>Genera `intake.json`, `sitiohoy.config.json`, `brief.md`.</li><li>Cierra servidor de briefing al confirmar submit.</li><li>Crea context packs y direccion visual.</li></ul></div>
+        </article>
+        <article class="module-row">
+          <div><span class="module-id">M0</span></div>
+          <div><h3>Scaffold, base tecnica e identidad visual</h3><p>Todos los planes.</p></div>
+          <div><ul><li>sitio-hoy-scaffold</li><li>sitio-hoy-database</li><li>sitio-hoy-qa</li></ul></div>
+          <div><ul><li>Next.js, tokens, Supabase clients, scripts QA.</li><li>Migraciones con Supabase CLI.</li><li>Admin `admin{empresa}@sitiohoy.com.ar` con password segura.</li></ul></div>
+        </article>
+        <article class="module-row">
+          <div><span class="module-id">M1</span></div>
+          <div><h3>Layout global</h3><p>Header, footer, navegacion, carrito o CTA WhatsApp.</p></div>
+          <div><ul><li>sitio-hoy</li><li>project-director</li><li>sitio-hoy-qa</li></ul></div>
+          <div><ul><li>Usa `inspiration-board.md`, `design-direction.md` y `layout-recipe.md`.</li><li>Corre `visual-audit` con screenshots responsive.</li></ul></div>
+        </article>
+        <article class="module-row">
+          <div><span class="module-id">M2</span></div>
+          <div><h3>Home</h3><p>Hero, categorias, destacados, confianza y CTA.</p></div>
+          <div><ul><li>sitio-hoy</li><li>project-director</li><li>seo opcional</li><li>sitio-hoy-qa</li></ul></div>
+          <div><ul><li>Hero especifico del rubro, no generico.</li><li>Copy en español argentino.</li><li>Score visual minimo 8/10.</li></ul></div>
+        </article>
+        <article class="module-row">
+          <div><span class="module-id">M3</span></div>
+          <div><h3>Catalogo y detalle</h3><p>Productos, categorias, variantes, galerias, metadata.</p></div>
+          <div><ul><li>sitio-hoy-database</li><li>sitio-hoy</li><li>sitio-hoy-qa</li></ul></div>
+          <div><ul><li>Productos con imagen, peso y dimensiones si hay envios.</li><li>ISR on-demand con tags.</li><li>`next/image` y metadata por producto.</li></ul></div>
+        </article>
+        <article class="module-row">
+          <div><span class="module-id">M4</span></div>
+          <div><h3>Checkout o paginas opcionales</h3><p>Depende del plan.</p></div>
+          <div><ul><li>sitio-hoy</li><li>integraciones MercadoPago</li><li>Envios fijos, Envia o Correo Argentino</li><li>sitio-hoy-qa</li></ul></div>
+          <div><ul><li>Esencial: paginas opcionales y contacto.</li><li>Emprendimiento/Empresa: carrito, totals server-side, pago, envios, tracking.</li></ul></div>
+        </article>
+        <article class="module-row">
+          <div><span class="module-id">M5</span></div>
+          <div><h3>SEO, legales o E-E-A-T</h3><p>Varia por plan.</p></div>
+          <div><ul><li>sitio-hoy</li><li>seo/* si aplica</li><li>sitio-hoy-qa</li></ul></div>
+          <div><ul><li>Esencial: sitemap, robots, QA y deploy.</li><li>Planes con checkout: paginas legales, contacto, confianza y contenido.</li></ul></div>
+        </article>
+        <article class="module-row">
+          <div><span class="module-id">M6</span></div>
+          <div><h3>Deploy o SEO tecnico</h3><p>Emprendimiento y Empresa.</p></div>
+          <div><ul><li>sitio-hoy-qa</li><li>seo-technical opcional</li><li>launch-automation</li></ul></div>
+          <div><ul><li>Emprendimiento: sitemap, robots, Umami, deploy.</li><li>Empresa: Schema.org, Lighthouse, performance.</li></ul></div>
+        </article>
+        <article class="module-row">
+          <div><span class="module-id">M7</span></div>
+          <div><h3>Umami avanzado y go-live</h3><p>Solo Plan Empresa.</p></div>
+          <div><ul><li>sitio-hoy-launch-automation</li><li>sitio-hoy-qa</li><li>audit</li></ul></div>
+          <div><ul><li>Eventos ecommerce, deploy production, webhooks, compra real, auditoria final.</li><li>No entrega si `audit` o `visual-audit` fallan.</li></ul></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="stack">
+      <div class="section-head">
+        <div>
+          <h2>Tecnologias y Librerias</h2>
+          <p>El stack busca velocidad, SEO, seguridad multitenant, ISR on-demand y buen mantenimiento. Estas decisiones son parte del contrato tecnico de las skills.</p>
+        </div>
+      </div>
+
+      <div class="tech-stack">
+        <article class="tech-row">
+          <h3>Next.js 15+ App Router</h3>
+          <p>Framework principal para sitios publicos, rutas server-side, metadata y deploy simple en Vercel.</p>
+          <ul><li>Server Components por defecto.</li><li>Server Actions para mutaciones.</li><li>No se usa Pages Router.</li></ul>
+        </article>
+        <article class="tech-row">
+          <h3>ISR on-demand</h3>
+          <p>Permite servir paginas rapidas y revalidar solo lo que cambia. Es clave para catalogos y tenant config.</p>
+          <ul><li>`unstable_cache` + `revalidateTag(tag, 'default')`.</li><li>Tags por tenant para evitar colisiones.</li><li>`/api/revalidate` usa `tenants.revalidation_secret`.</li><li>Nunca `revalidatePath('/')`, `dynamic = force-dynamic` ni `revalidate = N` en catalogo.</li></ul>
+        </article>
+        <article class="tech-row">
+          <h3>Supabase</h3>
+          <p>PostgreSQL, Auth, Storage y RLS multitenant en una instancia compartida.</p>
+          <ul><li>Todo cambio se aplica con Supabase CLI.</li><li>RLS separa datos por `tenant_id`.</li><li>Triggers SQL `pg_net` llaman `/api/revalidate` leyendo `url` y `revalidation_secret` desde `tenants`.</li><li>Service role solo en server, nunca publico.</li></ul>
+        </article>
+        <article class="tech-row">
+          <h3>MercadoPago Bricks</h3>
+          <p>Checkout para planes Emprendimiento y Empresa.</p>
+          <ul><li>Preferencia creada server-side.</li><li>Totales recalculados en server.</li><li>Webhook con idempotencia y eventos en DB.</li></ul>
+        </article>
+        <article class="tech-row">
+          <h3>Envios</h3>
+          <p>Emprendimiento usa zonas fijas. Empresa puede usar Envia.com o Correo Argentino por tenant.</p>
+          <ul><li>Productos fisicos requieren `weight_grams`.</li><li>Credenciales por cliente en `tenants`.</li><li>Smoke tests por proveedor.</li></ul>
+        </article>
+        <article class="tech-row">
+          <h3>Resend</h3>
+          <p>Email transaccional para confirmaciones y seguimiento cuando el plan lo incluye.</p>
+          <ul><li>Templates con identidad visual.</li><li>Prueba de inbox antes de go-live.</li><li>No se marca OK si no se recibio realmente.</li></ul>
+        </article>
+        <article class="tech-row">
+          <h3>Umami</h3>
+          <p>Analytics liviano y respetuoso de privacidad.</p>
+          <ul><li>Pageviews y eventos ecommerce.</li><li>Plan Empresa puede requerir eventos avanzados.</li></ul>
+        </article>
+        <article class="tech-row">
+          <h3>UI y validacion</h3>
+          <p>Librerias de soporte para experiencia, formularios y estado.</p>
+          <ul><li>`lucide-react` para iconos.</li><li>`zod`, `react-hook-form`, `@hookform/resolvers`.</li><li>`zustand` para carrito.</li><li>`browser-image-compression` para assets del cliente.</li></ul>
+        </article>
+        <article class="tech-row">
+          <h3>QA tooling</h3>
+          <p>Automatizaciones para detectar errores antes de mostrar o publicar.</p>
+          <ul><li>Playwright para visual audit y E2E con screenshots.</li><li>`sitiohoy:e2e` prueba home, menu mobile, catalogo, producto, carrito, checkout y contacto.</li><li>Lighthouse si existe en el proyecto.</li><li>Secret scan, preflight, smoke tests y audit.</li></ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="qa">
+      <div class="section-head">
+        <div>
+          <h2>Gates de Calidad</h2>
+          <p>Los gates evitan que el agente avance mareado o entregue un sitio con errores de diseño, integraciones o auditoria.</p>
+        </div>
+      </div>
+
+      <div class="grid cols-2">
+        <article class="card">
+          <h3>QA automatico</h3>
+          <ul>
+            <li>`npm run sitiohoy:preflight` valida brief, plan, Supabase CLI, integraciones y datos minimos.</li>
+            <li>`npm run build` bloquea errores TypeScript y Next.js.</li>
+            <li>`npm run sitiohoy:validate` revisa reglas SitioHoy.</li>
+            <li>`npm run sitiohoy:secret-scan` bloquea secretos commiteables.</li>
+            <li>`npm run sitiohoy:visual-audit` saca screenshots y detecta errores responsive.</li>
+            <li>`SITE_URL=http://localhost:3000 npm run sitiohoy:e2e` simula un usuario real en 375, 768, 1280 y 1920 px.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>QA manual obligatorio</h3>
+          <ul>
+            <li>Revisar screenshots 375, 390, 768, 1280 y 1920 px.</li>
+            <li>Probar pagos, webhooks, emails y envios con credenciales reales cuando corresponda.</li>
+            <li>Confirmar que los productos sin fotos usen imagenes Unsplash relacionadas.</li>
+            <li>Verificar que el tracking tenga fechas Argentina `-03:00`, checks y decisiones.</li>
+            <li>Probar compra real, formulario de contacto, emails, envios, seguimiento y rutas 404/500 antes de produccion.</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="note" style="margin-top: 14px;">
+        <strong>Regla de diseño:</strong> un modulo visual no se cierra si hay overflow horizontal, textos cortados, imagenes rotas, hero generico, tap targets chicos o score visual menor a 8/10. Cada sitio debe tener una direccion visual propia: paleta, composicion, tipografias y animaciones adaptadas al cliente, no una repeticion del proyecto anterior.
+      </div>
+
+      <div class="note" style="margin-top: 14px;">
+        <strong>Regla pre-deploy:</strong> antes de publicar se limpian `console.log` y debug temporales, se corre secret scan, se revisan Client Components para evitar filtraciones y el reporte QA debe listar pendientes de produccion.
+      </div>
+
+      <div class="note" style="margin-top: 14px;">
+        <strong>Aprendizaje continuo:</strong> cada bug corregido durante una pagina o modulo se registra en `.sitiohoy/errores-corregidos.md` con causa, solucion y recomendacion para actualizar skills.
+      </div>
+    </section>
+
+    <section id="instalacion">
+      <div class="section-head">
+        <div>
+          <h2>Instalacion e IAs Aceptadas</h2>
+          <p>El instalador copia las skills al formato que usa cada IA y agrega el contexto base con credenciales Supabase.</p>
+        </div>
+      </div>
+
+      <div class="grid cols-2">
+        <article class="card">
+          <h3>Comando de importacion</h3>
+          <p>Desde la carpeta del proyecto donde se quiere instalar el contexto:</p>
+          <div class="code-block"><pre>curl -fsSL https://raw.githubusercontent.com/Sitio-Hoy-Tech/sitiohoy-skills/main/bootstrap.sh -o /tmp/sitiohoy.sh && bash /tmp/sitiohoy.sh</pre></div>
+          <p style="margin-top: 12px;">El bootstrap permite elegir version, descarga el repo temporalmente, ejecuta `install.sh` y no deja la copia completa en la computadora.</p>
+        </article>
+        <article class="card">
+          <h3>IAs soportadas</h3>
+          <div class="checklist">
+            <div class="check"><strong>Claude Code</strong>`CLAUDE.md` + `.claude/skills/`.</div>
+            <div class="check"><strong>OpenAI Codex</strong>`AGENTS.md` + `.agents/skills/`.</div>
+            <div class="check"><strong>OpenCode</strong>`AGENTS.md` + `.opencode/skills/`.</div>
+            <div class="check"><strong>Cursor / Windsurf / Gemini / DeepSeek</strong>Lectura manual de `SKILL.md` y archivos equivalentes.</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="planes">
+      <div class="section-head">
+        <div>
+          <h2>Planes y Alcance</h2>
+          <p>El plan define modulos, integraciones y profundidad de QA.</p>
+        </div>
+      </div>
+
+      <div class="grid cols-3">
+        <article class="card">
+          <h3>Esencial</h3>
+          <p>Catalogo simple y conversion por WhatsApp. Hasta 50 productos. Sin pagos ni envios automáticos.</p>
+          <div class="tag-row"><span class="tag">M0-M5</span><span class="tag">WhatsApp</span><span class="tag">SEO base</span></div>
+        </article>
+        <article class="card">
+          <h3>Emprendimiento</h3>
+          <p>Catalogo con carrito, MercadoPago, envios por zonas fijas y emails si aplica.</p>
+          <div class="tag-row"><span class="tag">M0-M6</span><span class="tag">checkout</span><span class="tag">zonas fijas</span></div>
+        </article>
+        <article class="card">
+          <h3>Empresa</h3>
+          <p>Ecommerce completo con catalogo avanzado, envios por proveedor, SEO tecnico, performance y analytics avanzado.</p>
+          <div class="tag-row"><span class="tag">M0-M7</span><span class="tag">Envia/Correo</span><span class="tag">Umami</span></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="mejoras">
+      <div class="section-head">
+        <div>
+          <h2>Posibles Mejoras del Flujo</h2>
+          <p>Estas mejoras no son bloqueantes, pero ayudan a escalar calidad, auditoria y consistencia.</p>
+        </div>
+      </div>
+
+      <details open>
+        <summary>1. Generador automatico de este HTML</summary>
+        <div class="details-body">
+          Crear un script que lea `SKILL.md`, planes, checklists y scripts para regenerar esta documentacion y evitar desactualizaciones manuales.
+        </div>
+      </details>
+      <details>
+        <summary>2. Dashboard de auditoria por proyecto</summary>
+        <div class="details-body">
+          Convertir `proyecto-tracking.json`, `visual-report.json`, `static-report.json` y `audit-report.json` en una vista HTML por cliente.
+        </div>
+      </details>
+      <details>
+        <summary>3. QA visual con comparacion historica</summary>
+        <div class="details-body">
+          Guardar screenshots por modulo y comparar cambios para detectar regresiones visuales antes de deploy.
+        </div>
+      </details>
+      <details>
+        <summary>4. Smoke tests reales por sandbox</summary>
+        <div class="details-body">
+          Preparar fixtures para MercadoPago, Envia, Correo Argentino y Resend con credenciales sandbox y resultados auditables.
+        </div>
+      </details>
+      <details>
+        <summary>5. Validador de brief mas estricto</summary>
+        <div class="details-body">
+          Bloquear antes de scaffold si faltan datos claves de negocio, fotos, productos, peso, envios, contacto, dominio o referencias visuales.
+        </div>
+      </details>
+    </section>
+
+    <section id="actualizacion">
+      <div class="section-head">
+        <div>
+          <h2>Como Mantener este Documento</h2>
+          <p>Cada cambio de proceso debe reflejarse aca para que el repo siga siendo entendible y auditable.</p>
+        </div>
+      </div>
+
+      <div class="grid cols-2">
+        <article class="card">
+          <h3>Actualizar cuando cambie</h3>
+          <ul>
+            <li>Una skill o su `SKILL.md`.</li>
+            <li>El orden de modulos de cualquier plan.</li>
+            <li>Un script de QA, audit, launch o tracking.</li>
+            <li>Una integracion: MercadoPago, Resend, Envia, Correo Argentino, Umami o Supabase.</li>
+            <li>Una tecnologia base o libreria obligatoria.</li>
+            <li>Una regla transversal de diseno, E2E, seguridad pre-deploy o registro de errores corregidos.</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Checklist de actualizacion</h3>
+          <ul>
+            <li>Editar `docs/sitiohoy-skills.html`.</li>
+            <li>Actualizar `README.md` si cambia el uso o la ubicacion de docs.</li>
+            <li>Correr `node scripts/test-skills.mjs`.</li>
+            <li>Correr `git diff --check`.</li>
+            <li>Revisar que el HTML abra localmente sin assets externos.</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    SitioHoy Skills - Documento vivo del flujo de generacion de sitios. Ultima revision manual: 2026-05-16.
+  </footer>
+</body>
+</html>

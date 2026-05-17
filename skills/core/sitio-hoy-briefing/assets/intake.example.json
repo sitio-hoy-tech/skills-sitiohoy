@@ -1,0 +1,89 @@
+{
+  "clientStatus": "nuevo",
+  "existingTenantId": null,
+  "existingTenantLookup": null,
+  "business": {
+    "name": "Ferreteria Don Carlos",
+    "slug": "ferreteria-don-carlos",
+    "industry": "ferreteria",
+    "description": "Ferreteria barrial con productos para hogar, obra y mantenimiento.",
+    "differentiator": "Atencion cercana y entrega rapida en la zona.",
+    "primaryGoal": "vender-online",
+    "visualReferences": ["Sodimac", "MercadoLibre"]
+  },
+  "plan": "emprendimiento",
+  "technical": {
+    "mercadoPagoActive": true,
+    "enviaRequested": false,
+    "resendRequested": true,
+    "domain": {
+      "status": "owned",
+      "value": "https://www.ferreteriadoncarlos.com.ar"
+    },
+    "editor": "claude-code",
+    "supabaseMcp": true,
+    "aiDesignerMcp": false
+  },
+  "audience": {
+    "profile": "Adultos de la zona que compran insumos para arreglos del hogar.",
+    "problem": "Necesitan encontrar productos rapido y consultar disponibilidad.",
+    "desiredFeeling": "Confianza y cercania.",
+    "tone": "cercano",
+    "primaryDevice": "mobile"
+  },
+  "visualIdentity": {
+    "colors": {
+      "defined": true,
+      "primary": "#1B4332",
+      "secondary": "#F2C14E",
+      "accent": "#E4572E",
+      "hints": "",
+      "fromLogo": false
+    },
+    "desiredMood": "confiable, practico, local",
+    "style": "corporativo cercano",
+    "logo": {
+      "available": true,
+      "format": "png"
+    },
+    "photoQuality": "phone"
+  },
+  "catalog": {
+    "initialCount": 120,
+    "categories": ["Herramientas", "Pintura", "Electricidad"],
+    "hasVariants": true,
+    "priceRange": "$1.000-$150.000",
+    "type": "physical",
+    "defaultWeightGrams": 750,
+    "weightEstimated": true,
+    "defaultDimensionsCm": {
+      "length": 25,
+      "width": 15,
+      "height": 10
+    }
+  },
+  "pages": {
+    "about": true,
+    "faq": true,
+    "contact": true,
+    "legal": true,
+    "blog": false
+  },
+  "contact": {
+    "whatsapp": "5491123456789",
+    "email": "ventas@ferreteriadoncarlos.com.ar",
+    "socials": [
+      {
+        "network": "instagram",
+        "url": "https://instagram.com/ferreteriadoncarlos"
+      }
+    ],
+    "primarySocial": "Instagram"
+  },
+  "assets": {
+    "folderReady": true,
+    "missing": []
+  },
+  "animations": "subtle",
+  "notes": []
+}

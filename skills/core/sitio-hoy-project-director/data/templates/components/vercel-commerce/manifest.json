@@ -1,0 +1,32 @@
+{
+  "id": "vercel-commerce",
+  "repo": "vercel/commerce",
+  "fetched_at": "2026-05-09",
+  "components": {
+    "homepage": {
+      "file": "homepage.tsx",
+      "source_path": "app/page.tsx",
+      "description": "Homepage / página principal"
+    },
+    "cart": {
+      "file": "cart.ts",
+      "source_path": "components/cart/actions.ts",
+      "description": "Carrito / drawer de compra"
+    },
+    "footer": {
+      "file": "footer.tsx",
+      "source_path": "components/layout/footer.tsx",
+      "description": "Pie de página"
+    },
+    "navbar": {
+      "file": "navbar.tsx",
+      "source_path": "components/layout/navbar/index.tsx",
+      "description": "Barra de navegación principal"
+    },
+    "grid": {
+      "file": "grid.tsx",
+      "source_path": "components/layout/product-grid-items.tsx",
+      "description": "Grilla de productos / catálogo"
+    }
+  }
+}

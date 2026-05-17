@@ -1,0 +1,158 @@
+{
+  "updated_at": "2026-05-09",
+  "total": 6,
+  "templates": [
+    {
+      "id": "taxonomy",
+      "name": "Taxonomy — shadcn/ui App",
+      "source": "curated",
+      "repo": "shadcn-ui/taxonomy",
+      "demo_url": "https://tx.shadcn.com",
+      "preview_url": "https://vercel.com/templates/next.js/taxonomy",
+      "tags": [
+        "nextjs",
+        "tailwind",
+        "shadcn",
+        "typescript",
+        "blog",
+        "saas"
+      ],
+      "plan_fit": [
+        "esencial",
+        "emprendimiento"
+      ],
+      "industry": [
+        "servicios",
+        "saas",
+        "educación"
+      ],
+      "description": "App con shadcn/ui, auth, blog MDX, dashboard. Referencia para estructuras de contenido y layouts de servicios.",
+      "stars": 18000
+    },
+    {
+      "id": "dub",
+      "name": "Dub — Multi-tenant SaaS",
+      "source": "curated",
+      "repo": "dubinc/dub",
+      "demo_url": "https://dub.co",
+      "preview_url": "https://github.com/dubinc/dub",
+      "tags": [
+        "nextjs",
+        "tailwind",
+        "typescript",
+        "multitenant",
+        "saas"
+      ],
+      "plan_fit": [
+        "empresa"
+      ],
+      "industry": [
+        "saas",
+        "tecnología"
+      ],
+      "description": "Ejemplo real de SaaS multi-tenant en producción. Muy relevante para la arquitectura multitenant de SitioHoy.",
+      "stars": 17000
+    },
+    {
+      "id": "vercel-commerce",
+      "name": "Next.js Commerce",
+      "source": "curated",
+      "repo": "vercel/commerce",
+      "demo_url": "https://demo.vercel.store",
+      "preview_url": "https://vercel.com/templates/next.js/nextjs-commerce",
+      "tags": [
+        "ecommerce",
+        "nextjs",
+        "tailwind",
+        "shopify",
+        "typescript"
+      ],
+      "plan_fit": [
+        "emprendimiento",
+        "empresa"
+      ],
+      "industry": [
+        "retail",
+        "moda",
+        "tecnología"
+      ],
+      "description": "E-commerce de alto rendimiento con Next.js App Router. Soporte multi-proveedor (Shopify, BigCommerce, etc.).",
+      "stars": 12000
+    },
+    {
+      "id": "precedent",
+      "name": "Precedent — Next.js Boilerplate",
+      "source": "curated",
+      "repo": "steven-tey/precedent",
+      "demo_url": "https://precedent.dev",
+      "preview_url": "https://vercel.com/templates/next.js/precedent",
+      "tags": [
+        "nextjs",
+        "tailwind",
+        "typescript",
+        "framer-motion",
+        "landing"
+      ],
+      "plan_fit": [
+        "esencial",
+        "emprendimiento"
+      ],
+      "industry": [
+        "saas",
+        "startups",
+        "servicios"
+      ],
+      "description": "Boilerplate moderno con animaciones Framer Motion, componentes de UI pulidos y buenas prácticas.",
+      "stars": 6000
+    },
+    {
+      "id": "nextjs-portfolio",
+      "name": "Portfolio con Next.js",
+      "source": "curated",
+      "repo": "vercel/next-portfolio",
+      "demo_url": "https://portfolio-nextjs-template.vercel.app",
+      "preview_url": "https://vercel.com/templates/next.js/portfolio-starter-kit",
+      "tags": [
+        "nextjs",
+        "tailwind",
+        "portfolio",
+        "blog"
+      ],
+      "plan_fit": [
+        "esencial"
+      ],
+      "industry": [
+        "creativos",
+        "profesionales",
+        "servicios"
+      ],
+      "description": "Portfolio minimalista con blog MDX. Referencia para layouts de presentación de servicios o catálogos simples.",
+      "stars": 5000
+    },
+    {
+      "id": "nextjs-starter-medusa",
+      "name": "Medusa Next.js Starter",
+      "source": "curated",
+      "repo": "medusajs/nextjs-starter-medusa",
+      "demo_url": "https://next.medusajs.com",
+      "preview_url": "https://vercel.com/templates/next.js/medusa-nextjs-starter",
+      "tags": [
+        "ecommerce",
+        "nextjs",
+        "tailwind",
+        "medusa",
+        "typescript"
+      ],
+      "plan_fit": [
+        "empresa"
+      ],
+      "industry": [
+        "retail",
+        "moda",
+        "productos"
+      ],
+      "description": "Storefront completo con carrito, checkout, cuenta de usuario. Stack muy cercano al de SitioHoy Plan Empresa.",
+      "stars": 3000
+    }
+  ]
+}

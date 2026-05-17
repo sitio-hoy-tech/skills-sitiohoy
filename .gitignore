@@ -1,0 +1,9 @@
+.DS_Store
+.venv/
+__pycache__/
+node_modules/
+
+# Local project files (client-specific)
+sitiohoy.config.json
+/.sitiohoy/
+/examples/

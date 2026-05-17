@@ -1,0 +1,122 @@
+{
+  "version": 1,
+  "plans": {
+    "esencial": {
+      "modules": [
+        {
+          "id": 0,
+          "name": "Scaffold, Base Técnica e Identidad Visual",
+          "requiredChecks": ["config_valid", "brief_exists", "tokens_css_exists", "supabase_schema_ready", "tracking_updated", "validate_ok"]
+        },
+        {
+          "id": 1,
+          "name": "Layout Global",
+          "requiredChecks": ["header_ready", "footer_ready", "whatsapp_ready", "responsive_checked", "design_direction_used", "visual_audit_passed", "screenshots_reviewed", "no_overflow", "validate_ok"]
+        },
+        {
+          "id": 2,
+          "name": "Home",
+          "requiredChecks": ["hero_matches_brief", "sections_from_brief", "images_have_alt", "metadata_ready", "inspiration_board_used", "design_score_8", "visual_audit_passed", "screenshots_reviewed", "validate_ok"]
+        },
+        {
+          "id": 3,
+          "name": "Catálogo",
+          "requiredChecks": ["products_render", "categories_render", "product_images_ready", "empty_states_ready", "visual_audit_passed", "screenshots_reviewed", "no_overflow", "validate_ok"]
+        },
+        {
+          "id": 4,
+          "name": "Páginas Opcionales",
+          "requiredChecks": ["requested_pages_done", "contact_form_persists", "legal_pages_if_needed", "validate_ok"]
+        },
+        {
+          "id": 5,
+          "name": "SEO y Deploy",
+          "requiredChecks": ["sitemap_ready", "robots_ready", "visual_audit_passed", "e2e_passed", "qa_report_generated", "deploy_ready", "audit_generated"]
+        }
+      ]
+    },
+    "emprendimiento": {
+      "modules": [
+        {
+          "id": 0,
+          "name": "Scaffold, Base Técnica e Identidad Visual",
+          "requiredChecks": ["config_valid", "brief_exists", "mercadopago_required", "fixed_shipping_required", "supabase_schema_ready", "tracking_updated", "validate_ok"]
+        },
+        {
+          "id": 1,
+          "name": "Layout Global",
+          "requiredChecks": ["header_ready", "footer_ready", "cart_entry_ready", "whatsapp_ready", "responsive_checked", "design_direction_used", "visual_audit_passed", "screenshots_reviewed", "no_overflow", "validate_ok"]
+        },
+        {
+          "id": 2,
+          "name": "Home",
+          "requiredChecks": ["hero_matches_brief", "featured_products_ready", "trust_blocks_ready", "metadata_ready", "inspiration_board_used", "design_score_8", "visual_audit_passed", "screenshots_reviewed", "validate_ok"]
+        },
+        {
+          "id": 3,
+          "name": "Catálogo y Detalle",
+          "requiredChecks": ["products_render", "product_detail_ready", "variants_work", "product_images_ready", "products_have_weight", "visual_audit_passed", "screenshots_reviewed", "no_overflow", "validate_ok"]
+        },
+        {
+          "id": 4,
+          "name": "Carrito y Checkout",
+          "requiredChecks": ["cart_persists", "shipping_zones_work", "server_totals_recalculated", "mercadopago_preference_created", "payment_events_logged", "tracking_page_ready", "build_ok", "validate_ok"]
+        },
+        {
+          "id": 5,
+          "name": "Páginas Opcionales",
+          "requiredChecks": ["requested_pages_done", "contact_form_persists", "ecommerce_legal_pages_ready", "validate_ok"]
+        },
+        {
+          "id": 6,
+          "name": "SEO y Deploy",
+          "requiredChecks": ["sitemap_ready", "robots_ready", "visual_audit_passed", "e2e_passed", "qa_report_generated", "mercadopago_webhook_verified", "deploy_ready", "audit_generated"]
+        }
+      ]
+    },
+    "empresa": {
+      "modules": [
+        {
+          "id": 0,
+          "name": "Scaffold, Base Técnica e Identidad Visual",
+          "requiredChecks": ["config_valid", "brief_exists", "shipping_provider_selected", "supabase_cli_used", "supabase_schema_ready", "tracking_updated", "validate_ok"]
+        },
+        {
+          "id": 1,
+          "name": "Layout Global",
+          "requiredChecks": ["header_ready", "footer_ready", "cart_entry_ready", "whatsapp_ready", "responsive_checked", "design_direction_used", "visual_audit_passed", "screenshots_reviewed", "no_overflow", "validate_ok"]
+        },
+        {
+          "id": 2,
+          "name": "Home",
+          "requiredChecks": ["hero_matches_brief", "featured_products_ready", "trust_blocks_ready", "schema_ready", "inspiration_board_used", "design_score_8", "visual_audit_passed", "screenshots_reviewed", "validate_ok"]
+        },
+        {
+          "id": 3,
+          "name": "Catálogo y Detalle",
+          "requiredChecks": ["products_render", "product_detail_ready", "variants_work", "product_images_ready", "products_have_weight", "catalog_performance_checked", "visual_audit_passed", "screenshots_reviewed", "no_overflow", "build_ok", "validate_ok"]
+        },
+        {
+          "id": 4,
+          "name": "Carrito y Checkout",
+          "requiredChecks": ["cart_persists", "shipping_provider_tested", "server_totals_recalculated", "mercadopago_preference_created", "payment_events_logged", "order_events_logged", "tracking_page_ready", "build_ok", "validate_ok"]
+        },
+        {
+          "id": 5,
+          "name": "Páginas Opcionales",
+          "requiredChecks": ["requested_pages_done", "contact_form_persists", "ecommerce_legal_pages_ready", "validate_ok"]
+        },
+        {
+          "id": 6,
+          "name": "SEO Técnico y Performance",
+          "requiredChecks": ["sitemap_ready", "robots_ready", "schema_ready", "visual_audit_passed", "lighthouse_checked", "e2e_passed", "qa_run"]
+        },
+        {
+          "id": 7,
+          "name": "Umami Avanzado y Deploy",
+          "requiredChecks": ["umami_pageviews_verified", "purchase_event_verified", "mercadopago_webhook_verified", "shipping_webhook_or_flow_verified", "real_purchase_tested", "visual_audit_passed", "e2e_passed", "qa_report_generated", "audit_generated"]
+        }
+      ]
+    }
+  }
+}

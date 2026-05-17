@@ -1,0 +1,34 @@
+{
+  "scripts": {
+    "sitiohoy:briefing": "node scripts/briefing-server.mjs",
+    "sitiohoy:brief-from-intake": "node scripts/brief-from-intake.mjs",
+    "sitiohoy:preflight": "node scripts/preflight.mjs",
+    "sitiohoy:module-close": "node scripts/module-close.mjs",
+    "sitiohoy:validate": "node scripts/validate-sitiohoy.mjs",
+    "sitiohoy:validate-config": "node scripts/validate-config.mjs",
+    "sitiohoy:validate-supabase": "node scripts/validate-supabase-remote.mjs",
+    "sitiohoy:secret-scan": "node scripts/secret-scan.mjs",
+    "sitiohoy:visual-audit": "node scripts/visual-audit.mjs",
+    "sitiohoy:e2e": "playwright test tests/e2e/",
+    "sitiohoy:test-supabase": "node scripts/test-supabase.mjs",
+    "sitiohoy:test-mercadopago": "node scripts/test-mercadopago.mjs",
+    "sitiohoy:test-envia": "node scripts/test-envia.mjs",
+    "sitiohoy:test-correo-argentino": "node scripts/test-correo-argentino.mjs",
+    "sitiohoy:test-resend": "node scripts/test-resend.mjs",
+    "sitiohoy:qa": "node scripts/run-qa.mjs",
+    "sitiohoy:qa-report": "node scripts/generate-qa-report.mjs",
+    "sitiohoy:tracking": "node scripts/update-tracking.mjs",
+    "sitiohoy:audit": "node scripts/audit.mjs",
+    "sitiohoy:optimize-assets": "node scripts/optimize-assets.mjs",
+    "sitiohoy:test-webhooks": "node scripts/test-webhooks-local.mjs --all"
+  },
+  "dependencies": {
+    "@supabase/ssr": "latest",
+    "@supabase/supabase-js": "latest",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "latest",
+    "playwright": "latest"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "taxonomy",
+  "repo": "shadcn-ui/taxonomy",
+  "fetched_at": "2026-05-09",
+  "components": {
+    "navbar": {
+      "file": "navbar.tsx",
+      "source_path": "components/header.tsx",
+      "description": "Barra de navegación principal"
+    },
+    "footer": {
+      "file": "footer.tsx",
+      "source_path": "components/site-footer.tsx",
+      "description": "Pie de página"
+    }
+  }
+}

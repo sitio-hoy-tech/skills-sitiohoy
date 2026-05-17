@@ -1,0 +1,1400 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SitioHoy - Briefing de cliente</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  --bg: #f6f7f4;
+  --surface: #ffffff;
+  --surface-soft: #eef5ec;
+  --ink: #152018;
+  --muted: #667368;
+  --line: #d9e2d9;
+  --brand: #16a05d;
+  --brand-dark: #0f7442;
+  --accent: #e8b43f;
+  --danger: #dc2626;
+  --focus: rgba(22, 160, 93, 0.16);
+  --shadow: 0 18px 50px rgba(21, 32, 24, 0.08);
+  --radius: 8px;
+  --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    linear-gradient(135deg, rgba(22, 160, 93, 0.10), transparent 36%),
+    linear-gradient(315deg, rgba(232, 180, 63, 0.12), transparent 30%),
+    var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  line-height: 1.45;
+}
+button, input, select, textarea { font: inherit; }
+.shell { max-width: 1040px; margin: 0 auto; padding: 24px; }
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid rgba(217, 226, 217, 0.9);
+  background: rgba(246, 247, 244, 0.88);
+  backdrop-filter: blur(14px);
+}
+.topbar-inner {
+  max-width: 1040px;
+  height: 64px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--brand);
+  color: white;
+  font-weight: 900;
+}
+.brand-text { font-weight: 850; letter-spacing: 0; white-space: nowrap; }
+.step-count { color: var(--muted); font-size: 13px; font-weight: 750; white-space: nowrap; }
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 310px;
+  gap: 22px;
+  align-items: end;
+  padding: 32px 0 18px;
+}
+.hero h1 {
+  margin: 0;
+  max-width: 760px;
+  font-size: clamp(34px, 6vw, 62px);
+  line-height: 1.02;
+  letter-spacing: 0;
+}
+.hero p {
+  margin: 14px 0 0;
+  max-width: 690px;
+  color: var(--muted);
+  font-size: 17px;
+}
+.status-panel {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: var(--shadow);
+  padding: 16px;
+}
+.status-panel strong { display: block; margin-bottom: 10px; font-size: 14px; }
+.mini-list { display: grid; gap: 7px; color: var(--muted); font-size: 13px; }
+.progress {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 7px;
+  margin: 6px 0 18px;
+}
+.progress button {
+  min-width: 0;
+  height: 38px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+}
+.progress button.active {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: white;
+}
+.layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.card {
+  display: none;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--shadow);
+  padding: 24px;
+}
+.card.active { display: block; }
+.section-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: start;
+  margin-bottom: 22px;
+}
+.section-title { margin: 0; font-size: 28px; line-height: 1.08; letter-spacing: 0; }
+.section-copy { margin: 6px 0 0; color: var(--muted); max-width: 680px; }
+.required { color: var(--brand-dark); margin-left: 2px; }
+.grid { display: grid; gap: 14px; }
+.grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.field { display: grid; gap: 7px; }
+.field label, .label {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 780;
+}
+.hint { color: var(--muted); font-size: 12px; font-weight: 600; }
+input[type="text"], input[type="tel"], input[type="email"], input[type="url"], input[type="number"], select, textarea {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  padding: 10px 12px;
+  outline: none;
+}
+textarea { min-height: 92px; resize: vertical; }
+input:focus, select:focus, textarea:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 4px var(--focus);
+}
+.invalid { border-color: var(--danger) !important; box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.10) !important; }
+.error { display: none; color: var(--danger); font-size: 12px; font-weight: 700; }
+.error.visible { display: block; }
+.divider { height: 1px; background: var(--line); margin: 18px 0; }
+.option-grid { display: grid; gap: 10px; }
+.option-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.option-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.choice {
+  position: relative;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 14px;
+  cursor: pointer;
+  min-height: 88px;
+}
+.choice:hover { border-color: var(--brand); }
+.choice.selected { border-color: var(--brand); background: #f1fbf5; }
+.choice strong { display: block; margin-bottom: 4px; }
+.choice span { display: block; color: var(--muted); font-size: 13px; }
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--brand-dark);
+  font-size: 11px;
+  font-weight: 850;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+.checks { display: grid; gap: 8px; }
+.checks.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.check {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+}
+.check:last-child { border-bottom: 0; }
+.check input { margin: 2px 0 0; accent-color: var(--brand); }
+.check strong { display: block; font-size: 14px; }
+.check span { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; }
+.conditional { display: none; }
+.conditional.visible { display: block; }
+.tag-input {
+  min-height: 44px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 7px 9px;
+}
+.tag-input:focus-within { border-color: var(--brand); box-shadow: 0 0 0 4px var(--focus); }
+.tag-input input { min-height: 28px; border: 0; box-shadow: none; padding: 0; flex: 1; min-width: 160px; }
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #bde8ca;
+  border-radius: 999px;
+  background: #f1fbf5;
+  color: var(--brand-dark);
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 750;
+}
+.pill button { border: 0; background: transparent; color: inherit; cursor: pointer; padding: 0; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 760;
+}
+.chip.selected { border-color: var(--brand); background: var(--brand); color: white; }
+.color-row { display: grid; grid-template-columns: 50px 130px minmax(0, 1fr); gap: 8px; align-items: center; }
+input[type="color"] {
+  width: 50px;
+  height: 42px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: white;
+}
+.file-drop {
+  border: 1.5px dashed var(--line);
+  border-radius: var(--radius);
+  background: #fbfcfa;
+  padding: 20px;
+  cursor: pointer;
+}
+.file-drop:hover, .file-drop.dragover { border-color: var(--brand); background: #f1fbf5; }
+.file-drop strong { display: block; margin-bottom: 4px; }
+.file-drop span { color: var(--muted); font-size: 13px; }
+.file-drop input { display: none; }
+.file-list { display: grid; gap: 8px; margin-top: 10px; }
+.file-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 140px 34px;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 8px;
+  background: white;
+}
+.file-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+.file-item select { min-height: 34px; padding: 5px 8px; font-size: 12px; }
+.icon-btn { min-height: 34px; border: 0; border-radius: 6px; background: #fff1f1; color: var(--danger); cursor: pointer; }
+.social-row {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) 34px;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.summary { display: grid; gap: 14px; }
+.summary-block {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fbfcfa;
+  padding: 14px;
+}
+.summary-block h3 { margin: 0 0 10px; font-size: 15px; }
+.summary-row {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  padding: 8px 0;
+  font-size: 13px;
+}
+.summary-row:first-of-type { border-top: 0; }
+.summary-key { color: var(--muted); font-weight: 760; }
+.summary-val { font-weight: 720; word-break: break-word; }
+.actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 8;
+  border-top: 1px solid rgba(217, 226, 217, 0.95);
+  background: rgba(246, 247, 244, 0.92);
+  backdrop-filter: blur(14px);
+}
+.actions-inner {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.btn {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  cursor: pointer;
+  font-weight: 820;
+}
+.btn-primary { background: var(--brand); color: white; }
+.btn-primary:hover { background: var(--brand-dark); }
+.btn-primary:disabled { background: var(--line); color: var(--muted); cursor: not-allowed; }
+.btn-secondary { border-color: var(--line); background: white; color: var(--ink); }
+.btn-secondary:hover { background: var(--surface-soft); }
+.btn-link { border-color: var(--line); background: transparent; color: var(--brand-dark); }
+.success {
+  display: none;
+  max-width: 520px;
+  margin: 70px auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: white;
+  box-shadow: var(--shadow);
+  padding: 28px;
+  text-align: center;
+}
+.success.visible { display: block; }
+.success h2 { margin: 0 0 8px; font-size: 30px; }
+.success p { margin: 0; color: var(--muted); }
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.45);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 820px) {
+  .hero, .grid.two, .grid.three, .option-grid.two, .option-grid.three, .checks.two { grid-template-columns: 1fr; }
+  .progress { grid-template-columns: repeat(4, 1fr); }
+  .status-panel { display: none; }
+}
+@media (max-width: 560px) {
+  .shell, .topbar-inner, .actions-inner { padding-left: 16px; padding-right: 16px; }
+  .topbar-inner { height: 58px; }
+  .brand-text { white-space: normal; }
+  .card { padding: 18px; }
+  .progress { grid-template-columns: repeat(2, 1fr); }
+  .color-row, .file-item, .social-row, .summary-row { grid-template-columns: 1fr; }
+  .actions-inner { flex-direction: column-reverse; }
+  .btn { width: 100%; }
+}
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark">S</div>
+        <div class="brand-text">SitioHoy Briefing</div>
+      </div>
+      <div class="step-count" id="step-count">Paso 1 de 7</div>
+    </div>
+  </header>
+
+  <main class="shell" id="form-shell">
+    <section class="hero">
+      <div>
+        <h1>Ingreso de cliente</h1>
+        <p>Un briefing corto para definir alcance, diseño, catálogo, contacto y assets sin ir pregunta por pregunta.</p>
+      </div>
+      <aside class="status-panel">
+        <strong>Qué se genera al enviar</strong>
+        <div class="mini-list">
+          <span>.sitiohoy/intake.json</span>
+          <span>sitiohoy.config.json</span>
+          <span>_assets-cliente/ con los archivos subidos</span>
+        </div>
+      </aside>
+    </section>
+
+    <nav class="progress" id="progress" aria-label="Pasos del formulario"></nav>
+
+    <div class="layout">
+      <section class="card active" data-step="1">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Plan y alcance</h2>
+            <p class="section-copy">Definí el tipo de sitio y las integraciones que condicionan el proyecto.</p>
+          </div>
+          <span class="badge">Inicio</span>
+        </div>
+
+        <div class="field" style="margin-bottom:20px">
+          <div class="label">Estado del cliente <span class="required">*</span></div>
+          <div class="option-grid two" id="client-status-options">
+            <div class="choice selected" data-value="nuevo" onclick="selectClientStatus(this,'nuevo')">
+              <strong>Cliente nuevo</strong>
+              <span>Completar el briefing completo para generar los archivos del proyecto.</span>
+            </div>
+            <div class="choice" data-value="existente" onclick="selectClientStatus(this,'existente')">
+              <strong>Cliente ya existe</strong>
+              <span>Ya tiene tenant ID. Al enviar se consulta Supabase para recuperar plan, datos de empresa e integraciones cargadas.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="conditional" id="existing-client-section">
+          <div class="field">
+            <label for="existing-tenant-id">Tenant ID <span class="required">*</span></label>
+            <input type="text" id="existing-tenant-id" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+            <div class="hint">UUID del tenant ya creado. El servidor usa las credenciales locales de Supabase para completar los datos que el formulario no pida.</div>
+            <div class="error" id="existing-tenant-id-error">Ingresá el tenant ID.</div>
+          </div>
+          <div style="margin-top:16px">
+            <button type="button" class="btn btn-primary" id="submit-existing-btn" onclick="submitExistingClient()">Usar cliente existente</button>
+          </div>
+        </div>
+
+        <div id="new-client-form">
+
+        <div class="field">
+          <div class="label">Plan <span class="required">*</span></div>
+          <div class="option-grid three" id="plan-options">
+            <div class="choice selected" data-value="esencial" onclick="selectChoice('plan', this)">
+              <strong>Esencial</strong>
+              <span>Catálogo, WhatsApp y consulta directa. Hasta 50 productos.</span>
+            </div>
+            <div class="choice" data-value="emprendimiento" onclick="selectChoice('plan', this)">
+              <strong>Emprendimiento</strong>
+              <span>Tienda con MercadoPago, carrito y envíos fijos por zona.</span>
+            </div>
+            <div class="choice" data-value="empresa" onclick="selectChoice('plan', this)">
+              <strong>Empresa</strong>
+              <span>Ecommerce completo con proveedor de envíos y QA avanzado.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="conditional" id="shipping-section">
+          <div class="divider"></div>
+          <div class="field">
+            <div class="label">Envíos para plan Empresa <span class="required">*</span></div>
+            <div class="option-grid two" id="shipping-options">
+              <div class="choice selected" data-value="correo" onclick="selectChoice('shipping', this)">
+                <strong>Correo Argentino directo</strong>
+                <span>Cotización en tiempo real y pre-registro. El cliente usa su usuario MiCorreo.</span>
+              </div>
+              <div class="choice" data-value="envia" onclick="selectChoice('shipping', this)">
+                <strong>Envia.com</strong>
+                <span>Multicarrier con etiquetas PDF. Requiere cuenta y token API propios.</span>
+              </div>
+              <div class="choice" data-value="zonas" onclick="selectChoice('shipping', this)">
+                <strong>Precios fijos por zona</strong>
+                <span>Costos definidos por provincia o región, sin integración externa.</span>
+              </div>
+              <div class="choice" data-value="sin-envios" onclick="selectChoice('shipping', this)">
+                <strong>Sin envíos</strong>
+                <span>Retiro en local, coordinación manual o productos digitales.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="grid two">
+          <div class="field">
+            <div class="label">Dominio <span class="required">*</span></div>
+            <div class="option-grid">
+              <div class="choice selected" data-value="owned" onclick="selectChoice('domain', this)">
+                <strong>Tengo dominio</strong>
+                <span>Ya existe o está comprado.</span>
+              </div>
+              <div class="choice" data-value="pending_purchase" onclick="selectChoice('domain', this)">
+                <strong>Todavía no</strong>
+                <span>Queda pendiente de compra o definición.</span>
+              </div>
+            </div>
+            <input type="text" id="domain-value" placeholder="https://www.tudominio.com">
+          </div>
+
+          <div class="field">
+            <label for="editor-select">IA o editor de trabajo <span class="required">*</span></label>
+            <select id="editor-select">
+              <option value="">Seleccioná una opción</option>
+              <option value="codex">Codex</option>
+              <option value="claude-code">Claude Code</option>
+              <option value="cursor">Cursor</option>
+              <option value="opencode">OpenCode</option>
+              <option value="gemini">Gemini</option>
+              <option value="windsurf">Windsurf</option>
+              <option value="copilot">GitHub Copilot</option>
+              <option value="other">Otro</option>
+            </select>
+
+            <div class="checks">
+              <label class="check">
+                <input type="checkbox" id="mp-active">
+                <span><strong>MercadoPago activo</strong><span>Cuenta de vendedor verificada.</span></span>
+              </label>
+              <label class="check">
+                <input type="checkbox" id="resend-check">
+                <span><strong>Emails automáticos</strong><span>Confirmaciones y avisos con Resend.</span></span>
+              </label>
+              <label class="check">
+                <input type="checkbox" id="supabase-mcp">
+                <span><strong>MCP Supabase</strong><span>Disponible en el entorno del agente.</span></span>
+              </label>
+              <label class="check">
+                <input type="checkbox" id="aidesigner-mcp">
+                <span><strong>AIDesigner MCP</strong><span>Disponible para assets visuales.</span></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" data-step="2">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Negocio y cliente</h2>
+            <p class="section-copy">Lo mínimo para que diseño, copy y SEO entiendan qué vender y a quién hablarle.</p>
+          </div>
+        </div>
+
+        <div class="grid two">
+          <div class="field">
+            <label for="business-name">Nombre del negocio <span class="required">*</span></label>
+            <input type="text" id="business-name" placeholder="Ej: La Boutique de Ana">
+            <div class="error" id="business-name-error">Completá el nombre del negocio.</div>
+          </div>
+          <div class="field">
+            <label for="business-industry">Rubro <span class="required">*</span></label>
+            <input type="text" id="business-industry" placeholder="Ej: indumentaria femenina, ferretería, pastelería">
+            <div class="error" id="business-industry-error">Completá el rubro.</div>
+          </div>
+        </div>
+
+        <div class="grid two" style="margin-top:14px">
+          <div class="field">
+            <label for="business-goal">Objetivo principal del sitio</label>
+            <select id="business-goal">
+              <option value="vender-online">Vender online</option>
+              <option value="recibir-consultas">Recibir consultas por WhatsApp</option>
+              <option value="mostrar-catalogo">Mostrar catálogo y disponibilidad</option>
+              <option value="generar-confianza">Generar confianza de marca</option>
+              <option value="captar-leads">Captar leads o reservas</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="business-diff">Diferencial</label>
+            <input type="text" id="business-diff" placeholder="Ej: entrega rápida, atención personalizada, fabricación propia">
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <label for="business-desc">Qué vendés y por qué te eligen <span class="required">*</span></label>
+          <textarea id="business-desc" maxlength="360" placeholder="En 2 o 3 líneas: qué ofrecés, para quién y qué valor concreto entregás."></textarea>
+          <div class="error" id="business-desc-error">Completá una descripción breve.</div>
+        </div>
+
+        <div class="grid two" style="margin-top:14px">
+          <div class="field">
+            <label for="audience-profile">Cliente ideal</label>
+            <textarea id="audience-profile" placeholder="Edad aproximada, zona, intereses, poder adquisitivo, situación de compra."></textarea>
+          </div>
+          <div class="field">
+            <label for="audience-problem">Necesidad que resolvés</label>
+            <textarea id="audience-problem" placeholder="Qué problema, deseo o urgencia trae el cliente antes de comprar."></textarea>
+          </div>
+        </div>
+
+        <div class="grid two" style="margin-top:14px">
+          <div class="field">
+            <label for="audience-feeling">Sensación deseada</label>
+            <input type="text" id="audience-feeling" placeholder="Ej: confianza, rapidez, inspiración, exclusividad">
+          </div>
+          <div class="field">
+            <label for="visual-refs">Referentes visuales</label>
+            <input type="text" id="visual-refs" placeholder="Marcas, sitios o competidores separados por coma">
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="grid two">
+          <div class="field">
+            <div class="label">Tono</div>
+            <div class="option-grid two" id="tone-options">
+              <div class="choice selected" data-value="cercano" onclick="selectChoice('tone', this)"><strong>Cercano</strong><span>Simple, humano y directo.</span></div>
+              <div class="choice" data-value="profesional" onclick="selectChoice('tone', this)"><strong>Profesional</strong><span>Serio, claro y preciso.</span></div>
+              <div class="choice" data-value="juvenil" onclick="selectChoice('tone', this)"><strong>Juvenil</strong><span>Dinámico y actual.</span></div>
+              <div class="choice" data-value="exclusivo" onclick="selectChoice('tone', this)"><strong>Premium</strong><span>Elegante y aspiracional.</span></div>
+            </div>
+          </div>
+          <div class="field">
+            <div class="label">Dispositivo principal</div>
+            <div class="option-grid" id="device-options">
+              <div class="choice selected" data-value="mobile" onclick="selectChoice('device', this)"><strong>Mobile</strong><span>La mayoría consulta o compra desde celular.</span></div>
+              <div class="choice" data-value="desktop" onclick="selectChoice('device', this)"><strong>Desktop</strong><span>Uso más frecuente desde computadora.</span></div>
+              <div class="choice" data-value="mixed" onclick="selectChoice('device', this)"><strong>Mixto</strong><span>Ambos tienen peso similar.</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" data-step="3">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Catálogo</h2>
+            <p class="section-copy">Datos suficientes para armar productos, filtros, envíos y seed inicial sin frenar el proyecto.</p>
+          </div>
+        </div>
+
+        <div class="grid two">
+          <div class="field">
+            <label for="initial-count">Cantidad inicial <span class="required">*</span></label>
+            <input type="number" id="initial-count" min="1" placeholder="Ej: 24">
+            <div class="error" id="initial-count-error">Ingresá al menos 1 producto, servicio o ítem.</div>
+          </div>
+          <div class="field">
+            <label for="catalog-type">Tipo</label>
+            <select id="catalog-type" onchange="toggleShippingFields()">
+              <option value="physical">Productos físicos</option>
+              <option value="digital">Productos digitales</option>
+              <option value="service">Servicios</option>
+              <option value="mixed">Mixto</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:14px">
+          <label>Categorías <span class="hint">Enter o coma para agregar</span></label>
+          <div class="tag-input" onclick="document.getElementById('categories-input').focus()">
+            <div id="categories-chips"></div>
+            <input type="text" id="categories-input" placeholder="Ej: remeras, jeans, accesorios" onkeydown="handleCategoryInput(event)">
+          </div>
+        </div>
+
+        <div class="grid two" style="margin-top:14px">
+          <label class="check">
+            <input type="checkbox" id="has-variants">
+            <span><strong>Hay variantes</strong><span>Talles, colores, medidas, sabores o combinaciones.</span></span>
+          </label>
+          <div class="field">
+            <label>Rango de precios</label>
+            <div class="grid two">
+              <input type="text" id="price-from" placeholder="Desde $">
+              <input type="text" id="price-to" placeholder="Hasta $">
+            </div>
+          </div>
+        </div>
+
+        <div class="conditional visible" id="shipping-fields">
+          <div class="divider"></div>
+          <div class="grid two">
+            <div class="field">
+              <label for="default-weight">Peso promedio <span class="hint">gramos, si no sabés queda estimado</span></label>
+              <input type="number" id="default-weight" min="1" placeholder="Ej: 500">
+            </div>
+            <div class="field">
+              <label>Medidas promedio <span class="hint">cm</span></label>
+              <div class="grid three">
+                <input type="number" id="default-length" min="1" placeholder="Largo">
+                <input type="number" id="default-width" min="1" placeholder="Ancho">
+                <input type="number" id="default-height" min="1" placeholder="Alto">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" data-step="4">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Diseño</h2>
+            <p class="section-copy">Indicaciones visuales rápidas para no diseñar un sitio genérico.</p>
+          </div>
+        </div>
+
+        <label class="check">
+          <input type="checkbox" id="has-colors-toggle" onchange="toggleColors()">
+          <span><strong>Tengo colores de marca definidos</strong><span>Si no, se toma el logo, rubro y mood como base.</span></span>
+        </label>
+
+        <div class="conditional" id="colors-defined-section" style="margin-top:12px">
+          <div class="grid three">
+            <div class="field">
+              <label>Primario</label>
+              <div class="color-row">
+                <input type="color" id="color-primary" value="#16A05D" oninput="syncHex('color-primary','color-primary-hex')">
+                <input type="text" id="color-primary-hex" placeholder="#16A05D" oninput="syncPicker('color-primary-hex','color-primary')">
+                <span class="hint">Color dominante.</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>Secundario</label>
+              <div class="color-row">
+                <input type="color" id="color-secondary" value="#152018" oninput="syncHex('color-secondary','color-secondary-hex')">
+                <input type="text" id="color-secondary-hex" placeholder="#152018" oninput="syncPicker('color-secondary-hex','color-secondary')">
+                <span class="hint">Texto o apoyo.</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>Acento</label>
+              <div class="color-row">
+                <input type="color" id="color-accent" value="#E8B43F" oninput="syncHex('color-accent','color-accent-hex')">
+                <input type="text" id="color-accent-hex" placeholder="#E8B43F" oninput="syncPicker('color-accent-hex','color-accent')">
+                <span class="hint">Botones o detalles.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field" id="colors-undefined-section" style="margin-top:12px">
+          <label for="color-hints">Colores o tonos deseados</label>
+          <input type="text" id="color-hints" placeholder="Ej: verdes tierra, blanco y dorado, evitar rojo">
+        </div>
+
+        <div class="grid two" style="margin-top:14px">
+          <div class="field">
+            <label for="desired-mood">Mood visual</label>
+            <input type="text" id="desired-mood" placeholder="Ej: cálido, moderno, simple, elegante, artesanal">
+          </div>
+          <div class="field">
+            <label>Estilo</label>
+            <div class="chip-row" id="style-selector">
+              <button type="button" class="chip" data-value="minimalista" onclick="toggleStyle(this)">Minimalista</button>
+              <button type="button" class="chip" data-value="colorido" onclick="toggleStyle(this)">Colorido</button>
+              <button type="button" class="chip" data-value="corporativo" onclick="toggleStyle(this)">Corporativo</button>
+              <button type="button" class="chip" data-value="artesanal" onclick="toggleStyle(this)">Artesanal</button>
+              <button type="button" class="chip" data-value="tech" onclick="toggleStyle(this)">Tech</button>
+              <button type="button" class="chip" data-value="premium" onclick="toggleStyle(this)">Premium</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="grid two">
+          <div>
+            <label class="check">
+              <input type="checkbox" id="logo-toggle" onchange="toggleLogoUpload()">
+              <span><strong>Logo disponible</strong><span>Subilo si lo tenés a mano.</span></span>
+            </label>
+            <div class="conditional" id="logo-upload-section" style="margin-top:10px">
+              <div class="field">
+                <label for="logo-format">Formato</label>
+                <select id="logo-format">
+                  <option value="">Seleccioná formato</option>
+                  <option value="svg">SVG</option>
+                  <option value="png">PNG transparente</option>
+                  <option value="jpg">JPG / JPEG</option>
+                  <option value="ai">AI</option>
+                  <option value="pdf">PDF</option>
+                </select>
+              </div>
+              <div class="file-drop" id="logo-drop" onclick="document.getElementById('logo-file').click()" ondragover="dragOver(event,this)" ondragleave="dragLeave(this)" ondrop="dropFiles(event,this,'logo')">
+                <strong>Subir logo</strong>
+                <span>PNG, SVG, JPG, AI o PDF.</span>
+                <input type="file" id="logo-file" accept=".png,.svg,.jpg,.jpeg,.ai,.pdf" onchange="selectFiles(event,'logo')">
+              </div>
+              <div class="file-list" id="logo-file-list"></div>
+            </div>
+          </div>
+          <div class="field">
+            <div class="label">Fotos disponibles</div>
+            <div class="option-grid" id="photo-options">
+              <div class="choice selected" data-value="professional" onclick="selectChoice('photo', this)"><strong>Profesionales</strong><span>Sesión o producción cuidada.</span></div>
+              <div class="choice" data-value="phone" onclick="selectChoice('photo', this)"><strong>Celular</strong><span>Propias, con calidad aceptable.</span></div>
+              <div class="choice" data-value="supplier" onclick="selectChoice('photo', this)"><strong>Proveedor</strong><span>Imágenes de fabricante o marca.</span></div>
+              <div class="choice" data-value="none" onclick="selectChoice('photo', this)"><strong>Sin fotos</strong><span>Se usarán imágenes relacionadas hasta recibir material real.</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" data-step="5">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Contenido y contacto</h2>
+            <p class="section-copy">Páginas necesarias y canales públicos para que el sitio convierta desde el primer día.</p>
+          </div>
+        </div>
+
+        <div class="grid two">
+          <div class="field">
+            <div class="label">Páginas</div>
+            <div class="checks two">
+              <label class="check"><input type="checkbox" id="page-about"><span><strong>Sobre nosotros</strong><span>Historia, equipo o valores.</span></span></label>
+              <label class="check"><input type="checkbox" id="page-faq"><span><strong>FAQ</strong><span>Preguntas frecuentes.</span></span></label>
+              <label class="check"><input type="checkbox" id="page-contact"><span><strong>Contacto</strong><span>Formulario o datos completos.</span></span></label>
+              <label class="check"><input type="checkbox" id="page-legal"><span><strong>Legales</strong><span>Términos, privacidad y devoluciones.</span></span></label>
+              <label class="check"><input type="checkbox" id="page-blog"><span><strong>Blog</strong><span>Novedades o contenido SEO.</span></span></label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="contact-wa">WhatsApp</label>
+            <input type="tel" id="contact-wa" placeholder="+54 11 1234-5678">
+            <label for="contact-email">Email público</label>
+            <input type="email" id="contact-email" placeholder="hola@tunegocio.com">
+            <div class="label">Animaciones</div>
+            <div class="option-grid" id="animation-options">
+              <div class="choice" data-value="none" onclick="selectChoice('animations', this)"><strong>Sin animaciones</strong><span>Máxima simplicidad.</span></div>
+              <div class="choice selected" data-value="subtle" onclick="selectChoice('animations', this)"><strong>Sutiles</strong><span>Transiciones y microinteracciones.</span></div>
+              <div class="choice" data-value="full" onclick="selectChoice('animations', this)"><strong>Expresivas</strong><span>Más movimiento para marcas creativas.</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="field">
+          <div class="label">Redes sociales</div>
+          <div id="socials-container"></div>
+          <button type="button" class="btn btn-link" onclick="addSocialRow()">Agregar red social</button>
+          <div class="conditional" id="primary-social-field" style="margin-top:10px">
+            <label for="primary-social">Red principal</label>
+            <select id="primary-social"><option value="">Seleccioná una red</option></select>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" data-step="6">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Assets</h2>
+            <p class="section-copy">Confirmá qué material existe y subí archivos si los tenés disponibles ahora.</p>
+          </div>
+        </div>
+
+        <div class="grid two">
+          <div class="field">
+            <div class="label">Disponible</div>
+            <div class="checks">
+              <label class="check"><input type="checkbox" id="asset-logo"><span><strong>Logo</strong><span>Archivo de marca listo.</span></span></label>
+              <label class="check"><input type="checkbox" id="asset-hero"><span><strong>Hero o banner</strong><span>Imagen principal del sitio.</span></span></label>
+              <label class="check"><input type="checkbox" id="asset-productos"><span><strong>Fotos de productos</strong><span>Material real para catálogo.</span></span></label>
+              <label class="check"><input type="checkbox" id="asset-marca"><span><strong>Fotos de marca</strong><span>Local, equipo, proceso o packaging.</span></span></label>
+              <label class="check"><input type="checkbox" id="asset-galeria"><span><strong>Galería adicional</strong><span>Imágenes complementarias.</span></span></label>
+            </div>
+          </div>
+          <div class="field">
+            <div class="label">Subir archivos</div>
+            <div class="file-drop" id="assets-drop" onclick="document.getElementById('assets-file').click()" ondragover="dragOver(event,this)" ondragleave="dragLeave(this)" ondrop="dropFiles(event,this,'assets')">
+              <strong>Arrastrá archivos o hacé clic</strong>
+              <span>Se guardan en _assets-cliente/logo, hero, productos, marca o galeria.</span>
+              <input type="file" id="assets-file" accept="image/*,.svg,.pdf" multiple onchange="selectFiles(event,'assets')">
+            </div>
+            <div class="file-list" id="assets-file-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" data-step="7">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Revisión final</h2>
+            <p class="section-copy">Chequeá el resumen antes de generar los archivos del proyecto.</p>
+          </div>
+        </div>
+        <div class="summary" id="summary-content"></div>
+        <div class="divider"></div>
+        <button class="btn btn-primary" id="submit-btn" onclick="submitForm()">Generar intake</button>
+      </section>
+    </div>
+  </main>
+
+  <section class="success" id="success-screen">
+    <h2>Briefing enviado</h2>
+    <p>Se generaron `.sitiohoy/intake.json`, `sitiohoy.config.json` y los assets subidos.</p>
+  </section>
+
+  <footer class="actions" id="actions">
+    <div class="actions-inner">
+      <button type="button" class="btn btn-secondary" id="prev-btn" onclick="prevStep()">Anterior</button>
+      <button type="button" class="btn btn-primary" id="next-btn" onclick="nextStep()">Siguiente</button>
+    </div>
+  </footer>
+
+<script>
+const steps = ['Plan', 'Negocio', 'Catálogo', 'Diseño', 'Contenido', 'Assets', 'Revisión']
+const state = {
+  currentStep: 1,
+  clientStatus: 'nuevo',
+  plan: 'esencial',
+  shipping: 'correo',
+  domain: 'owned',
+  tone: 'cercano',
+  device: 'mobile',
+  photo: 'professional',
+  animations: 'subtle',
+  styles: [],
+  categories: [],
+  socials: [],
+  uploadedFiles: { logo: [], assets: [] },
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderProgress()
+  syncHex('color-primary', 'color-primary-hex')
+  syncHex('color-secondary', 'color-secondary-hex')
+  syncHex('color-accent', 'color-accent-hex')
+  toggleShippingFields()
+  updateUI()
+})
+
+function renderProgress() {
+  const progress = document.getElementById('progress')
+  progress.innerHTML = steps.map((label, index) =>
+    `<button type="button" onclick="goStep(${index + 1})" id="progress-${index + 1}">${index + 1}. ${label}</button>`
+  ).join('')
+}
+
+function updateUI() {
+  document.querySelectorAll('.card').forEach(card => {
+    card.classList.toggle('active', Number(card.dataset.step) === state.currentStep)
+  })
+  steps.forEach((_, index) => {
+    const item = document.getElementById(`progress-${index + 1}`)
+    if (item) item.classList.toggle('active', index + 1 <= state.currentStep)
+  })
+  document.getElementById('step-count').textContent = `Paso ${state.currentStep} de ${steps.length}`
+  document.getElementById('prev-btn').style.visibility = state.currentStep === 1 ? 'hidden' : 'visible'
+  document.getElementById('next-btn').style.display = state.currentStep === steps.length ? 'none' : 'inline-flex'
+  if (state.currentStep === steps.length) buildSummary()
+}
+
+function goStep(step) {
+  if (step > state.currentStep && !validateStep(state.currentStep)) return
+  state.currentStep = step
+  updateUI()
+  scrollToTop()
+}
+function nextStep() {
+  if (!validateStep(state.currentStep)) return
+  if (state.currentStep < steps.length) {
+    state.currentStep += 1
+    updateUI()
+    scrollToTop()
+  }
+}
+function prevStep() {
+  if (state.currentStep > 1) {
+    state.currentStep -= 1
+    updateUI()
+    scrollToTop()
+  }
+}
+function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }) }
+
+function selectClientStatus(element, value) {
+  element.parentElement.querySelectorAll('.choice').forEach(item => item.classList.remove('selected'))
+  element.classList.add('selected')
+  state.clientStatus = value
+  document.getElementById('existing-client-section').classList.toggle('visible', value === 'existente')
+  document.getElementById('new-client-form').style.display = value === 'existente' ? 'none' : 'block'
+}
+
+function submitExistingClient() {
+  const tenantId = document.getElementById('existing-tenant-id').value.trim()
+  if (!tenantId) {
+    showInvalid('existing-tenant-id', 'existing-tenant-id-error')
+    return
+  }
+  clearInvalid('existing-tenant-id', 'existing-tenant-id-error')
+  document.getElementById('new-client-form').style.display = 'block'
+  state.clientStatus = 'existente'
+  nextStep()
+}
+
+function selectChoice(group, element) {
+  element.parentElement.querySelectorAll('.choice').forEach(item => item.classList.remove('selected'))
+  element.classList.add('selected')
+  const value = element.dataset.value
+  state[group] = value
+  if (group === 'plan') {
+    document.getElementById('shipping-section').classList.toggle('visible', value === 'empresa')
+    if (value !== 'esencial') document.getElementById('mp-active').checked = true
+    else document.getElementById('mp-active').checked = false
+  }
+  if (group === 'domain') {
+    document.getElementById('domain-value').style.display = value === 'owned' ? 'block' : 'none'
+  }
+}
+
+function validateStep(step) {
+  let ok = true
+  if (state.clientStatus === 'existente') return ok
+  if (step === 2) {
+    ok = requireField('business-name', 'business-name-error') && ok
+    ok = requireField('business-industry', 'business-industry-error') && ok
+    ok = requireField('business-desc', 'business-desc-error') && ok
+  }
+  if (step === 3) {
+    const count = Number(document.getElementById('initial-count').value)
+    if (!count || count < 1) {
+      showInvalid('initial-count', 'initial-count-error')
+      ok = false
+    } else clearInvalid('initial-count', 'initial-count-error')
+  }
+  return ok
+}
+function requireField(fieldId, errorId) {
+  if (!document.getElementById(fieldId).value.trim()) {
+    showInvalid(fieldId, errorId)
+    return false
+  }
+  clearInvalid(fieldId, errorId)
+  return true
+}
+function showInvalid(fieldId, errorId) {
+  document.getElementById(fieldId).classList.add('invalid')
+  document.getElementById(errorId).classList.add('visible')
+}
+function clearInvalid(fieldId, errorId) {
+  document.getElementById(fieldId).classList.remove('invalid')
+  document.getElementById(errorId).classList.remove('visible')
+}
+
+function toggleShippingFields() {
+  const type = document.getElementById('catalog-type').value
+  document.getElementById('shipping-fields').classList.toggle('visible', type === 'physical' || type === 'mixed')
+}
+
+function handleCategoryInput(event) {
+  if (event.key === 'Enter' || event.key === ',') {
+    event.preventDefault()
+    const value = event.target.value.trim().replace(/,$/, '')
+    if (value && !state.categories.includes(value)) state.categories.push(value)
+    event.target.value = ''
+    renderCategories()
+  }
+  if (event.key === 'Backspace' && !event.target.value && state.categories.length) {
+    state.categories.pop()
+    renderCategories()
+  }
+}
+function renderCategories() {
+  document.getElementById('categories-chips').innerHTML = state.categories.map((cat, index) =>
+    `<span class="pill">${esc(cat)}<button type="button" onclick="removeCategory(${index})">×</button></span>`
+  ).join('')
+}
+function removeCategory(index) {
+  state.categories.splice(index, 1)
+  renderCategories()
+}
+
+function toggleColors() {
+  const active = document.getElementById('has-colors-toggle').checked
+  document.getElementById('colors-defined-section').classList.toggle('visible', active)
+  document.getElementById('colors-undefined-section').style.display = active ? 'none' : 'grid'
+}
+function syncHex(colorId, textId) {
+  document.getElementById(textId).value = document.getElementById(colorId).value
+}
+function syncPicker(textId, colorId) {
+  const value = document.getElementById(textId).value.trim()
+  if (/^#[0-9a-fA-F]{6}$/.test(value)) document.getElementById(colorId).value = value
+}
+function toggleStyle(button) {
+  button.classList.toggle('selected')
+  state.styles = [...document.querySelectorAll('#style-selector .chip.selected')].map(item => item.dataset.value)
+}
+function toggleLogoUpload() {
+  const visible = document.getElementById('logo-toggle').checked
+  document.getElementById('logo-upload-section').classList.toggle('visible', visible)
+  document.getElementById('asset-logo').checked = visible
+}
+
+let socialRowId = 0
+function addSocialRow() {
+  state.socials.push({ id: socialRowId++, network: 'instagram', url: '' })
+  renderSocialRows()
+}
+function renderSocialRows() {
+  const container = document.getElementById('socials-container')
+  container.innerHTML = state.socials.map(s => `
+    <div class="social-row">
+      <select onchange="updateSocial(${s.id}, 'network', this.value)">
+        ${['instagram','tiktok','facebook','youtube','pinterest','linkedin','otra'].map(network =>
+          `<option value="${network}" ${s.network === network ? 'selected' : ''}>${labelNetwork(network)}</option>`
+        ).join('')}
+      </select>
+      <input type="url" placeholder="https://..." value="${esc(s.url)}" onchange="updateSocial(${s.id}, 'url', this.value)">
+      <button type="button" class="icon-btn" onclick="removeSocialRow(${s.id})">×</button>
+    </div>
+  `).join('')
+  updatePrimarySocial()
+}
+function updateSocial(id, field, value) {
+  const social = state.socials.find(item => item.id === id)
+  if (social) social[field] = value
+  updatePrimarySocial()
+}
+function removeSocialRow(id) {
+  state.socials = state.socials.filter(item => item.id !== id)
+  renderSocialRows()
+}
+function updatePrimarySocial() {
+  const field = document.getElementById('primary-social-field')
+  const select = document.getElementById('primary-social')
+  field.classList.toggle('visible', state.socials.length > 0)
+  const current = select.value
+  select.innerHTML = '<option value="">Seleccioná una red</option>' + state.socials.map(s =>
+    `<option value="${s.network}" ${current === s.network ? 'selected' : ''}>${labelNetwork(s.network)}</option>`
+  ).join('')
+}
+function labelNetwork(network) {
+  return ({ instagram: 'Instagram', tiktok: 'TikTok', facebook: 'Facebook', youtube: 'YouTube', pinterest: 'Pinterest', linkedin: 'LinkedIn', otra: 'Otra' })[network] || network
+}
+
+function dragOver(event, element) {
+  event.preventDefault()
+  element.classList.add('dragover')
+}
+function dragLeave(element) { element.classList.remove('dragover') }
+function dropFiles(event, element, bucket) {
+  event.preventDefault()
+  element.classList.remove('dragover')
+  ;[...event.dataTransfer.files].forEach(file => addFile(bucket, file))
+  renderFiles(bucket)
+}
+function selectFiles(event, bucket) {
+  ;[...event.target.files].forEach(file => addFile(bucket, file))
+  renderFiles(bucket)
+  event.target.value = ''
+}
+function addFile(bucket, file) {
+  state.uploadedFiles[bucket].push({ file, folder: bucket === 'logo' ? 'logo' : guessFolder(file.name) })
+  if (bucket === 'logo') {
+    document.getElementById('asset-logo').checked = true
+    document.getElementById('logo-toggle').checked = true
+  }
+}
+function guessFolder(name) {
+  const lower = name.toLowerCase()
+  if (lower.includes('logo')) return 'logo'
+  if (lower.includes('hero') || lower.includes('banner')) return 'hero'
+  if (lower.includes('prod')) return 'productos'
+  if (lower.includes('marca') || lower.includes('equipo') || lower.includes('team')) return 'marca'
+  return 'galeria'
+}
+function renderFiles(bucket) {
+  const list = document.getElementById(bucket === 'logo' ? 'logo-file-list' : 'assets-file-list')
+  list.innerHTML = state.uploadedFiles[bucket].map((item, index) => `
+    <div class="file-item">
+      <div class="file-name" title="${esc(item.file.name)}">${esc(item.file.name)}</div>
+      <select onchange="state.uploadedFiles['${bucket}'][${index}].folder=this.value">
+        ${['logo','hero','productos','marca','galeria'].map(folder =>
+          `<option value="${folder}" ${item.folder === folder ? 'selected' : ''}>${folder}/</option>`
+        ).join('')}
+      </select>
+      <button type="button" class="icon-btn" onclick="removeFile('${bucket}', ${index})">×</button>
+    </div>
+  `).join('')
+}
+function removeFile(bucket, index) {
+  state.uploadedFiles[bucket].splice(index, 1)
+  renderFiles(bucket)
+}
+
+function gatherFormData() {
+  const catalogType = document.getElementById('catalog-type').value
+  return {
+    clientStatus: state.clientStatus,
+    existingTenantId: state.clientStatus === 'existente' ? document.getElementById('existing-tenant-id').value.trim() : '',
+    plan: state.plan,
+    shipping: state.plan === 'empresa' ? state.shipping : state.plan === 'emprendimiento' ? 'zonas' : 'sin-envios',
+    mercadoPagoActive: document.getElementById('mp-active').checked,
+    resendRequested: document.getElementById('resend-check').checked,
+    domain: { status: state.domain, value: document.getElementById('domain-value').value.trim() },
+    editor: document.getElementById('editor-select').value || 'other',
+    supabaseMcp: document.getElementById('supabase-mcp').checked,
+    aiDesignerMcp: document.getElementById('aidesigner-mcp').checked,
+    businessName: document.getElementById('business-name').value.trim(),
+    industry: document.getElementById('business-industry').value.trim(),
+    primaryGoal: document.getElementById('business-goal').value,
+    description: document.getElementById('business-desc').value.trim(),
+    differentiator: document.getElementById('business-diff').value.trim(),
+    visualRefs: document.getElementById('visual-refs').value.trim(),
+    audienceProfile: document.getElementById('audience-profile').value.trim(),
+    audienceProblem: document.getElementById('audience-problem').value.trim(),
+    desiredFeeling: document.getElementById('audience-feeling').value.trim(),
+    tone: state.tone,
+    primaryDevice: state.device,
+    initialCount: Number(document.getElementById('initial-count').value) || 0,
+    catalogType,
+    categories: state.categories,
+    hasVariants: document.getElementById('has-variants').checked,
+    priceFrom: document.getElementById('price-from').value.trim(),
+    priceTo: document.getElementById('price-to').value.trim(),
+    defaultWeightGrams: Number(document.getElementById('default-weight').value) || 500,
+    weightEstimated: !document.getElementById('default-weight').value.trim(),
+    defaultDimensionsCm: {
+      length: Number(document.getElementById('default-length').value) || 20,
+      width: Number(document.getElementById('default-width').value) || 15,
+      height: Number(document.getElementById('default-height').value) || 8,
+    },
+    colorsDefined: document.getElementById('has-colors-toggle').checked,
+    colorPrimary: document.getElementById('color-primary-hex').value.trim(),
+    colorSecondary: document.getElementById('color-secondary-hex').value.trim(),
+    colorAccent: document.getElementById('color-accent-hex').value.trim(),
+    colorHints: document.getElementById('color-hints').value.trim(),
+    desiredMood: document.getElementById('desired-mood').value.trim(),
+    visualStyle: state.styles.join(','),
+    logoAvailable: document.getElementById('logo-toggle').checked || document.getElementById('asset-logo').checked,
+    logoFormat: document.getElementById('logo-format').value,
+    photoQuality: state.photo,
+    pages: {
+      about: document.getElementById('page-about').checked,
+      faq: document.getElementById('page-faq').checked,
+      contact: document.getElementById('page-contact').checked,
+      legal: document.getElementById('page-legal').checked,
+      blog: document.getElementById('page-blog').checked,
+    },
+    whatsapp: document.getElementById('contact-wa').value.trim(),
+    email: document.getElementById('contact-email').value.trim(),
+    socials: state.socials.map(({ network, url }) => ({ network, url })),
+    primarySocial: document.getElementById('primary-social').value,
+    animationsLevel: state.animations,
+    assets: {
+      folderReady: ['asset-logo','asset-hero','asset-productos','asset-marca','asset-galeria'].some(id => document.getElementById(id).checked),
+      logo: document.getElementById('asset-logo').checked,
+      hero: document.getElementById('asset-hero').checked,
+      productos: document.getElementById('asset-productos').checked,
+      marca: document.getElementById('asset-marca').checked,
+      galeria: document.getElementById('asset-galeria').checked,
+    },
+  }
+}
+
+function buildIntakeJson(v) {
+  const slug = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+  const physical = v.catalogType === 'physical' || v.catalogType === 'mixed'
+  const missing = []
+  if (!v.assets.logo) missing.push('logo')
+  if (!v.assets.hero) missing.push('hero')
+  if (!v.assets.productos) missing.push('productos')
+  const notes = []
+  if (physical && v.weightEstimated) notes.push('Peso promedio estimado en 500 g hasta confirmar productos reales.')
+  if (!v.assets.productos) notes.push('Usar imágenes Unsplash relacionadas al rubro/categoría/producto hasta recibir fotos reales.')
+  return {
+    clientStatus: v.clientStatus,
+    existingTenantId: v.existingTenantId || null,
+    business: {
+      name: v.businessName,
+      slug: slug(v.businessName),
+      industry: v.industry,
+      description: v.description,
+      differentiator: v.differentiator,
+      primaryGoal: v.primaryGoal,
+      visualReferences: v.visualRefs ? v.visualRefs.split(',').map(item => item.trim()).filter(Boolean) : [],
+    },
+    plan: v.plan,
+    technical: {
+      mercadoPagoActive: v.mercadoPagoActive,
+      correoArgentinoRequested: v.plan === 'empresa' && v.shipping === 'correo',
+      enviaRequested: v.plan === 'empresa' && v.shipping === 'envia',
+      resendRequested: v.resendRequested,
+      domain: v.domain,
+      editor: v.editor,
+      supabaseMcp: v.supabaseMcp,
+      aiDesignerMcp: v.aiDesignerMcp,
+    },
+    audience: {
+      profile: v.audienceProfile,
+      problem: v.audienceProblem,
+      desiredFeeling: v.desiredFeeling,
+      tone: v.tone,
+      primaryDevice: v.primaryDevice,
+    },
+    visualIdentity: {
+      colors: {
+        defined: v.colorsDefined,
+        primary: v.colorsDefined ? v.colorPrimary : '',
+        secondary: v.colorsDefined ? v.colorSecondary : '',
+        accent: v.colorsDefined ? v.colorAccent : '',
+        hints: v.colorsDefined ? '' : v.colorHints,
+        fromLogo: !v.colorsDefined && v.logoAvailable,
+      },
+      desiredMood: v.desiredMood,
+      style: v.visualStyle,
+      logo: { available: v.logoAvailable, format: v.logoFormat },
+      photoQuality: v.photoQuality,
+    },
+    catalog: {
+      initialCount: v.initialCount,
+      categories: v.categories,
+      hasVariants: v.hasVariants,
+      priceRange: v.priceFrom || v.priceTo ? `$${v.priceFrom} - $${v.priceTo}` : '',
+      type: v.catalogType,
+      defaultWeightGrams: physical ? v.defaultWeightGrams : null,
+      weightEstimated: physical ? v.weightEstimated : false,
+      defaultDimensionsCm: physical ? v.defaultDimensionsCm : null,
+    },
+    pages: v.pages,
+    contact: {
+      whatsapp: normalizePhone(v.whatsapp),
+      email: v.email,
+      socials: v.socials.filter(item => item.url || item.network),
+      primarySocial: v.primarySocial,
+    },
+    assets: { folderReady: v.assets.folderReady, missing },
+    animations: v.animationsLevel,
+    notes,
+  }
+}
+
+function buildSummary() {
+  const v = gatherFormData()
+  const rows = [
+    ['Estado del cliente', v.clientStatus === 'existente' ? `Existente (Tenant: ${v.existingTenantId})` : 'Nuevo'],
+    ['Plan', v.plan],
+    ['Envíos', v.shipping],
+    ['Negocio', `${v.businessName || '-'} · ${v.industry || '-'}`],
+    ['Objetivo', v.primaryGoal],
+    ['Cliente ideal', v.audienceProfile || '-'],
+    ['Catálogo', `${v.initialCount || 0} ítems · ${v.catalogType}`],
+    ['Categorías', v.categories.join(', ') || '-'],
+    ['Diseño', [v.visualStyle, v.desiredMood].filter(Boolean).join(' · ') || '-'],
+    ['Contacto', [v.whatsapp, v.email].filter(Boolean).join(' · ') || '-'],
+    ['Assets faltantes', ['logo','hero','productos'].filter(key => !v.assets[key]).join(', ') || 'ninguno'],
+  ]
+  document.getElementById('summary-content').innerHTML = `
+    <div class="summary-block">
+      <h3>Resumen del intake</h3>
+      ${rows.map(([key, value]) => `
+        <div class="summary-row"><div class="summary-key">${esc(key)}</div><div class="summary-val">${esc(value)}</div></div>
+      `).join('')}
+    </div>
+  `
+}
+
+async function submitForm() {
+  const button = document.getElementById('submit-btn')
+  button.disabled = true
+  button.innerHTML = '<span class="spinner"></span> Generando'
+  const intake = buildIntakeJson(gatherFormData())
+  const formData = new FormData()
+  formData.append('data', JSON.stringify(intake))
+  ;[...(state.uploadedFiles.logo || []), ...(state.uploadedFiles.assets || [])].forEach(({ file, folder }) => {
+    formData.append(folder, file, file.name)
+  })
+  try {
+    const response = await fetch('/submit', { method: 'POST', body: formData })
+    const json = await response.json()
+    if (!json.ok) throw new Error(json.error || 'Error desconocido')
+    document.getElementById('form-shell').style.display = 'none'
+    document.getElementById('actions').style.display = 'none'
+    document.getElementById('success-screen').classList.add('visible')
+  } catch (error) {
+    button.disabled = false
+    button.textContent = 'Generar intake'
+    alert('Error al enviar: ' + error.message)
+  }
+}
+
+function normalizePhone(value) {
+  const clean = String(value || '').replace(/[^\d+]/g, '')
+  if (!clean) return ''
+  if (clean.startsWith('+')) return clean
+  if (clean.startsWith('54')) return '+' + clean
+  return '+54' + clean
+}
+function esc(value) {
+  return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+}
+</script>
+</body>
+</html>
