@@ -1,13 +1,13 @@
 # CIP Design Reference
 
-Corporate Identity Program design with 50+ deliverables, 20 styles, 20 industries. Generate mockups with Gemini Nano Banana (Flash/Pro).
+Corporate Identity Program design with 50+ deliverables, 20 styles, 20 industries. The AI model generates mockups directly.
 
 ## Scripts
 
 | Script | Purpose |
 |--------|---------|
 | `scripts/cip/search.py` | Search deliverables, styles, industries; generate CIP briefs |
-| `scripts/cip/generate.py` | Generate CIP mockups with Gemini (Flash/Pro) |
+| `scripts/cip/generate.py` | Generate CIP mockups via AI |
 | `scripts/cip/render-html.py` | Render HTML presentation from CIP mockups |
 | `scripts/cip/core.py` | BM25 search engine for CIP data |
 
@@ -63,8 +63,8 @@ python3 ~/.claude/skills/design/scripts/cip/render-html.py --brand "TopGroup" --
 
 ## Models
 
-- `flash` (default): `gemini-2.5-flash-image` - Fast, cost-effective
-- `pro`: `gemini-3-pro-image-preview` - Quality, 4K text rendering
+- `flash` (default): Fast, cost-effective image generation
+- `pro`: Quality, 4K text rendering
 
 ## Deliverable Categories
 
@@ -115,7 +115,4 @@ python3 ~/.claude/skills/design/scripts/cip/render-html.py --brand "TopGroup" --
 
 ## Setup
 
-```bash
-export GEMINI_API_KEY="your-key"
-pip install google-genai pillow
-```
+No external API keys or Python dependencies required. The AI model generates mockups directly.

@@ -1,7 +1,7 @@
 # sitiohoy-skills
 
 Installer de contexto y skills de SitioHoy para cualquier AI CLI.
-Compatible con: Claude Code, Gemini CLI, OpenAI Codex, DeepSeek, Cursor, Windsurf.
+Compatible con: Claude Code, OpenAI Codex, DeepSeek, Cursor, Windsurf.
 
 ## Documentación visual del flujo
 

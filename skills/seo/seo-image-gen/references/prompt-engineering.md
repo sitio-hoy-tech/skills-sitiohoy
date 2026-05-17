@@ -3,7 +3,7 @@
 > Load this on-demand when constructing complex prompts or when the user
 > asks about prompt techniques. Do NOT load at startup.
 >
-> Aligned with Google's March 2026 "Ultimate Prompting Guide" for Gemini image generation.
+> Aligned with best practices for AI image generation prompting.
 
 ## Table of Contents
 
@@ -134,12 +134,12 @@ of Dorothea Lange's documentary portraiture"
 ## Advanced Techniques
 
 ### Character Consistency (Multi-turn)
-Use `gemini_chat` and maintain descriptive anchors:
+Use multi-turn conversation and maintain descriptive anchors:
 - First turn: Generate character with exhaustive physical description
 - Following turns: Reference "the same character" + repeat 2-3 key identifiers
 - Key identifiers: hair color/style, distinctive clothing, facial feature
 
-**Multi-image reference technique** (3.1 Flash):
+**Multi-image reference technique:**
 - Provide up to 4-5 character reference images in the conversation
 - Assign distinct names to each character ("Character A: the red-haired knight")
 - Model preserves features across different angles, actions, and environments
@@ -165,7 +165,7 @@ mid-century modern typeface feel.
 - Expect creative font interpretations, not exact replication of described styles
 
 ### Positive Framing (No Negative Prompts)
-Gemini does NOT support negative prompts. Rephrase exclusions:
+Many AI image models do NOT support negative prompts. Rephrase exclusions:
 - Instead of "no blur" → "sharp, in-focus, tack-sharp detail"
 - Instead of "no people" → "empty, deserted, uninhabited"
 - Instead of "no text" → "clean, uncluttered, text-free"
@@ -173,7 +173,7 @@ Gemini does NOT support negative prompts. Rephrase exclusions:
 
 ### Search-Grounded Generation
 For images based on real-world data (weather, events, statistics),
-Gemini can use Google Search grounding to incorporate live information.
+some AI models can use search grounding to incorporate live information.
 Useful for infographics with current data.
 
 **Three-part formula for search-grounded prompts:**
@@ -185,24 +185,24 @@ Useful for infographics with current data.
 
 ## Prompt Adaptation Rules
 
-When adapting prompts from the claude-prompts database (Midjourney/DALL-E/etc.)
-to Gemini's natural language format:
+When adapting prompts from other systems (Midjourney/DALL-E/etc.)
+to natural language format:
 
-| Source Syntax | Gemini Equivalent |
+| Source Syntax | Natural Language Equivalent |
 |---------------|-------------------|
-| `--ar 16:9` | Call `set_aspect_ratio("16:9")` separately |
-| `--v 6`, `--style raw` | Remove - Gemini has no version/style flags |
+| `--ar 16:9` | Set aspect ratio separately or describe in prompt |
+| `--v 6`, `--style raw` | Remove - no version/style flags needed |
 | `--chaos 50` | Describe variety: "unexpected, surreal composition" |
 | `--no trees` | Positive framing: "open clearing with no vegetation" |
 | `(word:1.5)` weight | Descriptive emphasis: "prominently featuring [word]" |
 | `8K, masterpiece, ultra-detailed` | Keep only "ultra-realistic, high resolution"; remove the rest |
 | Comma-separated tags | Expand into descriptive narrative paragraphs |
-| `shot on Hasselblad` | Keep - camera specs work well in Gemini |
+| `shot on Hasselblad` | Keep - camera specs work well for realism |
 
 ## Common Prompt Mistakes
 
 1. **Keyword stuffing**:stacking generic quality terms ("8K, masterpiece, best quality") adds nothing. Use only "ultra-realistic, high resolution" at the end
-2. **Tag lists**:Gemini wants prose, not "red car, sunset, mountain, cinematic"
+2. **Tag lists**:AI image models want prose, not "red car, sunset, mountain, cinematic"
 3. **Missing lighting**:The single biggest quality differentiator
 4. **No composition direction**:Results in generic centered framing
 5. **Vague style**:"make it look cool" vs specific art direction
@@ -210,7 +210,7 @@ to Gemini's natural language format:
 7. **Overlong prompts**:Diminishing returns past ~200 words; be precise, not verbose
 8. **Text longer than ~25 characters**:Rendering degrades rapidly past this limit
 9. **Burying key details at the end**:In long prompts, details placed last may be deprioritized; put critical specifics (exact text, key constraints) in the first third of the prompt
-10. **Not iterating with follow-up prompts**:Use `gemini_chat` for progressive refinement instead of trying to get everything right in one generation
+10. **Not iterating with follow-up prompts**:Use multi-turn conversation for progressive refinement instead of trying to get everything right in one generation
 
 ## Proven Prompt Templates
 
@@ -369,7 +369,7 @@ branding, high resolution, dramatic contrast.
 6. **Add platform context**:"Instagram aesthetic", "commercial photography for advertising"
 7. **Describe textures**:"crinkle-textured", "metallic silver", "frosted glass"
 8. **Use action verbs**:"mid-run", "posing confidently", "captured mid-stride"
-9. **End with "ultra-realistic, high resolution"**:these two specific anchors help on Gemini. Avoid generic stacking like "8K, masterpiece, best quality" which adds no value
+9. **End with "ultra-realistic, high resolution"**:these two specific anchors help most AI image models. Avoid generic stacking like "8K, masterpiece, best quality" which adds no value
 10. **For products, say "prominently displayed"**:ensures the product/logo isn't hidden
 
 ### Anti-Patterns (What NOT to Do)
@@ -382,7 +382,7 @@ branding, high resolution, dramatic contrast.
 
 ## Safety Filter Rephrase Strategies
 
-Gemini's safety filters (Layer 2: server-side output filter) cannot be disabled.
+AI image model safety filters (server-side output filters) cannot be disabled.
 When a prompt is blocked, the only path forward is rephrasing.
 
 ### Common Trigger Categories

@@ -137,14 +137,14 @@ ffmpeg -framerate 1 -pattern_type glob -i '*.png' \
 
 ## Note on 4K Output
 
-With Gemini 3.1 Flash's `imageSize: "4K"` option (up to 4096×4096), many traditional
-upscaling post-processing steps are no longer necessary. If your target platform accepts
-images at or below 4K resolution, generate at native 4K instead of generating at 1K
-and upscaling. This produces better detail and avoids upscaling artifacts.
+With native 4K generation support (up to 4096x4096), many traditional upscaling
+post-processing steps are no longer necessary. If your target platform accepts images
+at or below 4K resolution, generate at native 4K instead of generating at 1K and
+upscaling. This produces better detail and avoids upscaling artifacts.
 
 ## Green Screen Transparency Pipeline
 
-Gemini cannot generate transparent backgrounds. Use this workaround:
+Most AI image generators cannot produce transparent backgrounds. Use this workaround:
 
 ### 1. Generate with green screen prompt
 

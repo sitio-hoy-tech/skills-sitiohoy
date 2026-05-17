@@ -1,12 +1,12 @@
 # Icon Design Reference
 
-AI-powered SVG icon generation using Gemini 3.1 Pro Preview. 15 styles, 12 categories, multi-size export.
+AI-powered SVG icon generation. 15 styles, 12 categories, multi-size export. The AI model generates SVG directly.
 
 ## Scripts
 
 | Script | Purpose |
 |--------|---------|
-| `scripts/icon/generate.py` | Generate SVG icons with Gemini 3.1 Pro Preview |
+| `scripts/icon/generate.py` | Generate SVG icons via AI |
 
 ## Commands
 
@@ -102,8 +102,7 @@ python3 ~/.claude/skills/design/scripts/icon/generate.py --list-categories
 
 ## Model
 
-- **gemini-3.1-pro-preview**: Best thinking, token efficiency, factual consistency
-- Text-only output (SVG is XML text) — no image generation API needed
+- The AI model generates SVG directly (text-only output — no image generation API needed)
 - Supports structured output for consistent SVG formatting
 
 ## Workflow
@@ -116,7 +115,4 @@ python3 ~/.claude/skills/design/scripts/icon/generate.py --list-categories
 
 ## Setup
 
-```bash
-export GEMINI_API_KEY="your-key"
-pip install google-genai
-```
+No external API keys or Python dependencies required. The AI model generates SVG icons directly.

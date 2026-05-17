@@ -136,7 +136,7 @@ This skill orchestrates 16 specialized sub-skills (+ 3 extensions):
 16. **seo-backlinks** -- Backlink profile analysis (free: Moz, Bing, CC; premium: DataForSEO)
 17. **seo-firecrawl** -- Full-site crawling and site mapping via Firecrawl MCP (extension)
 18. **seo-dataforseo** -- Live SEO data via DataForSEO MCP (extension)
-19. **seo-image-gen** -- AI image generation for SEO assets via Gemini (extension)
+19. **seo-image-gen** -- AI image generation for SEO assets (extension)
 
 ## Subagents
 
