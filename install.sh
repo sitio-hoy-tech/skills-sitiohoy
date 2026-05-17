@@ -258,12 +258,28 @@ CONTEXTMD
 
 # ── Instaladores por IA ───────────────────────────────────────────────────────
 
+flatten_skills() {
+  # Copy skills from categorized repo structure to flat target directory.
+  # Repo: skills/core/sitio-hoy/, skills/seo/seo-audit/, skills/design/ckm-design/
+  # Target: flat directory with each skill as direct subfolder.
+  local dest="$1"
+  rm -rf "$dest"
+  mkdir -p "$dest"
+  for category in "$REPO_DIR/skills/"*/; do
+    for skill in "$category"*/; do
+      [ -d "$skill" ] || continue
+      local name
+      name="$(basename "$skill")"
+      cp -r "$skill" "$dest/$name"
+    done
+  done
+}
+
 install_claude() {
   local skills_dir="$TARGET_DIR/.claude/skills"
   local claude_md="$TARGET_DIR/CLAUDE.md"
 
-  mkdir -p "$skills_dir"
-  rsync -a --delete "$REPO_DIR/skills/" "$skills_dir/"
+  flatten_skills "$skills_dir"
 
   touch "$claude_md"
   if ! grep -q "SITIOHOY-CONTEXT-START" "$claude_md" 2>/dev/null; then
@@ -283,8 +299,7 @@ install_codex() {
   local skills_dir="$TARGET_DIR/.agents/skills"
   local agents_md="$TARGET_DIR/AGENTS.md"
 
-  mkdir -p "$skills_dir"
-  rsync -a --delete "$REPO_DIR/skills/" "$skills_dir/"
+  flatten_skills "$skills_dir"
   generate_context_block > "$agents_md"
 
   cat >> "$agents_md" <<'SKILLINDEX'
@@ -311,8 +326,7 @@ install_opencode() {
   local skills_dir="$TARGET_DIR/.opencode/skills"
   local agents_md="$TARGET_DIR/AGENTS.md"
 
-  mkdir -p "$skills_dir"
-  rsync -a --delete "$REPO_DIR/skills/" "$skills_dir/"
+  flatten_skills "$skills_dir"
   generate_context_block > "$agents_md"
 
   cat >> "$agents_md" <<'SKILLINDEX'
