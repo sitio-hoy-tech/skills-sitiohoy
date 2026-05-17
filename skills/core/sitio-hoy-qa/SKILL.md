@@ -56,9 +56,8 @@ npx playwright install chromium
 ## Verificación de Fidelidad al Diseño
 
 Antes de cerrar módulos visuales (1-6):
-- Comparar screenshot del sitio implementado vs el diseño en Stitch
 - Verificar que tokens.css coincide con las especificaciones del DESIGN.md
-- Colores, tipografía y espaciado deben ser pixel-perfect respecto al diseño de Stitch
+- Colores, tipografía y espaciado deben ser coherentes con la dirección creativa del DESIGN.md
 - Si hay discrepancias, corregir antes de cerrar el módulo
 - El DESIGN.md es la fuente de verdad para las especificaciones visuales
 

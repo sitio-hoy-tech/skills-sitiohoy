@@ -36,19 +36,13 @@ Crear una base consistente antes de escribir UI:
 - scripts de QA base
 - scripts operativos: `brief-from-intake`, `preflight`, `module-close`, `secret-scan`, `visual-audit`, `sitiohoy:e2e`, `audit`, smoke tests de integraciones y validador remoto Supabase
 
-## Pre-requisito: Diseño con Stitch (BLOQUEANTE)
-
-**Stitch es obligatorio. No hay alternativa manual. Sin diseño de Stitch, PARAR.**
+## Pre-requisito: DESIGN.md (BLOQUEANTE)
 
 Antes de comenzar módulos de UI (1-6):
 1. Verificar que `.sitiohoy/design/DESIGN.md` existe (generado automáticamente por el briefing)
-2. El DESIGN.md debe haber sido enviado manualmente a Stitch
-3. El diseño debe estar generado en Stitch (todas las páginas, mobile + desktop)
-4. El ID del proyecto de Stitch debe estar guardado en `.sitiohoy/design/stitch-project-id.txt`
-5. Assets exportados desde Stitch deben estar en `_assets-cliente/stitch/`
-6. Tokens de diseño (colores, tipografía, espaciado) deben coincidir con el diseño de Stitch
-7. Si el diseño no está listo, **BLOQUEAR** e informar al usuario:
-   > "Falta el diseño de Stitch. Necesito que envíes el DESIGN.md a Stitch y generes el diseño completo antes de continuar con la implementación."
+2. El modelo AI usa DESIGN.md como dirección creativa para generar diseños directamente en código
+3. Si DESIGN.md no existe, **BLOQUEAR** e informar al usuario:
+   > "Falta el DESIGN.md. Ejecutar el briefing para generarlo antes de continuar con la implementación."
 
 ## Workflow
 
@@ -101,17 +95,17 @@ Antes de comenzar módulos de UI (1-6):
    SITE_URL=http://localhost:3000 npm run sitiohoy:e2e
    ```
 
-### Extracción de tokens desde Stitch
+### Generación de tokens desde DESIGN.md
 
-Si el diseño ya fue creado en Stitch:
-1. Revisar el diseño en Stitch y extraer los tokens visualmente
-2. Mapear tokens del diseño de Stitch → `styles/tokens.css`:
+El modelo AI genera los tokens directamente a partir de DESIGN.md:
+1. Leer DESIGN.md y extraer las especificaciones de diseño
+2. Generar `styles/tokens.css` con las CSS custom properties:
    - Colors → `--color-*`
    - Spacing → `--space-*`  
    - Typography → `--font-*`, `--text-*`
    - Radius → `--radius-*`
-3. No inventar tokens — usar exactamente los del diseño de Stitch
-4. El DESIGN.md ya contiene todos los tokens esperados — usarlos como guía
+3. El DESIGN.md contiene todos los tokens esperados — usarlos como guía
+4. Libertad creativa para mejorar o complementar lo especificado
 
 ## Reglas
 

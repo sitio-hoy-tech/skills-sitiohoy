@@ -516,7 +516,7 @@ async function handleSubmit(req, res) {
   await writeFile(briefPath, buildBrief(intake, newIntegrations))
   log(clr(c.green, `  ✓ brief.md escrito`))
 
-  // Generate DESIGN.md for Stitch using the standalone generator
+  // Generate DESIGN.md (AI design direction document) using the standalone generator
   const designDir = path.join(CWD, '.sitiohoy', 'design')
   await mkdir(designDir, { recursive: true })
 
@@ -543,7 +543,7 @@ async function handleSubmit(req, res) {
     log(clr(c.green, `  ✓ .sitiohoy/design/DESIGN.md escrito (inline)`))
   }
 
-  log(clr(c.cyan, `    → Este archivo se debe enviar manualmente a Stitch`))
+  log(clr(c.cyan, `    → El modelo AI usará este archivo como dirección creativa`))
 
   // Write copy guide
   const copyGuidePath = path.join(sitiohoyDir, 'copy-guide.md')
@@ -558,7 +558,7 @@ async function handleSubmit(req, res) {
   log(clr(c.gray, '  sitiohoy.config.json'))
   log(clr(c.gray, '  brief.md'))
   log(clr(c.gray, '  .sitiohoy/design/DESIGN.md'))
-  log(clr(c.cyan, '    → Enviar DESIGN.md manualmente a Stitch para generar el diseño'))
+  log(clr(c.cyan, '    → El modelo AI usará DESIGN.md como dirección creativa para generar el diseño'))
   log(clr(c.gray, '  .sitiohoy/copy-guide.md'))
   savedFiles.forEach(f => log(clr(c.gray, `  ${f}`)))
   log('')
@@ -847,7 +847,7 @@ function buildDesignMd(intake, integrations) {
   // ═══════════════════════════════════════════════════════════════════════════
   // HEADER
   // ═══════════════════════════════════════════════════════════════════════════
-  lines.push(`# DESIGN.md — Brief Creativo para Stitch`)
+  lines.push(`# DESIGN.md — Dirección Creativa para el Modelo AI`)
   lines.push(``)
   lines.push(`> **Proyecto:** ${business.name || 'Sin definir'}`)
   lines.push(`> **Plan:** ${plan === 'esencial' ? 'Esencial' : plan === 'emprendimiento' ? 'Emprendimiento' : 'Empresa'}`)
@@ -904,7 +904,7 @@ function buildDesignMd(intake, integrations) {
     lines.push(`**Color principal:** ${visual.colors.primary}`)
     lines.push(`- Este es el color de marca. Usalo como guía para la paleta general. Proponé una paleta completa que funcione.`)
   } else {
-    lines.push(`**Color principal:** No definido — Stitch, proponé una paleta que vaya con el rubro y el estilo.`)
+    lines.push(`**Color principal:** No definido — proponé una paleta que vaya con el rubro y el estilo.`)
   }
 
   if (visual.colors?.secondary) {
@@ -1086,9 +1086,9 @@ function buildDesignMd(intake, integrations) {
   // ═══════════════════════════════════════════════════════════════════════════
   // 10. DIRECTRICES CREATIVAS
   // ═══════════════════════════════════════════════════════════════════════════
-  lines.push(`## 10. Directrices Creativas para Stitch`)
+  lines.push(`## 10. Directrices Creativas`)
   lines.push(``)
-  lines.push(`**Stitch, esto es lo que necesito que tengas en cuenta al diseñar:**`)
+  lines.push(`**Esto es lo que hay que tener en cuenta al diseñar:**`)
   lines.push(``)
   lines.push(`### Prioridades generales`)
   lines.push(`1. **Mobile-first** — El diseño debe funcionar perfecto en celular.`)
@@ -1098,7 +1098,7 @@ function buildDesignMd(intake, integrations) {
   lines.push(`5. **Velocidad** — Diseño ligero, sin elementos que ralenticen la carga.`)
   lines.push(``)
 
-  lines.push(`### Qué debe tener cada página (a criterio creativo de Stitch)`)
+  lines.push(`### Qué debe tener cada página`)
   lines.push(`- **Header:** Logo, navegación, ${hasCheckout ? 'carrito con badge, ' : ''}CTA principal. Mobile: menú hamburguesa.`)
   lines.push(`- **Footer:** Contacto, links de navegación, legales, redes, crédito "Desarrollado por SitioHoy" con link a sitiohoy.com.ar.`)
   lines.push(`- **Home:** Hero que transmita la esencia del negocio. ${!hasCheckout ? 'CTA a WhatsApp.' : 'CTA a comprar o ver catálogo.'} Productos o categorías destacadas. Señales de confianza.`)
@@ -1145,9 +1145,9 @@ function buildDesignMd(intake, integrations) {
   // ═══════════════════════════════════════════════════════════════════════════
   // 12. INSTRUCCIONES FINALES
   // ═══════════════════════════════════════════════════════════════════════════
-  lines.push(`## 12. Instrucciones Finales para Stitch`)
+  lines.push(`## 12. Instrucciones Finales`)
   lines.push(``)
-  lines.push(`**Stitch, este es tu brief. Ahora te toca a vos:**`)
+  lines.push(`**Este es tu brief de dirección creativa. Ahora generá el diseño:**`)
   lines.push(``)
   lines.push(`1. Diseñá un sitio web único y memorable para **${business.name || 'este negocio'}**.`)
   lines.push(`2. Usá los colores de marca como guía, pero proponé una paleta completa que funcione.`)
@@ -1163,7 +1163,7 @@ function buildDesignMd(intake, integrations) {
   lines.push(`---`)
   lines.push(``)
   lines.push(`**Documento generado por SitioHoy**`)
-  lines.push(`**ID del proyecto Stitch:** [COMPLETAR DESPUÉS DE CREAR EN STITCH]`)
+  lines.push(`**Documento generado por SitioHoy**`)
   lines.push(``)
 
   return lines.join('\n')

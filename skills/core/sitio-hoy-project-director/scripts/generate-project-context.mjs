@@ -522,62 +522,60 @@ await write(path.join(outDesign, 'anti-slop-checklist.md'), `
 - [ ] Schema y metadata no usan copy generico.
 `)
 
-// Write stitch-instructions.md
-const stitchInstructions = `# Instrucciones de Implementación desde Stitch
+// Write design-implementation.md
+const designImplementation = `# Instrucciones de Implementación de Diseño
 
-## Flujo de trabajo (Manual)
-1. Abrir Stitch en el navegador con el ID del proyecto guardado en \`.sitiohoy/design/stitch-project-id.txt\`
-2. Revisar el diseño de cada página directamente en Stitch
-3. Extraer variables de diseño visualmente del panel de Stitch
-4. Implementar componente por componente comparando con el diseño en Stitch
+## Flujo de trabajo
+1. Leer \`.sitiohoy/design/DESIGN.md\` como dirección creativa
+2. Generar design tokens en \`styles/tokens.css\`
+3. Implementar componentes directamente en código (TSX + Tailwind + tokens CSS)
+4. Libertad creativa total: diseños únicos, modernos y hermosos
 
-## Mapeo Stitch → Code
-| Propiedad Stitch | CSS/Tailwind Equivalent |
+## Mapeo DESIGN.md → Code
+| Especificación DESIGN.md | CSS/Tailwind Equivalent |
 |---|---|
-| fill color | bg-[color] / background-color |
-| text color | text-[color] / color |
-| font-size | text-[size] / font-size |
-| padding | p-[n] / padding |
+| color primario | bg-[color] / background-color |
+| color texto | text-[color] / color |
+| tipografía | text-[size] / font-size |
+| espaciado | p-[n] / padding |
 | gap | gap-[n] / gap |
-| border-radius | rounded-[n] / border-radius |
-| opacity | opacity-[n] / opacity |
+| radios | rounded-[n] / border-radius |
+| opacidad | opacity-[n] / opacity |
 
-## Reglas de Fidelidad
-- Cada componente debe coincidir con el diseño en ±2px
-- Colores exactos — no aproximar (usar los hex del DESIGN.md)
-- Tipografía: mismo font-family, weight y size (ver DESIGN.md sección 4)
-- Espaciado: respetar el sistema de spacing del diseño (ver DESIGN.md sección 5)
+## Reglas de Diseño
+- Colores coherentes con la dirección creativa del DESIGN.md
+- Tipografía: font-family, weight y size según la personalidad del negocio
+- Espaciado: respetar el sistema de spacing definido
 - Si el diseño usa 8px grid, implementar con múltiplos de 8
+- Libertad creativa para mejorar o complementar lo especificado
 
 ## Verificación
 Después de implementar cada página:
-1. Revisar el diseño en Stitch
-2. Screenshot del sitio implementado en el mismo viewport
-3. Comparar visualmente lado a lado
-4. Ajustar hasta match
+1. Comparar con la dirección creativa del DESIGN.md
+2. Screenshot del sitio implementado en múltiples viewports
+3. Ajustar hasta lograr coherencia visual
 
 ## Recuerda
-- El DESIGN.md (\`.sitiohoy/design/DESIGN.md\`) contiene todas las especificaciones
-- Stitch es la única fuente de verdad visual
-- No inventar diseño — implementar exactamente lo que Stitch generó
+- El DESIGN.md (\`.sitiohoy/design/DESIGN.md\`) contiene la dirección creativa
+- El modelo AI genera diseños directamente en código
+- Cada sitio debe tener personalidad única — no copiar templates genéricos
 `
-await writeFile(path.join(outDesign, 'stitch-instructions.md'), stitchInstructions)
+await writeFile(path.join(outDesign, 'design-implementation.md'), designImplementation)
 
 // Write implementation-order.md
 const implOrder = `# Orden de Implementación Optimizado
 
 ## Principio
 Cada módulo se implementa en orden de dependencia. No saltar módulos.
-Stitch design DEBE estar listo antes de Módulo 1.
+DESIGN.md DEBE estar listo antes de Módulo 1.
 
 ## Secuencia
 
 ### Pre-implementación
 1. ✅ Briefing completado (intake.json, config, brief.md, DESIGN.md)
 2. ✅ Context packs generados (.sitiohoy/context/, .sitiohoy/design/)
-3. ✅ DESIGN.md enviado a Stitch y diseño generado
-4. ✅ ID del proyecto de Stitch guardado en `.sitiohoy/design/stitch-project-id.txt`
-5. ✅ Tokens extraídos del diseño de Stitch → tokens.css
+3. ✅ DESIGN.md generado como dirección creativa
+4. ✅ Design tokens generados por el modelo AI → tokens.css
 
 ### Módulo 0 — Scaffold & Database
 - Next.js base + Supabase schema + QA scripts
@@ -585,7 +583,7 @@ Stitch design DEBE estar listo antes de Módulo 1.
 
 ### Módulo 1 — Layout Base
 - Header, Footer, Nav, Cart Sidebar, Error boundaries
-- Dependencia: tokens.css, Stitch layout screenshots
+- Dependencia: tokens.css, DESIGN.md dirección creativa
 - Gate: validate + visual-audit
 
 ### Módulo 2 — Home

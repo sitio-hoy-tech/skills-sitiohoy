@@ -39,17 +39,15 @@ Pasos:
    ```
 5. Usar `sitio-hoy-database` para generar y aplicar schema completo.
 6. Confirmar columnas `origin_*`, `envia_access_token`, `umami_url` y `umami_website_id` en `tenants`.
-7. Enviar `.sitiohoy/design/DESIGN.md` manualmente a Stitch para generar el diseño completo.
-8. Guardar ID del proyecto de Stitch en `.sitiohoy/design/stitch-project-id.txt`.
-9. Exportar assets desde Stitch a `_assets-cliente/stitch/`.
-10. Crear/ajustar `styles/tokens.css` con tokens reales extraídos del diseño de Stitch.
+7. Leer `.sitiohoy/design/DESIGN.md` como dirección creativa.
+8. El modelo AI genera design tokens y componentes directamente en código.
+9. Crear/ajustar `styles/tokens.css` con tokens generados por el modelo AI.
 8. Configurar `.env.local` desde `.env.example`.
 
 Verificación ✅:
 - [ ] `sitiohoy.config.json` creado con plan Empresa
-- [ ] `.sitiohoy/design/DESIGN.md` generado y enviado a Stitch
-- [ ] Diseño de Stitch generado y revisado
-- [ ] ID del proyecto de Stitch guardado
+- [ ] `.sitiohoy/design/DESIGN.md` generado como dirección creativa
+- [ ] Design tokens generados por el modelo AI
 - [ ] Schema completo aplicado, incluyendo eventos, mensajes y shipping fallback
 - [ ] RLS completo
 - [ ] Datos de origen para Envia.com definidos o marcados como pendientes

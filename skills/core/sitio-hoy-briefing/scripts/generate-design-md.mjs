@@ -1,8 +1,8 @@
 /**
  * generate-design-md.mjs
- * Genera un DESIGN.md estructurado como prompt técnico para Stitch.
+ * Genera un DESIGN.md estructurado como documento de dirección creativa para el modelo AI.
  * Cada página tiene su propio mini-brief + checklist de verificación.
- * El formato es visual y escaneable para que Stitch no pierda detalles.
+ * El formato es visual y escaneable para que el modelo AI no pierda detalles.
  */
 
 import { existsSync } from 'node:fs'
@@ -273,7 +273,7 @@ function buildDesignMd() {
   const lines = []
 
   // HEADER
-  lines.push(`# DESIGN.md — Prompt para Stitch`)
+  lines.push(`# DESIGN.md — Dirección Creativa para el Modelo AI`)
   lines.push(``)
   lines.push(`> **Proyecto:** ${business.name || 'Sin definir'}`)
   lines.push(`> **Plan:** ${plan === 'esencial' ? 'Esencial' : plan === 'emprendimiento' ? 'Emprendimiento' : 'Empresa'}`)
@@ -283,11 +283,11 @@ function buildDesignMd() {
   lines.push(``)
 
   // ═════════════════════════════════════════════════════════════════════════
-  // PROMPT PRINCIPAL — Ultra claro para Stitch
+  // DIRECCIÓN CREATIVA — Ultra claro para el modelo AI
   // ═════════════════════════════════════════════════════════════════════════
-  lines.push(`## PROMPT PRINCIPAL — Leer primero`)
+  lines.push(`## DIRECCIÓN CREATIVA — Leer primero`)
   lines.push(``)
-  lines.push(`Stitch, necesito que diseñes un sitio web completo para **${business.name || 'este negocio'}**.`)
+  lines.push(`Modelo AI, necesito que diseñes un sitio web completo para **${business.name || 'este negocio'}**.`)
   lines.push(``)
   lines.push(`**Contexto rápido:**`)
   lines.push(`- Rubro: ${business.industry || 'Sin definir'}`)
@@ -339,11 +339,11 @@ function buildDesignMd() {
   lines.push(``)
 
   // ═════════════════════════════════════════════════════════════════════════
-  // CHECKLIST GLOBAL — Para que Stitch verifique que no faltó nada
+  // CHECKLIST GLOBAL — Para verificar que no faltó nada
   // ═════════════════════════════════════════════════════════════════════════
   lines.push(`## CHECKLIST GLOBAL — Verificar antes de entregar`)
   lines.push(``)
-  lines.push(`Stitch, revisá esta lista y confirmá que está TODO:`)
+  lines.push(`Revisá esta lista y confirmá que está TODO:`)
   lines.push(``)
   lines.push(`### Páginas obligatorias:`)
   allPages.filter(p => p.required).forEach(p => {
@@ -424,20 +424,19 @@ function buildDesignMd() {
   // ═════════════════════════════════════════════════════════════════════════
   lines.push(`## INSTRUCCIONES FINALES`)
   lines.push(``)
-  lines.push(`Stitch, este es tu brief. Ahora diseñá el sitio completo:`)
+  lines.push(`Este es el brief de dirección creativa. Diseñá el sitio completo:`)
   lines.push(``)
   lines.push(`1. Empezá con el sistema de diseño base (colores, tipografía, componentes).`)
   lines.push(`2. Luego diseñá página por página siguiendo la lista de arriba.`)
   lines.push(`3. Cada página debe tener versión MOBILE (375px) y DESKTOP (1280px).`)
   lines.push(`4. No te saltees ninguna página de la lista.`)
-  lines.push(`5. Cuando termines, confirmá que completaste el CHECKLIST GLOBAL.`)
+  lines.push(`5. Confirmá que completaste el CHECKLIST GLOBAL.`)
   lines.push(``)
-  lines.push(`**Cuando termines, avisame para que revise el diseño y después implemente el código.**`)
+  lines.push(`**Generar design tokens en styles/tokens.css y componentes directamente en código (TSX + Tailwind).**`)
   lines.push(``)
   lines.push(`---`)
   lines.push(``)
   lines.push(`**Documento generado por SitioHoy**`)
-  lines.push(`**ID del proyecto Stitch:** [COMPLETAR DESPUÉS DE CREAR EN STITCH]`)
   lines.push(``)
 
   return lines.join('\n')

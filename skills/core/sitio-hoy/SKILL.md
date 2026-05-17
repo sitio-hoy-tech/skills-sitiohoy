@@ -66,32 +66,20 @@ Plan Empresa       → leer plans/empresa/INDEX.md
 El INDEX.md de cada plan lista exactamente qué archivos cargar y en qué orden.
 **Cargar solo los archivos del plan activo — no cargar integraciones innecesarias.**
 
-### Paso 2.5 — Diseño con Stitch (OBLIGATORIO — Flujo Manual)
+### Paso 2.5 — Diseño (generación directa por el modelo AI)
 
-**Stitch es la única herramienta de diseño. Sin diseño de Stitch no se implementa UI.**
+1. Verificar que `.sitiohoy/design/DESIGN.md` existe (generado por briefing).
+2. DESIGN.md contiene: paleta, tipografía, layout, componentes, páginas.
+3. El modelo AI usa DESIGN.md como **dirección creativa**, no como spec rígida.
+4. Generar design tokens en `styles/tokens.css` (CSS custom properties).
+5. Libertad creativa total: diseños únicos, modernos y hermosos.
+6. Las referencias de ckm-design (logo-color-psychology, etc.) sirven como guía.
+7. No copiar templates genéricos — cada sitio debe tener personalidad única.
 
-1. Verificar que `.sitiohoy/design/DESIGN.md` existe (generado automáticamente por el briefing).
-2. **Enviar el DESIGN.md a Stitch MANUALMENTE:**
-   - Abrir Stitch en el navegador
-   - Crear un nuevo proyecto
-   - Copiar y pegar TODO el contenido de `.sitiohoy/design/DESIGN.md` en el prompt de Stitch
-   - Pedirle a Stitch que genere el diseño completo siguiendo el documento al pie de la letra
-3. **Esperar a que Stitch genere el diseño.** Esto puede tomar varios minutos.
-4. **Copiar el ID del proyecto de Stitch** y guardarlo en `.sitiohoy/design/stitch-project-id.txt`
-5. **Revisar cada pantalla** en Stitch:
-   - Home, Catálogo, Producto, Carrito (si aplica), Checkout (si aplica)
-   - Verificar responsive en los breakpoints definidos
-   - Confirmar que los colores y tipografía coinciden con el DESIGN.md
-6. **Exportar assets** desde Stitch (imágenes, iconos, etc.) y guardar en `_assets-cliente/stitch/`
-7. Proceder con implementación usando el diseño de Stitch como referencia pixel-perfect.
-8. Los design tokens del diseño se trasladan a `styles/tokens.css`.
-
-**IMPORTANTE:**
-- No existe MCP automático para Stitch. El envío del DESIGN.md es **manual**.
-- El ID del proyecto de Stitch es necesario para que la IA entienda qué diseño implementar.
-- Sin DESIGN.md completo, Stitch no podrá generar un diseño preciso.
-
-Para el flujo detallado, consultar `references/stitch-workflow.md`.
+**Artefactos generados:**
+- `styles/tokens.css` — variables CSS (colores, tipografía, espaciado, radios)
+- Componentes UI directamente en código (TSX + Tailwind + tokens CSS)
+- Sin dependencia de herramientas externas de diseño
 
 ### Paso 3 — Scaffold y base técnica
 
@@ -170,8 +158,8 @@ Usar `sitio-hoy-launch-automation` solo cuando QA esté aprobado o documentado.
 **Comportamiento:**
 - Modo silencioso activo en todo momento
 - Una pregunta → nunca volver a pedir lo ya dado
-- Solo hablar ante: error crítico / dato faltante / fin de módulo / bloqueo externo / Stitch desconectado
-- **Stitch obligatorio**: el diseño debe salir de Stitch usando el DESIGN.md generado por el briefing. Sin DESIGN.md no hay diseño, sin diseño no hay implementación UI. El envío a Stitch es manual.
+- Solo hablar ante: error crítico / dato faltante / fin de módulo / bloqueo externo
+- **DESIGN.md obligatorio**: el modelo AI usa DESIGN.md como dirección creativa para generar diseños directamente en código. Sin DESIGN.md no hay diseño, sin diseño no hay implementación UI.
 - Formato de fin de módulo: `Módulo N ✅ · Listo para N+1`
 - Al finalizar cada módulo: ejecutar `npm run sitiohoy:tracking -- --modulo N --nombre "Nombre"` para actualizar `proyecto-tracking.json` automáticamente
 - En ese tracking, completar `--checks` con los IDs cumplidos de `.sitiohoy/checklists/module-checks.json`

@@ -155,7 +155,7 @@ recomendados según el rubro del negocio. Al generar el `DESIGN.md` y
 los context packs, considerar estos seeds para:
 
 1. Sugerir componentes específicos del rubro en el DESIGN.md
-2. Alimentar a Stitch con estructuras base adecuadas al tipo de negocio
+2. Dar al modelo AI estructuras base adecuadas al tipo de negocio
 3. Evitar diseños genéricos — cada rubro tiene patrones de conversión distintos
 
 ## Paralelización
@@ -184,28 +184,21 @@ Orden recomendado: lanzar Grupo A y Grupo B en paralelo.
 Lanzar Grupo C en paralelo con ambos si hay URLs de referencia disponibles.
 Esperar a que los tres grupos terminen antes de pasar al scaffold.
 
-## Integración con Stitch (Diseño)
+## Diseño (generación directa por el modelo AI)
 
-Después de generar los context packs, el diseño se crea con Stitch usando el flujo manual:
+Después de generar los context packs, el modelo AI genera el diseño directamente en código:
 
 1. Leer `.sitiohoy/design/DESIGN.md` (generado automáticamente por el briefing)
-2. **Enviar el DESIGN.md a Stitch MANUALMENTE:**
-   - Abrir Stitch en el navegador
-   - Crear nuevo proyecto
-   - Copiar y pegar el contenido completo del DESIGN.md
-   - Solicitar generación del diseño completo
-3. Esperar a que Stitch genere todas las pantallas
-4. **Copiar el ID del proyecto de Stitch** y guardarlo en `.sitiohoy/design/stitch-project-id.txt`
-5. Revisar cada pantalla en Stitch contra el DESIGN.md
-6. Exportar assets desde Stitch a `_assets-cliente/stitch/`
-7. El diseño aprobado se usa como referencia pixel-perfect para implementación
+2. El modelo AI usa DESIGN.md como **dirección creativa**, no como spec rígida
+3. Generar design tokens en `styles/tokens.css` (CSS custom properties)
+4. Generar componentes UI directamente en código (TSX + Tailwind + tokens CSS)
+5. Libertad creativa total: diseños únicos, modernos y hermosos
 
-### Reglas de diseño con Stitch
+### Reglas de diseño
 - SIEMPRE usar el DESIGN.md generado automáticamente — no crear briefs manuales
-- El envío a Stitch es manual: copiar y pegar el DESIGN.md completo
-- Guardar el ID del proyecto de Stitch para referencia durante implementación
-- Los design tokens del diseño se trasladan a `styles/tokens.css`
-- No inventar diseño — implementar exactamente lo que Stitch generó
+- Los design tokens se generan en `styles/tokens.css`
+- Cada sitio debe tener personalidad única — no copiar templates genéricos
+- Las referencias de ckm-design sirven como guía complementaria
 
 ## Reglas
 

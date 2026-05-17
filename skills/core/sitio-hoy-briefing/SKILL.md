@@ -51,7 +51,7 @@ node .opencode/skills/sitio-hoy-briefing/scripts/briefing-server.mjs
 3. Abrir `http://localhost:3456` en el navegador (el servidor lo hace automáticamente).
 4. Esperar a que el cliente complete y envíe el formulario.
 5. El servidor genera automáticamente: `.sitiohoy/intake.json` + `sitiohoy.config.json` + `brief.md` + `.sitiohoy/design/DESIGN.md` + `.sitiohoy/copy-guide.md` + `_assets-cliente/`
-   - El `DESIGN.md` es el documento ULTRA DETALLADO que se envía manualmente a Stitch para generar el diseño completo del sitio.
+   - El `DESIGN.md` es el documento de dirección creativa que el modelo AI usa para generar el diseño directamente en código.
    - Si el cliente ya tenía tenant ID, también genera `.sitiohoy/existing-tenant-check.json` con el snapshot público de `public.tenants`.
 6. Pedir al cliente que confirme que completó y envió el formulario.
 7. Después de esa confirmación, verificar que el proceso del servidor terminó. El script se apaga solo 2 segundos después del submit; si sigue corriendo, cortarlo antes de continuar.
@@ -94,7 +94,7 @@ node .opencode/skills/sitio-hoy-briefing/scripts/briefing-server.mjs
 No pasar a scaffold hasta tener:
 - [ ] `sitiohoy.config.json`
 - [ ] `brief.md`
-- [ ] `.sitiohoy/design/DESIGN.md` (documento ultra detallado para Stitch)
+- [ ] `.sitiohoy/design/DESIGN.md` (documento de dirección creativa para el modelo AI)
 - [ ] estado del cliente detectado (`nuevo` o `existente`)
 - [ ] si es existente: `existingTenantId` validado
 - [ ] si es existente: `.sitiohoy/existing-tenant-check.json` generado y revisado
@@ -105,16 +105,14 @@ No pasar a scaffold hasta tener:
 - [ ] si faltan imágenes de productos: regla Unsplash anotada
 - [ ] páginas opcionales listadas
 - [ ] tono y dirección visual resumidos
-- [ ] **DESIGN.md enviado a Stitch y diseño generado (o en proceso)**
+- [ ] **DESIGN.md generado y listo para que el modelo AI lo use como dirección creativa**
 
 ## Handoff
 
 Después de esta skill:
-1. **Enviar `.sitiohoy/design/DESIGN.md` manualmente a Stitch** para generar el diseño completo
-2. Guardar el ID del proyecto de Stitch en `.sitiohoy/design/stitch-project-id.txt`
-3. Exportar assets desde Stitch a `_assets-cliente/stitch/`
-4. `sitio-hoy-project-director` genera context packs y dirección visual;
-5. `sitio-hoy` importa el INDEX del plan detectado;
-6. `sitio-hoy-scaffold` crea la base;
-7. `sitio-hoy-database` genera schema/RLS;
-8. los módulos usan `brief.md`, `DESIGN.md` y `.sitiohoy/context/module-N.md` como fuente mínima.
+1. `sitio-hoy-project-director` genera context packs y dirección visual;
+2. `sitio-hoy` importa el INDEX del plan detectado;
+3. `sitio-hoy-scaffold` crea la base;
+4. `sitio-hoy-database` genera schema/RLS;
+5. los módulos usan `brief.md`, `DESIGN.md` y `.sitiohoy/context/module-N.md` como fuente mínima.
+6. El modelo AI lee DESIGN.md como dirección creativa y genera diseños directamente en código.

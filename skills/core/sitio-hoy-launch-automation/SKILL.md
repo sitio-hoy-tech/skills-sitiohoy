@@ -64,8 +64,7 @@ No ejecutar deploy real si faltan QA, env vars o credenciales. Primero generar e
 ## Pre-launch: Verificación de diseño
 
 Antes de deploy:
-- Confirmar que la implementación respeta el diseño de Stitch
-- Comparar el sitio implementado con el diseño en Stitch página por página
+- Confirmar que la implementación respeta la dirección creativa del DESIGN.md
 - Revisar screenshots de `npm run sitiohoy:visual-audit` contra el DESIGN.md
 - Si hay discrepancias mayores, resolver antes de deploy
 

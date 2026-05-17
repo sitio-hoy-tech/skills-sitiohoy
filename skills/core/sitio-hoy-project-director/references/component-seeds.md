@@ -1,6 +1,6 @@
 # Component Seeds por Rubro
 
-Referencia de componentes base que Stitch debe usar como punto de partida según el rubro del negocio.
+Referencia de componentes base que el modelo AI debe usar como punto de partida según el rubro del negocio.
 
 ## Rubros y sus componentes clave
 

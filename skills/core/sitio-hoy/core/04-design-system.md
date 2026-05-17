@@ -31,21 +31,15 @@ Cada proyecto debe tener dirección visual propia: paleta, tipografías, composi
 
 ## 1. Generación del Design System
 
-### Con Stitch (Flujo SitioHoy — OBLIGATORIO)
+### Generación directa por el modelo AI
 
 1. El briefing genera automáticamente `.sitiohoy/design/DESIGN.md` con todo el sistema de diseño
-2. Enviar el DESIGN.md manualmente a Stitch (copiar y pegar en el prompt)
-3. Stitch genera el diseño visual completo siguiendo el documento al pie de la letra
-4. Extraer los tokens del diseño generado por Stitch y volcarlos en `styles/tokens.css`
+2. El modelo AI lee DESIGN.md como **dirección creativa** (no como spec rígida)
+3. El modelo AI genera directamente design tokens y componentes en código
+4. Volcar los tokens en `styles/tokens.css` (CSS custom properties)
 5. El DESIGN.md ya contiene el rationale completo de cada decisión de diseño
-
-### Sin Stitch (solo como referencia)
-
-Si Stitch no está disponible temporalmente:
-1. Leer el brief y el DESIGN.md generado
-2. Generar `styles/tokens.css` manualmente basado en las especificaciones del DESIGN.md
-3. No improvisar fuera de lo especificado en el DESIGN.md
-4. Resolver la conexión con Stitch antes de implementar UI final
+6. Libertad creativa total: diseños únicos, modernos y hermosos
+7. Las referencias de ckm-design sirven como guía complementaria
 
 ### Template de `styles/tokens.css`
 
@@ -453,4 +447,4 @@ Solicitar al cliente o generar con herramientas de diseño:
 - Siempre generar: variante horizontal + variante cuadrada (ícono)
 - Formatos: PNG fondo transparente + SVG
 - Verificar legibilidad en 32px (favicon) y 200px (header)
-- Si Stitch generó un logo como parte del diseño, exportarlo y usarlo
+- Si el modelo AI generó un logo como parte del diseño, usarlo directamente

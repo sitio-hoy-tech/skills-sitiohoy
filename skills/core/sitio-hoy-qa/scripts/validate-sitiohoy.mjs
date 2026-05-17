@@ -82,7 +82,7 @@ if (!existsSync(path.join(root, '.env.example'))) {
 }
 
 if (!existsSync(path.join(root, '.sitiohoy', 'design', 'DESIGN.md'))) {
-  add('warning', 'Falta .sitiohoy/design/DESIGN.md. Los módulos visuales requieren el documento de diseño para Stitch.', '.sitiohoy/design/DESIGN.md')
+  add('warning', 'Falta .sitiohoy/design/DESIGN.md. Los módulos visuales requieren el documento de dirección creativa.', '.sitiohoy/design/DESIGN.md')
 }
 
 if (!existsSync(path.join(root, '.sitiohoy', 'copy-guide.md'))) {
