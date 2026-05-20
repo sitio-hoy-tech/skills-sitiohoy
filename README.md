@@ -1,7 +1,7 @@
-# sitiohoy-skills
+# skills-sitiohoy
 
 Installer de contexto y skills de SitioHoy para cualquier AI CLI.
-Compatible con: Claude Code, OpenAI Codex, DeepSeek, Cursor, Windsurf.
+Compatible con: Claude Code, OpenAI Codex, OpenCode.
 
 ## Documentación visual del flujo
 
@@ -43,17 +43,17 @@ un script de QA/launch/tracking o el proceso de instalación, actualizar tambié
 ## Instalación
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Sitio-Hoy-Tech/sitiohoy-skills/main/bootstrap.sh -o /tmp/sitiohoy.sh && bash /tmp/sitiohoy.sh
+curl -fsSL https://raw.githubusercontent.com/Sitio-Hoy-Tech/skills-sitiohoy/main/bootstrap.sh -o /tmp/sitiohoy.sh && bash /tmp/sitiohoy.sh
 ```
 
-Descarga todo, mostrá el menú interactivo, instalá y no deja el repo en tu computadora.
+El bootstrap muestra las versiones tagueadas disponibles en GitHub y permite elegir cuál instalar (o `main` para la última). Descarga, muestra el menú interactivo para elegir la IA destino, instala las skills y no deja el repo en tu computadora.
 
 ## Actualizar skills
 
 Cuando modifiques las skills localmente, sincronizá al repo:
 
 ```bash
-cd ~/Desktop/sitiohoy-skills
+cd ~/Desktop/skills-sitiohoy
 bash update.sh
 git add skills/ && git commit -m "feat: actualizar skills" && git push
 ```
@@ -73,23 +73,50 @@ El test valida sintaxis de scripts, JSON y ejecuta un smoke flow sobre `examples
 ## Estructura
 
 ```
-sitiohoy-skills/
-├── bootstrap.sh                ← punto de entrada (curl)
-├── install.sh                  ← installer con menú interactivo
+skills-sitiohoy/
+├── bootstrap.sh                ← punto de entrada (curl), selector de versión
+├── install.sh                  ← installer con menú interactivo (IA + credenciales)
 ├── update.sh                   ← sincronizar skills locales → repo
+├── sitiohoy.config.json        ← config base del proyecto (plan, integraciones, gates)
 ├── credentials.env.example     ← template de credenciales
 ├── assets/
 │   └── logo-sitiohoy.png
 ├── docs/
 │   └── sitiohoy-skills.html    ← guía navegable del flujo completo
+├── examples/
+│   └── dummy-empresa/          ← fixture para smoke tests
+├── scripts/
+│   └── test-skills.mjs         ← validación de skills
 └── skills/
-    ├── sitio-hoy/
-    ├── sitio-hoy-briefing/
-    ├── sitio-hoy-database/
-    ├── sitio-hoy-launch-automation/
-    ├── sitio-hoy-project-director/
-    ├── sitio-hoy-qa/
-    ├── sitio-hoy-scaffold/
-    ├── seo/
-    └── ...
+    ├── core/                   ← skills principales del framework
+    │   ├── sitio-hoy/                  — orquestador principal
+    │   ├── sitio-hoy-briefing/         — onboarding + config
+    │   ├── sitio-hoy-scaffold/         — base Next.js + Supabase
+    │   ├── sitio-hoy-database/         — migraciones + RLS + seed admin
+    │   ├── sitio-hoy-qa/               — validación automática
+    │   ├── sitio-hoy-launch-automation/ — deploy GitHub + Vercel + Supabase
+    │   └── sitio-hoy-project-director/ — context packs + dirección visual
+    ├── design/                 ← skills de diseño
+    │   └── ckm-design/                 — sistema de diseño knowledge-based
+    └── seo/                    ← skills de SEO (19 sub-skills)
+        ├── seo/                        — orquestador SEO principal
+        ├── seo-audit/                  — auditoría completa del sitio
+        ├── seo-backlinks/              — análisis de backlinks
+        ├── seo-competitor-pages/       — páginas de comparación vs competencia
+        ├── seo-content/                — calidad de contenido + E-E-A-T
+        ├── seo-dataforseo/             — datos en vivo vía DataForSEO
+        ├── seo-firecrawl/              — crawling vía Firecrawl
+        ├── seo-geo/                    — SEO para AI Overviews + buscadores IA
+        ├── seo-google/                 — Search Console + PageSpeed + CrUX
+        ├── seo-hreflang/               — hreflang + SEO internacional
+        ├── seo-image-gen/              — generación de imágenes para SEO
+        ├── seo-images/                 — optimización de imágenes
+        ├── seo-local/                  — SEO local + Google Business Profile
+        ├── seo-maps/                   — geo-grid ranking + GBP
+        ├── seo-page/                   — análisis deep de página individual
+        ├── seo-plan/                   — planificación estratégica SEO
+        ├── seo-programmatic/           — SEO programático a escala
+        ├── seo-schema/                 — Schema.org / JSON-LD
+        ├── seo-sitemap/                — análisis y generación de sitemaps
+        └── seo-technical/              — auditoría técnica (9 categorías)
 ```

@@ -9,7 +9,7 @@ set -e
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET_DIR="$(pwd)"
 CREDS_FILE="$HOME/.sitiohoy/credentials.env"
-GITHUB_REPO="Sitio-Hoy-Tech/sitiohoy-skills"
+GITHUB_REPO="Sitio-Hoy-Tech/skills-sitiohoy"
 
 # ── Colores ───────────────────────────────────────────────────────────────────
 CY=$'\033[38;2;34;163;91m'
@@ -352,7 +352,7 @@ SKILLINDEX
 # ── Copiar logo ───────────────────────────────────────────────────────────────
 copy_logo() {
   local dest="$TARGET_DIR/logo-sitiohoy.png"
-  local logo_url="https://raw.githubusercontent.com/Sitio-Hoy-Tech/sitiohoy-skills/main/assets/logo-sitiohoy.png"
+  local logo_url="https://raw.githubusercontent.com/Sitio-Hoy-Tech/skills-sitiohoy/main/assets/logo-sitiohoy.png"
   if curl -fsSL "$logo_url" -o "$dest" 2>/dev/null; then
     success "Logo → logo-sitiohoy.png"
   elif [ -f "$REPO_DIR/assets/logo-sitiohoy.png" ]; then

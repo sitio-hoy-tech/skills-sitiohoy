@@ -2,7 +2,7 @@
 # SitioHoy Bootstrap — descarga el installer y lo ejecuta, sin dejar rastro
 set -e
 
-REPO="Sitio-Hoy-Tech/sitiohoy-skills"
+REPO="Sitio-Hoy-Tech/skills-sitiohoy"
 TMP_DIR=$(mktemp -d)
 
 cleanup() { rm -rf "$TMP_DIR"; }
