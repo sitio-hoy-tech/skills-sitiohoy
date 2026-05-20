@@ -135,6 +135,21 @@ export const sendOrderStatusUpdate = async (orderId: string, newStatus: string, 
 }
 ```
 
+## Regla de branding: TODOS los emails deben tener identidad visual
+
+Tanto los emails de orden (confirmación, cambio de estado) como los de contacto deben usar
+el mismo patrón de diseño:
+
+- **Header**: color primario del negocio + nombre del negocio + emoji del rubro
+- **Preheader**: texto invisible para preview del inbox (90 chars)
+- **Contenedor**: `max-width: 560px`, fondo gris `#f5f5f5`, `border-radius: 12px`
+- **Acentos**: `border-left: 4px solid {color-primario}` en bloques destacados
+- **Botón CTA**: color primario para "Ver mi pedido", verde `#25D366` para WhatsApp
+- **Footer**: dominio del sitio + "generado automáticamente"
+
+No enviar emails con HTML genérico sin header/footer. El diseño del email debe ser
+consistente con la identidad visual del sitio generado.
+
 ## Integrar en webhook MercadoPago
 
 Al final del handler del webhook (después de actualizar el pedido en Supabase):
@@ -153,7 +168,7 @@ Aplicar siempre en todos los emails del proyecto:
 - Incluir emoji relevante al inicio: `📬`, `✅`, `🛵`, etc.
 - Mencionar el nombre del remitente o contexto concreto
 - Formato: `{emoji} {contexto específico} — {sitio}`
-- Ejemplo: `📬 Valentin te escribió desde tanosburger.com.ar`
+- Ejemplo: `📬 Valentin te escribió desde misitio.com.ar`
 - Evitar: `Nuevo mensaje de contacto — Nombre` (genérico, sin personalidad)
 
 ### Preheader

@@ -34,6 +34,9 @@ $$;
 -- contact_messages, order_events, payment_events)
 
 -- Para cada tabla TABLA_NOMBRE:
+-- (aplicar a: products, product_images, product_variants,
+-- categories, subcategories, orders, order_items, coupons, shipping_zones,
+-- contact_messages, order_events, payment_events, blog_categories, blog_posts)
 ALTER TABLE TABLA_NOMBRE ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "tenant_select" ON TABLA_NOMBRE FOR SELECT TO authenticated
@@ -195,7 +198,7 @@ export const provisionTenant = async (email: string, password: string, tenantId:
 ## Checklist RLS ✅
 
 - [ ] `public.get_tenant_id()` function creada
-- [ ] RLS habilitado en todas las tablas: products, product_images, product_variants, categories, subcategories, orders, order_items, coupons, shipping_zones, contact_messages, order_events, payment_events, platform_config, user_tenants, tenants
+- [ ] RLS habilitado en todas las tablas: products, product_images, product_variants, categories, subcategories, orders, order_items, coupons, shipping_zones, contact_messages, order_events, payment_events, platform_config, user_tenants, tenants, blog_categories, blog_posts
 - [ ] Políticas CRUD creadas para cada tabla
 - [ ] Bucket `public_assets` creado con políticas de storage
 - [ ] Usuario admin provisionado con `tenant_id` en `app_metadata`

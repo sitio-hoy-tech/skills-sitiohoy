@@ -53,7 +53,7 @@ Antes de comenzar módulos de UI (1-6):
 2. Copiar el contenido de `assets/template-next-supabase/` en la raiz del proyecto.
 3. Instalar dependencias base:
    ```bash
-   npm install @supabase/ssr @supabase/supabase-js lucide-react browser-image-compression zod@^3.24.0
+   npm install @supabase/ssr @supabase/supabase-js lucide-react zod@^3.24.0
    ```
 4. Si plan es `emprendimiento` o `empresa`, instalar:
    ```bash

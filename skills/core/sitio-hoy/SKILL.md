@@ -48,7 +48,7 @@ Usar `sitio-hoy-briefing`. **No hacer preguntas por consola — siempre abrir el
    - si sigue vivo, detenerlo con `Ctrl+C` o cerrar el proceso antes de continuar;
    - no dejar servidores de briefing corriendo en segundo plano.
 7. Validar que `brief.md` exista. Si no existe, generarlo desde `.sitiohoy/intake.json` antes de avanzar.
-8. Usar `sitio-hoy-project-director` para generar context packs y dirección visual:
+8. Usar `sitio-hoy-project-director` (OBLIGATORIO) para generar context packs y dirección visual:
    - `.sitiohoy/context/`
    - `.sitiohoy/design/`
 9. Con `sitiohoy.config.json`, determinar qué plan importar.
@@ -98,15 +98,25 @@ Si el proyecto arranca desde cero:
 
 Si el proyecto ya existe, inspeccionar primero y aplicar solo los faltantes.
 
-### Paso 4 — Confirmar Brief y Diseño
+### Paso 4 — Comprensión Profunda del Brief y Diseño
 
-Leer `brief.md`, confirmar que tiene:
+**CRÍTICO: La IA debe entender completamente el proyecto antes de implementar.** No basta con leer el brief — hay que comprenderlo.
+
+Leer `brief.md` y verificar que tiene:
 - negocio, audiencia y tono;
 - identidad visual;
 - catálogo;
 - páginas;
 - contacto y redes;
 - assets faltantes.
+
+**Después de leer, analizar:**
+1. ¿La propuesta de valor del negocio es clara? ¿Se entiende qué venden y a quién?
+2. ¿Hay inconsistencias? (ej: dice "joyería premium" pero el tono es "juvenil")
+3. ¿Faltan datos que impactan el diseño? (ej: no hay colores definidos, no hay logo)
+4. ¿El catálogo tiene sentido con el plan? (ej: 500 productos en Plan Esencial que permite 50)
+
+**Si hay dudas o inconsistencias:** preguntar ANTES de empezar a diseñar. Una pregunta bien hecha ahora ahorra una reescritura después. Pero si todo está claro, avanzar sin preguntar.
 
 Leer `.sitiohoy/copy-guide.md` para mantener consistencia de tono y copy en todos los módulos.
 
@@ -160,7 +170,22 @@ Usar `sitio-hoy-launch-automation` solo cuando QA esté aprobado o documentado.
 - Una pregunta → nunca volver a pedir lo ya dado
 - Solo hablar ante: error crítico / dato faltante / fin de módulo / bloqueo externo
 - **DESIGN.md obligatorio**: el modelo AI usa DESIGN.md como dirección creativa para generar diseños directamente en código. Sin DESIGN.md no hay diseño, sin diseño no hay implementación UI.
+- **Crédito de agencia**: usar siempre el componente `<AgencyCredit />` (`components/ui/agency-credit.tsx`) en el footer. Muestra "Desarrollado por" + logo SitioHoy con link a `sitiohoy.com.ar`. No copiar JSX inline en cada plan.
+- **Productos destacados**: siempre `LIMIT 8` hardcodeado en la query de `featured = true`. Si el cliente quiere cambiar el límite, se modifica en el código.
 - Formato de fin de módulo: `Módulo N ✅ · Listo para N+1`
+- **Protocolo de cierre de módulo** (OBLIGATORIO antes de avanzar):
+  1. Ejecutar las gates automáticas (`build`, `validate`, `visual-audit` si aplica)
+  2. **Listar pruebas manuales** que el usuario debe realizar para validar el módulo. Ejemplos:
+     - Módulo 1 (Layout): "Revisá el header/footer en mobile y desktop. Probá el menú hamburguesa."
+     - Módulo 2 (Home): "Mirá el home en localhost:3000 y aprobá el diseño. Si querés cambios, decime."
+     - Módulo 3 (Catálogo): "Probá los filtros, la paginación, y abrí un producto. ¿Se ve bien la galería?"
+     - Módulo 4 (Checkout): "Hacé una compra de prueba con tarjeta de test. Verificá que el webhook actualice el pedido."
+     - Módulo 5 (Páginas): "Revisá las páginas opcionales. Probá el formulario de contacto."
+     - Módulo 6/7 (Deploy): "Verificá el sitio en producción. Revisá Lighthouse, sitemap, Schema.org."
+  3. **Listar configuraciones necesarias para el próximo módulo**. Ejemplos:
+     - "Para Módulo 4 vas a necesitar: credenciales de MercadoPago (test), MP_WEBHOOK_SECRET en .env.local"
+     - "Para Módulo 7 vas a necesitar: credenciales de MP producción, dominio configurado"
+  4. Esperar confirmación del usuario antes de avanzar al siguiente módulo
 - Al finalizar cada módulo: ejecutar `npm run sitiohoy:tracking -- --modulo N --nombre "Nombre"` para actualizar `proyecto-tracking.json` automáticamente
 - En ese tracking, completar `--checks` con los IDs cumplidos de `.sitiohoy/checklists/module-checks.json`
 - Preferir cerrar módulos con `npm run sitiohoy:module-close -- --modulo N --nombre "Nombre" --checks "..."` para que tracking, checks y QA queden sincronizados.
@@ -182,6 +207,9 @@ Usar `sitio-hoy-launch-automation` solo cuando QA esté aprobado o documentado.
 - `error.tsx` y `not-found.tsx` en cada segmento de ruta importante
 - `loading.tsx` con skeleton en rutas de datos pesados
 - Mobile-first siempre — diseñar desde 375px
+- **Filtros obligatorios**: en catálogo y en toda sección donde haya contenido categorizable, incluir filtros visibles y funcionales
+- **Submenús en header**: si hay categorías de productos, crear submenús desplegables en la navegación principal (ej: "Productos → [Categoría 1, Categoría 2, ...]"). Aplicar en todos los planes.
+- **Paginación obligatoria**: en catálogo y en toda lista de contenido, implementar paginación server-side. Nunca renderizar todos los items de golpe. Usar `LIMIT`/`OFFSET` o cursor-based pagination.
 - Supabase CLI siempre para subir cambios a Supabase. El Dashboard queda solo para revisar o recuperar un bloqueo, no como camino normal de ejecución.
 
 **El admin NO se construye en este skill.** El admin es un repositorio separado.

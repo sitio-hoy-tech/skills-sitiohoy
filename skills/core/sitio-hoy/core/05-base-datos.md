@@ -56,9 +56,12 @@ y aplicar con `supabase db push`. No usar SQL Editor salvo bloqueo documentado.
 13. order_events
 14. payment_events
 15. platform_config
+16. blog_categories
+17. blog_posts
 ```
 
-> Regla SitioHoy v2.1: el schema base se crea completo en todos los planes.
+> **Schema version: 2.2** — Incluye blog_posts/blog_categories. Los proyectos existentes pueden actualizarse con migraciones diferenciales.
+> Regla SitioHoy v2.2: el schema base se crea completo en todos los planes.
 > Las funcionalidades se activan o desactivan por configuración del tenant, no borrando tablas.
 > Para generar la migración canónica, preferir `sitio-hoy-database`.
 
@@ -380,6 +383,55 @@ ALTER TABLE public.orders
 
 ---
 
+## Tabla: `blog_categories`
+
+Categorías de blog para organizar artículos. Se crean solo si el cliente solicita blog.
+
+| Columna | Tipo | Nullable | Default | Descripción |
+|---|---|---|---|---|
+| `id` | uuid | NO | gen_random_uuid() | PK |
+| `tenant_id` | uuid | NO | — | FK → tenants.id |
+| `name` | text | NO | — | Nombre de la categoría |
+| `slug` | text | NO | — | URL-friendly |
+| `description` | text | YES | — | Descripción de la categoría |
+| `position` | integer | YES | 0 | Orden de aparición |
+| `active` | boolean | YES | true | Visible/oculta |
+| `created_at` | timestamptz | YES | now() | — |
+| `updated_at` | timestamptz | YES | now() | — |
+
+Unique: `(tenant_id, slug)`.
+
+---
+
+## Tabla: `blog_posts`
+
+Artículos de blog. Se crean solo si el cliente solicita blog. Soporta SEO completo con metadata, OG image y Schema.org Article.
+
+| Columna | Tipo | Nullable | Default | Descripción |
+|---|---|---|---|---|
+| `id` | uuid | NO | gen_random_uuid() | PK |
+| `tenant_id` | uuid | NO | — | FK → tenants.id |
+| `blog_category_id` | uuid | YES | — | FK → blog_categories.id |
+| `title` | text | NO | — | Título del artículo |
+| `slug` | text | NO | — | URL-friendly |
+| `excerpt` | text | YES | — | Resumen corto (≤160 chars para meta description) |
+| `content` | text | YES | — | Contenido completo (Markdown o HTML) |
+| `cover_image` | text | YES | — | URL de la imagen de portada |
+| `cover_image_alt` | text | YES | — | Alt text para SEO |
+| `author` | text | YES | — | Nombre del autor |
+| `status` | text | YES | 'draft' | draft, published, archived |
+| `published_at` | timestamptz | YES | — | Fecha de publicación (null = draft) |
+| `seo_title` | text | YES | — | Meta title (si difiere del título) |
+| `seo_description` | text | YES | — | Meta description (si difiere del excerpt) |
+| `featured` | boolean | YES | false | Destacado en home/listado |
+| `position` | integer | YES | 0 | Orden manual |
+| `created_at` | timestamptz | YES | now() | — |
+| `updated_at` | timestamptz | YES | now() | — |
+
+Unique: `(tenant_id, slug)`.
+
+---
+
 ## Relaciones
 
 ```
@@ -403,6 +455,10 @@ orders (1) ───── (N) order_events
 orders (1) ───── (N) payment_events
 order_items (N) ─ (1) products
 order_items (N) ─ (1) product_variants
+
+blog_categories (1) ─ (N) blog_posts
+tenants (1) ──── (N) blog_categories
+tenants (1) ──── (N) blog_posts
 ```
 
 ---
@@ -698,6 +754,43 @@ CREATE TABLE platform_config (
   updated_at timestamptz DEFAULT now()
 );
 
+-- 16. Blog categories
+CREATE TABLE blog_categories (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid NOT NULL REFERENCES tenants(id),
+  name text NOT NULL,
+  slug text NOT NULL,
+  description text,
+  position integer DEFAULT 0,
+  active boolean DEFAULT true,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now(),
+  UNIQUE(tenant_id, slug)
+);
+
+-- 17. Blog posts
+CREATE TABLE blog_posts (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid NOT NULL REFERENCES tenants(id),
+  blog_category_id uuid REFERENCES blog_categories(id),
+  title text NOT NULL,
+  slug text NOT NULL,
+  excerpt text,
+  content text,
+  cover_image text,
+  cover_image_alt text,
+  author text,
+  status text DEFAULT 'draft',
+  published_at timestamptz,
+  seo_title text,
+  seo_description text,
+  featured boolean DEFAULT false,
+  position integer DEFAULT 0,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now(),
+  UNIQUE(tenant_id, slug)
+);
+
 -- 13. Trigger updated_at automático
 CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS TRIGGER LANGUAGE plpgsql AS $$
@@ -722,4 +815,15 @@ CREATE INDEX idx_product_variants_product ON product_variants(product_id);
 CREATE INDEX idx_contact_messages_tenant_created ON contact_messages(tenant_id, created_at DESC);
 CREATE INDEX idx_order_events_order ON order_events(order_id);
 CREATE INDEX idx_payment_events_order ON payment_events(order_id);
+CREATE INDEX idx_blog_posts_tenant_published ON blog_posts(tenant_id, published_at DESC) WHERE status = 'published';
+CREATE INDEX idx_blog_posts_tenant_slug ON blog_posts(tenant_id, slug);
+CREATE INDEX idx_blog_categories_tenant ON blog_categories(tenant_id);
+
+CREATE TRIGGER trg_blog_posts_updated_at
+  BEFORE UPDATE ON blog_posts
+  FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+CREATE TRIGGER trg_blog_categories_updated_at
+  BEFORE UPDATE ON blog_categories
+  FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 ```

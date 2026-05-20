@@ -66,7 +66,9 @@ Tablas base siempre presentes:
 - `order_events`
 - `payment_events`
 - `platform_config`
-- `site_pages` (opcional, plan Empresa) — metadata de páginas para SEO y navegación dinámica
+- `blog_categories` — categorías de blog con tenant_id y slug único
+- `blog_posts` — artículos de blog con status (draft/published/archived), cover_image, excerpt, content, published_at
+- `site_pages` (opcional, plan Empresa) — metadata de páginas para SEO y navegación dinámica. No tiene schema definido aún; definir en `05-base-datos.md` si se implementa
 
 `shipping_zones` queda sin uso en Empresa si se usa Envia.com, pero existe para
 fallback y upgrades.

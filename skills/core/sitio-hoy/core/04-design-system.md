@@ -327,28 +327,12 @@ Nunca animar propiedades que rompen performance (`width`, `height`, `top`, `left
 
 ## 9. Optimización de Imágenes
 
-### Compresión client-side antes de upload
+La compresión de imágenes se maneja en build-time con el script `sitiohoy:optimize-assets` (usa `sharp` como dev dependency). No se instala compresión client-side en el sitio público — eso corresponde al admin (repositorio separado).
+
+### Validación de imágenes (solo referencia para admin)
 
 ```typescript
-// lib/images/compress.ts
-import imageCompression from 'browser-image-compression'
-
-export async function compressProductImage(file: File): Promise<File> {
-  if (file.size > 50 * 1024 * 1024) throw new Error('El archivo supera 50MB')
-
-  const compressed = await imageCompression(file, {
-    maxSizeMB: 2,
-    maxWidthOrHeight: 2000,
-    useWebWorker: true,
-    fileType: 'image/webp',
-    initialQuality: 0.85,
-  })
-
-  return new File([compressed], file.name.replace(/\.[^/.]+$/, '.webp'), {
-    type: 'image/webp',
-  })
-}
-
+// Solo si se necesita validar uploads en el futuro (admin)
 export function validateImage(file: File) {
   const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif']
   if (!ALLOWED.includes(file.type)) throw new Error('Formato no permitido. Usar JPG, PNG, WebP o AVIF.')

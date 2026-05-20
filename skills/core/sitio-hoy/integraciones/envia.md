@@ -128,6 +128,83 @@ const SHIPPING_FALLBACK = {
 }
 ```
 
+## Webhook de Envia.com — tracking updates
+
+```typescript
+// app/api/webhooks/envia/route.ts
+import { NextRequest, NextResponse } from 'next/server'
+import { createServiceClient } from '@/lib/supabase/server'
+import { sendOrderStatusUpdate } from '@/lib/resend/emails/order-status'
+
+const TENANT_ID = process.env.NEXT_PUBLIC_TENANT_ID!
+
+export async function POST(req: NextRequest) {
+  // Verificar secret — Envia permite configurar un header custom
+  const secret = process.env.ENVIA_WEBHOOK_SECRET
+  const auth = req.headers.get('x-envia-secret')
+  if (!secret || auth !== secret) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const body = await req.json()
+  const trackingNumber = body?.tracking_number ?? body?.trackingNumber
+  const status = body?.status
+
+  if (!trackingNumber) {
+    return NextResponse.json({ error: 'Missing tracking_number' }, { status: 400 })
+  }
+
+  const supabase = createServiceClient()
+
+  // Buscar orden por tracking number
+  const { data: order } = await supabase
+    .from('orders')
+    .select('id, status')
+    .eq('tenant_id', TENANT_ID)
+    .eq('shipping_tracking_number', trackingNumber)
+    .single()
+
+  if (!order) {
+    return NextResponse.json({ error: 'Order not found' }, { status: 404 })
+  }
+
+  // Registrar evento
+  await supabase.from('order_events').insert({
+    tenant_id: TENANT_ID,
+    order_id: order.id,
+    type: 'envia_webhook',
+    payload: body,
+  })
+
+  // Mapear status de Envia a nuestro status
+  const STATUS_MAP: Record<string, string> = {
+    'in_transit': 'shipped',
+    'delivered': 'delivered',
+    'returned': 'cancelled',
+  }
+
+  const newStatus = STATUS_MAP[status]
+  if (newStatus && newStatus !== order.status) {
+    await supabase
+      .from('orders')
+      .update({ status: newStatus })
+      .eq('id', order.id)
+      .eq('tenant_id', TENANT_ID)
+
+    // Notificar al comprador si Resend está configurado
+    await sendOrderStatusUpdate(order.id, newStatus, trackingNumber, 'Correo Argentino').catch(() => {})
+  }
+
+  return NextResponse.json({ ok: true })
+}
+```
+
+**Seguridad del webhook:**
+- `ENVIA_WEBHOOK_SECRET` debe estar en las variables de Vercel (no en `tenants` — es de plataforma, no de tenant)
+- Sin el secret, el endpoint responde 401
+- Siempre registrar el payload en `order_events` antes de mutar estado
+- Actualizar por `id` + `tenant_id` para no afectar otros tenants
+
 ## Verificación ✅
 
 - [ ] `envia_access_token` configurado en tabla `tenants`
@@ -136,3 +213,6 @@ const SHIPPING_FALLBACK = {
 - [ ] Cotización retorna tarifas reales con un código postal de prueba
 - [ ] `toProvinceCode()` aplicado en origin y destination antes de la llamada
 - [ ] Fallback funciona si la integración no está configurada
+- [ ] `ENVIA_WEBHOOK_SECRET` configurado en Vercel
+- [ ] Webhook de Envia registrado con URL `{siteUrl}/api/webhooks/envia`
+- [ ] Webhook rechaza requests sin secret (401)

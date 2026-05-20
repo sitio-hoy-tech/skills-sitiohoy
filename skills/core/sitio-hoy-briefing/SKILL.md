@@ -49,7 +49,7 @@ node .opencode/skills/sitio-hoy-briefing/scripts/briefing-server.mjs
 1. Encontrar la ruta correcta del script buscando `briefing-server.mjs` en las carpetas de skills del proyecto.
 2. Correr `node <ruta>/briefing-server.mjs` desde la raíz del proyecto.
 3. Abrir `http://localhost:3456` en el navegador (el servidor lo hace automáticamente).
-4. Esperar a que el cliente complete y envíe el formulario.
+4. Esperar a que el cliente complete y envíe el formulario. El servidor se cierra automáticamente tras 30 minutos de inactividad.
 5. El servidor genera automáticamente: `.sitiohoy/intake.json` + `sitiohoy.config.json` + `brief.md` + `.sitiohoy/design/DESIGN.md` + `.sitiohoy/copy-guide.md` + `_assets-cliente/`
    - El `DESIGN.md` es el documento de dirección creativa que el modelo AI usa para generar el diseño directamente en código.
    - Si el cliente ya tenía tenant ID, también genera `.sitiohoy/existing-tenant-check.json` con el snapshot público de `public.tenants`.

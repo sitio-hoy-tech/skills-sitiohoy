@@ -15,6 +15,7 @@ import { randomUUID } from 'node:crypto'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const FORM_HTML = path.resolve(__dirname, '../assets/briefing-form.html')
 const START_PORT = 3456
+const INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000 // 30 minutes
 const CWD = process.cwd()
 const TENANT_SELECT = [
   'id',
@@ -866,6 +867,9 @@ function sendJSON(res, status, data) {
 
 // ── REQUEST HANDLER ──────────────────────────────────────────────────────────
 async function handleRequest(req, res) {
+  // Reset inactivity timer on every request
+  resetInactivityTimer()
+
   const url = req.url?.split('?')[0] ?? '/'
 
   // CORS preflight
@@ -907,6 +911,17 @@ async function handleRequest(req, res) {
 const port = await findFreePort(START_PORT)
 const server = http.createServer(handleRequest)
 
+// ── INACTIVITY TIMEOUT ───────────────────────────────────────────────────────
+let inactivityTimer = null
+
+function resetInactivityTimer() {
+  if (inactivityTimer) clearTimeout(inactivityTimer)
+  inactivityTimer = setTimeout(() => {
+    log(clr(c.yellow, `\n  ⏰ Timeout: ${INACTIVITY_TIMEOUT_MS / 60000} minutos sin actividad. Cerrando servidor...\n`))
+    server.close(() => process.exit(0))
+  }, INACTIVITY_TIMEOUT_MS)
+}
+
 server.listen(port, '127.0.0.1', () => {
   const url = `http://localhost:${port}`
 
@@ -917,6 +932,7 @@ server.listen(port, '127.0.0.1', () => {
   log(`  ${clr(c.bold, 'URL:')}    ${clr(c.cyan, url)}`)
   log(`  ${clr(c.bold, 'CWD:')}    ${clr(c.gray, CWD)}`)
   log(`  ${clr(c.bold, 'Form:')}   ${clr(c.gray, FORM_HTML)}`)
+  log(`  ${clr(c.bold, 'Timeout:')} ${clr(c.gray, `${INACTIVITY_TIMEOUT_MS / 60000} min de inactividad`)}`)
   log(clr(c.gray, '  ─────────────────────────────────────'))
   log(`  ${clr(c.yellow, 'Ctrl+C')} para cancelar`)
   log('')
@@ -927,6 +943,9 @@ server.listen(port, '127.0.0.1', () => {
     log(clr(c.red, `  ${FORM_HTML}`))
     log('')
   }
+
+  // Start inactivity timer
+  resetInactivityTimer()
 
   // Open browser unless disabled for CI/sandbox checks.
   if (process.env.SITIOHOY_NO_OPEN !== '1') {

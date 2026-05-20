@@ -6,11 +6,9 @@ tipo: plan-esencial
 
 # Módulos — Plan Esencial
 
-Ejecutar secuencialmente. No avanzar al siguiente módulo sin:
-1. checklist funcional completo;
-2. `npm run build` sin errores cuando aplique;
-3. `npm run sitiohoy:validate` sin errores;
-4. `proyecto-tracking.json` actualizado.
+**Base compartida:** leer `plans/modulos-shared.md` para pasos y verificaciones comunes a todos los planes. Este archivo solo documenta diferencias del Plan Esencial.
+
+Ejecutar secuencialmente. No avanzar al siguiente módulo sin cumplir el **gate universal de cierre** (ver `modulos-shared.md`).
 
 Si el proyecto no tiene scripts SitioHoy, cargar `sitio-hoy-scaffold` o `sitio-hoy-qa` antes de cerrar el módulo.
 
@@ -28,7 +26,7 @@ Pasos:
    - pagos, envíos, Resend y Umami en `false`
 3. Instalar dependencias base:
    ```bash
-   npm install @supabase/ssr @supabase/supabase-js lucide-react browser-image-compression zod
+   npm install @supabase/ssr @supabase/supabase-js lucide-react zod
    ```
 4. Usar `sitio-hoy-database` para generar `supabase/migrations/001_initial_schema.sql`.
 5. Aplicar schema completo + RLS + bucket `public_assets`.
@@ -38,7 +36,7 @@ Pasos:
 7. El modelo AI genera design tokens y componentes directamente en código.
 8. Crear/ajustar `styles/tokens.css` con tokens generados por el modelo AI.
 9. Crear `.env.local` desde `.env.example`.
-10. Agregar `proyecto-tracking.json` a `.gitignore`.
+10. Crear `proyecto-tracking.json` en la raíz del proyecto (se commitea al repo, NO en `.gitignore`).
 
 Verificación ✅:
 - [ ] `sitiohoy.config.json` creado con plan Esencial
@@ -67,16 +65,9 @@ Pasos:
 1. `app/layout.tsx` con `next/font`, metadata global y tokens cargados.
 2. `<Header>`: logo, nav principal y botón "WhatsApp" con ícono destacado.
 3. `<Footer>`: WhatsApp, email, redes sociales, links legales, Schema.org `Organization`.
-   - En la barra inferior del footer, a la derecha del copyright, incluir siempre el crédito de agencia:
-     ```tsx
-     // Copiar /public/logo-sitiohoy.png al proyecto
-     <a href="https://sitiohoy.com.ar" target="_blank" rel="noopener noreferrer"
-        className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity">
-       <span className="text-xs">Desarrollado por</span>
-       <Image src="/logo-sitiohoy.png" alt="SitioHoy" width={72} height={24} className="h-5 w-auto object-contain" />
-     </a>
-     ```
-   - Copiar el logo desde la ruta confirmada en el onboarding (sección 9 del cuestionario) a `public/logo-sitiohoy.png`.
+   - En la barra inferior del footer incluir siempre `<AgencyCredit />` (componente reutilizable en `components/ui/agency-credit.tsx`).
+   - El componente muestra "Desarrollado por" + logo SitioHoy con link a `sitiohoy.com.ar`.
+   - Copiar `public/logo-sitiohoy.png` desde los assets del onboarding.
    - Si el logo no fue entregado, pedirlo antes de construir el footer.
    - La barra inferior debe ser `flex justify-between` para que copyright quede a la izquierda y el crédito a la derecha.
 4. `app/not-found.tsx` y `app/error.tsx` globales.
@@ -89,7 +80,7 @@ Verificación ✅:
 - [ ] Footer con datos completos del brief
 - [ ] Crédito "Desarrollado por SitioHoy" visible en la barra inferior del footer con link a sitiohoy.com.ar
 - [ ] 375px / 768px / 1280px sin overflow
-- [ ] Auditoría diseño ≥ 7/10 en las 10 dimensiones
+- [ ] Auditoría diseño ≥ 8/10 en las 10 dimensiones
 - [ ] `npm run sitiohoy:validate` sin errores
 
 ---
@@ -101,7 +92,7 @@ Verificación ✅:
 Secciones:
 1. Hero según brief y `core/04-design-system.md`.
 2. Categorías con links al catálogo filtrado.
-3. Productos destacados (`featured = true`).
+3. Productos destacados (`featured = true`, máximo 8 productos — hardcodeado con `LIMIT 8` en la query).
 4. Propuesta de valor con 3-4 beneficios.
 5. CTA final con WhatsApp grande y copy del negocio.
 
@@ -126,16 +117,18 @@ Verificación ✅:
 **Objetivo**: catálogo completo con detalle de producto y CTA WhatsApp por producto.
 
 Pasos:
-1. `/catalogo` con grid, filtros por categoría y ordenamiento.
+1. `/catalogo` con grid, filtros por categoría, ordenamiento y **paginación server-side** (LIMIT/OFFSET, nunca cargar todos los productos de golpe).
 2. `/catalogo/[slug]` con galería, variantes y botón "Consultar por WhatsApp".
-3. `generateStaticParams()` para productos activos.
+3. `generateStaticParams()` solo si ≤50 productos. Para catálogos más grandes, las páginas se generan on-first-visit via ISR on-demand.
 4. `generateMetadata()` por producto.
 5. Schema.org `Product`, `Offer` y `BreadcrumbList`.
-6. Queries cacheadas con `unstable_cache`.
+6. Queries cacheadas con `unstable_cache` — ISR on-demand solamente, nunca `revalidate = N`.
 7. `loading.tsx`, `error.tsx` y `not-found.tsx` en segmentos de catálogo.
+8. **Submenús en header**: si hay categorías, agregar dropdown de categorías bajo "Productos" en la navegación principal.
 
 Verificación ✅:
-- [ ] Filtros funcionan sin romper responsive
+- [ ] Filtros por categoría visibles y funcionales
+- [ ] Paginación implementada (no se cargan todos los productos de golpe)
 - [ ] Galería navegable
 - [ ] Variantes visibles con precio correcto
 - [ ] WhatsApp incluye nombre del producto
@@ -158,7 +151,7 @@ Páginas comunes:
 Reglas:
 - Crear solo lo pedido.
 - Si hay formulario, guardar lead en `contact_messages` cuando Resend no esté configurado.
-- Páginas estáticas puras pueden usar `export const revalidate = 86400`.
+- Páginas estáticas puras NO usan `revalidate = N` — se invalidan via ISR on-demand como el resto del sitio.
 
 Verificación ✅:
 - [ ] Solo páginas pedidas implementadas

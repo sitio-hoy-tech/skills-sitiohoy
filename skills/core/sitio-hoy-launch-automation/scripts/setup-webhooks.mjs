@@ -17,7 +17,7 @@
  */
 
 import { existsSync } from 'node:fs'
-import { readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 
 // ── Args ──────────────────────────────────────────────────────────────────────
@@ -201,7 +201,6 @@ await checkResend()
 await checkEnvia()
 
 // Guardar resultados
-import { mkdir } from 'node:fs/promises'
 await mkdir(outDir, { recursive: true })
 await writeFile(resultsPath, JSON.stringify(results, null, 2))
 

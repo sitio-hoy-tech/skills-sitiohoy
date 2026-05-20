@@ -60,67 +60,23 @@ En la raíz del proyecto:
 5. Si el módulo es checkout, cargar también `.sitiohoy/context/checkout-context.md`.
 6. Si es deploy, cargar `.sitiohoy/context/deploy-context.md`.
 
-## Templates de referencia
+## Filosofía de diseño: libertad creativa total
 
-El archivo `data/templates/index.json` contiene una biblioteca curada de templates
-open source relevantes para proyectos SitioHoy. El generador crea
-`.sitiohoy/design/inspiration-board.md` con referencias del cliente y referencias curadas
-según plan/rubro para anclar el diseño a ejemplos reales en vez de improvisar.
+**No se usan templates de referencia.** El modelo AI genera cada diseño desde cero con total libertad creativa. Cada sitio debe ser único, moderno, hermoso e intuitivo.
 
-### Cómo seleccionar templates
+El diseño se ancla en:
+- El brief del cliente (`brief.md`)
+- La dirección creativa (`DESIGN.md`)
+- El rubro y audiencia del negocio
+- Las mejores prácticas de UX/UI y conversión
 
-Al iniciar un proyecto, leer `data/templates/index.json` y elegir 1–2 templates
-que mejor correspondan al plan y rubro del cliente:
-
-| Plan | Templates recomendados |
-|---|---|
-| Esencial | portfolio, landing page, servicios simples |
-| Emprendimiento | e-commerce mediano, nextjs-commerce, medusa starter |
-| Empresa | vercel-commerce, dub (multitenant), medusa completo |
-
-Agregar o revisar en `inspiration-board.md` y `design-direction.md` una sección:
-
-```md
-## Referencias de layout
-
-- **Template principal**: [nombre] — [repo] — [demo_url]
-- **Patrón a tomar**: [qué componentes / estructura / UX se adopta]
-- **Qué NO tomar**: [qué diferencia al sitio del template]
-```
-
-### Actualizar la biblioteca de templates
-
-```bash
-# Con GitHub API (necesita GITHUB_TOKEN para más rate limit)
-GITHUB_TOKEN=ghp_xxx node scripts/fetch-templates.mjs
-
-# Sin GitHub (solo lista curada)
-node scripts/fetch-templates.mjs --no-github
-```
-
-El script preserva campos manuales (`industry`, `notes`) entre ejecuciones.
-Para agregar un template nuevo, editarlo directamente en `data/templates/index.json`
-con `"source": "curated"` y correr `--no-github`.
-
-### Descargar componentes de código
-
-Descarga los componentes clave (Hero, ProductCard, Navbar, Footer, Cart, Checkout)
-de los templates como código real para usar de referencia:
-
-```bash
-# Todos los templates del index
-GITHUB_TOKEN=ghp_xxx node scripts/fetch-components.mjs
-
-# Un template específico
-node scripts/fetch-components.mjs --id vercel-commerce
-
-# Limitar archivos por template (default: 10)
-node scripts/fetch-components.mjs --max-files 6
-```
-
-Los componentes quedan en `data/templates/components/{template-id}/`.
-La skill los lee al generar `layout-recipe.md` y adapta las estructuras
-al proyecto en lugar de inventarlas desde cero.
+**Principios de diseño:**
+- Tipografías únicas o muy relacionadas con el logo del sitio
+- Paletas de colores derivadas de la identidad del negocio
+- Layouts creativos que eviten patrones genéricos
+- UX intuitiva con navegación clara y CTAs efectivos
+- Diseño mobile-first desde 375px
+- Cada sitio debe tener personalidad propia — nunca copiar patrones de otro proyecto
 
 ### Capturar screenshots de sitios de referencia
 

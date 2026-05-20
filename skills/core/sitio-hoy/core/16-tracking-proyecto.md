@@ -7,9 +7,11 @@ tipo: core — actualizar al finalizar CADA módulo, sin excepción
 # Tracking de Proyecto
 
 > Registro interno de SitioHoy. No es parte del entregable al cliente.
-> El archivo `proyecto-tracking.json` va en la raíz del proyecto y en `.gitignore`.
+> El archivo `proyecto-tracking.json` va en la raíz del proyecto y **SE COMMITEA al repositorio** (NO en `.gitignore`). Es fundamental para la trazabilidad del proyecto.
 > Todas las fechas deben guardarse como ISO 8601 con offset Argentina `-03:00`
 > (`America/Argentina/Buenos_Aires`), nunca como `Z` UTC.
+> Los datos deben ser lo más reales posibles — tokens estimados, duración real, costo calculado.
+> Si se pierde el tracking, se pierde toda la trazabilidad del proyecto.
 
 ---
 

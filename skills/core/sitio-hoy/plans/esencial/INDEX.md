@@ -27,7 +27,8 @@ tipo: plan — cargar después del onboarding técnico cuando plan = esencial
 core/00-rol-identidad.md        ← identidad y mentalidad
 core/10-modo-silencioso.md      ← comportamiento — ejecutar sin pedir confirmación
 core/18-skills-especializadas.md ← mapa de skills y dónde encontrarlas
-plans/esencial/modulos.md       ← módulos del plan — referencia durante todo el proyecto
+plans/modulos-shared.md         ← pasos y verificaciones comunes a todos los planes
+plans/esencial/modulos.md       ← diferencias específicas de este plan
 ```
 
 ### CARGAR EN MÓDULO 0 — Setup técnico

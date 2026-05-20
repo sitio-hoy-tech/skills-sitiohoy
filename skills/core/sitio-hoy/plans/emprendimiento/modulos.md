@@ -6,12 +6,9 @@ tipo: plan-emprendimiento
 
 # Módulos — Plan Emprendimiento
 
-Ejecutar secuencialmente. No avanzar al siguiente módulo sin:
-1. checklist funcional completo;
-2. `npm run build` sin errores cuando aplique;
-3. `npm run sitiohoy:validate` sin errores;
-4. QA manual documentado para pagos/envíos cuando aplique;
-5. `proyecto-tracking.json` actualizado.
+**Base compartida:** leer `plans/modulos-shared.md` para pasos y verificaciones comunes a todos los planes. Este archivo solo documenta diferencias del Plan Emprendimiento.
+
+Ejecutar secuencialmente. No avanzar al siguiente módulo sin cumplir el **gate universal de cierre** (ver `modulos-shared.md`). Para módulos de pagos/envíos, agregar QA manual documentado.
 
 ---
 
@@ -30,7 +27,7 @@ Pasos:
    - `integrations.umami: true`
 3. Instalar dependencias:
    ```bash
-   npm install @supabase/ssr @supabase/supabase-js lucide-react browser-image-compression zod
+   npm install @supabase/ssr @supabase/supabase-js lucide-react zod
    npm install mercadopago @mercadopago/sdk-react react-hook-form @hookform/resolvers zustand
    ```
 4. Si Resend está activado:
@@ -42,7 +39,7 @@ Pasos:
 7. Leer `.sitiohoy/design/DESIGN.md` como dirección creativa.
 8. El modelo AI genera design tokens y componentes directamente en código.
 9. Crear/ajustar `styles/tokens.css` con tokens generados por el modelo AI.
-8. Configurar `.env.local` desde `.env.example`.
+10. Configurar `.env.local` desde `.env.example`.
 
 Verificación ✅:
 - [ ] `sitiohoy.config.json` creado con integraciones correctas
@@ -99,6 +96,9 @@ Igual que Plan Esencial Módulo 3, más:
 - validación de stock server-side antes de checkout.
 
 Verificación ✅:
+- [ ] Filtros por categoría visibles y funcionales
+- [ ] Paginación server-side implementada
+- [ ] Submenú de categorías en header
 - [ ] Agregar, editar cantidad y eliminar funciona
 - [ ] Variantes actualizan precio/stock sin recarga
 - [ ] Stock crítico visible
@@ -126,7 +126,7 @@ Pasos:
 5. Crear pedido e items con `tenant_id`.
 6. Crear preferencia MercadoPago con idempotency key estable por pedido/intento.
 7. Webhook `/api/webhooks/mercadopago`:
-   - verificar firma si `MP_WEBHOOK_SECRET` existe;
+   - **verificar firma OBLIGATORIO** — `MP_WEBHOOK_SECRET` debe existir. Sin él, el webhook rechaza todos los requests;
    - guardar payload en `payment_events`;
    - actualizar `orders` filtrando por `id` y `tenant_id`.
 8. Página `/seguimiento` con Server Action/RPC por `tracking_token`, no RLS anon basada en JWT.

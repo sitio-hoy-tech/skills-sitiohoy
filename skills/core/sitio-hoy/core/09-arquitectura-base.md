@@ -21,6 +21,10 @@ tipo: core — referencia para ubicar y crear archivos
 │   │   │   └── error/page.tsx       # Error en el pago
 │   │   ├── seguimiento/             # Solo en Emprendimiento y Empresa
 │   │   │   └── page.tsx             # Tracking de pedido por tracking_token
+│   │   ├── blog/                     # Blog (si activado en brief)
+│   │   │   ├── page.tsx             # Listado de posts con categorías
+│   │   │   └── [slug]/
+│   │   │       └── page.tsx         # Detalle de post (SEO Article)
 │   │   └── [...cms]/                # Páginas opcionales (Sobre nosotros, FAQ, etc.)
 │   │       └── page.tsx
 │   ├── api/
@@ -52,7 +56,8 @@ tipo: core — referencia para ubicar y crear archivos
 │   │   └── PaymentBrick.tsx
 │   └── seo/
 │       ├── SchemaOrg.tsx
-│       └── SchemaProduct.tsx
+│       ├── SchemaProduct.tsx
+│       └── SchemaArticle.tsx
 │
 ├── lib/
 │   ├── supabase/
@@ -63,6 +68,7 @@ tipo: core — referencia para ubicar y crear archivos
 │   ├── data/
 │   │   ├── products.ts               # getAllProducts, getProductBySlug, etc.
 │   │   ├── categories.ts
+│   │   ├── blog.ts                  # getAllBlogPosts, getBlogPostBySlug, getBlogCategories
 │   │   └── site-config.ts
 │   ├── mercadopago/                  # Solo Emprendimiento y Empresa
 │   │   └── client.ts
@@ -115,3 +121,5 @@ tipo: core — referencia para ubicar y crear archivos
 - `_assets-cliente/` se agrega a `.gitignore` (imágenes del cliente no van al repo)
 - `supabase/migrations/` solo si el MCP de Supabase no está disponible
 - `DESIGN.md` documenta las decisiones de diseño para el cliente y futuros cambios
+- `blog/` solo existe si el brief del cliente incluye blog — no crear rutas de blog por defecto
+- `lib/data/blog.ts` usa `unstable_cache` con tags `BLOG_POSTS`, `BLOG_POST(slug)`, `BLOG_CATEGORIES`

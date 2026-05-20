@@ -25,6 +25,9 @@ export const TAGS = {
   HOMEPAGE:    `homepage-${TENANT_ID}`,
   SHIPPING:    `shipping-zones-${TENANT_ID}`,
   TENANT:      `tenant-config-${TENANT_ID}`,   // ← getTenantConfig() en lib/supabase/tenant.ts
+  BLOG_POSTS:      `blog-posts-${TENANT_ID}`,
+  BLOG_POST:       (slug: string) => `blog-post-${TENANT_ID}-${slug}`,
+  BLOG_CATEGORIES: `blog-categories-${TENANT_ID}`,
 } as const
 ```
 
@@ -118,6 +121,8 @@ const TABLE_TAGS: Record<string, string[]> = {
   coupons:          [`coupons-${TENANT_ID}`],
   tenants:          [`tenant-config-${TENANT_ID}`],
   shipping_zones:   [`shipping-zones-${TENANT_ID}`],
+  blog_posts:       [`blog-posts-${TENANT_ID}`],
+  blog_categories:  [`blog-categories-${TENANT_ID}`, `blog-posts-${TENANT_ID}`],
 }
 
 export async function POST(req: NextRequest) {
@@ -180,6 +185,9 @@ Regla: invalidar solo lo mínimo necesario. El tag granular primero, el colectiv
 | Config del sitio (nombre, logo, redes) | `tenant-config-{tenant}`, `site-config-{tenant}`, `homepage-{tenant}` | Afecta layout global |
 | Pedido cambia de estado (admin) | `order-{tenant}-{id}`, `orders-{tenant}` | Dashboard y tracking |
 | Pago aprobado (webhook MP) | `order-{tenant}-{id}`, `orders-{tenant}` | Mismo que arriba |
+| Blog post: publicado/editado | `blog-post-{tenant}-{slug}`, `blog-posts-{tenant}`, `homepage-{tenant}` | Puede aparecer en home y listado |
+| Blog post: despublicado/eliminado | `blog-posts-{tenant}`, `homepage-{tenant}` | Desaparece del listado |
+| Blog categoría: editada/eliminada | `blog-categories-{tenant}`, `blog-posts-{tenant}` | Afecta navegación del blog |
 
 ## Helper de invalidación recomendado
 
@@ -199,22 +207,30 @@ export const invalidateOrder = (orderId: string) => {
   revalidateTag(TAGS.ORDERS, 'default')
 }
 
+export const invalidateBlogPost = (slug: string, { listChanged = false } = {}) => {
+  revalidateTag(TAGS.BLOG_POST(slug), 'default')
+  if (listChanged) revalidateTag(TAGS.BLOG_POSTS, 'default')
+  revalidateTag(TAGS.HOMEPAGE, 'default')
+}
+
 export const invalidateTenantConfig = () => {
   revalidateTag(TAGS.TENANT, 'default')
   revalidateTag(TAGS.HOMEPAGE, 'default')
 }
 ```
 
-## Reglas de oro
+## Reglas de oro (CRÍTICAS — aplicar sin excepción)
 
 1. Tag granular primero (`product-{tenant}-{slug}`), luego colectivo (`products-{tenant}`) solo si la lista cambió
 2. **Nunca `revalidatePath('/')`** — usar `revalidateTag(TAGS.HOMEPAGE, 'default')`
-3. Sin `export const revalidate = N` en páginas de catálogo — solo ISR on-demand
-4. No usar `dynamic = 'force-dynamic'` en páginas de catálogo — rompe ISR y cada visita golpea Supabase.
-5. No usar `revalidate = N` como timer fijo en catálogo editable — regenera aunque no haya cambios.
+3. **PROHIBIDO `export const revalidate = N` en CUALQUIER página de catálogo o datos dinámicos** — solo ISR on-demand via webhooks de Supabase. Ya existe un trigger genérico en Supabase que llama a `/api/revalidate` cuando cambian datos.
+4. **PROHIBIDO `dynamic = 'force-dynamic'` en páginas de catálogo** — rompe ISR y cada visita golpea Supabase.
+5. **PROHIBIDO timer de revalidación** — no usar `revalidate = N` como timer fijo. Los datos se invalidan solo cuando cambian, via el webhook de Supabase.
 6. `getTenantConfig()` **sin** `revalidate` — solo se invalida con `revalidateTag(TAGS.TENANT, 'default')`
 7. En `unstable_cache`, siempre desestructurar `{ data, error }` y loguear `error`; si no, Supabase puede fallar silenciosamente y cachear `[]`.
-8. El ISR on-demand es el approach correcto para sitios con catálogo editable.
+8. **ISR on-demand es el ÚNICO approach permitido** para sitios con catálogo editable. La invalidación viene de Supabase → webhook → `revalidateTag()`.
+9. **`generateStaticParams()` solo para catálogos pequeños (≤50 productos)**. Para Emprendimiento (≤200) y Empresa (ilimitados), NO usar `generateStaticParams()` — las páginas de producto se generan on-first-visit via ISR on-demand. Esto evita builds lentos.
+10. **El endpoint `/api/revalidate` debe existir siempre** — es el receptor del webhook de Supabase. Sin él, el ISR on-demand no funciona.
 
 ## Triggers SQL multitenant Supabase
 
@@ -316,6 +332,30 @@ DROP TRIGGER IF EXISTS isr_coupons ON public.coupons;
 CREATE TRIGGER isr_coupons
 AFTER INSERT OR UPDATE OR DELETE ON public.coupons
 FOR EACH ROW EXECUTE FUNCTION trigger_isr_coupons();
+
+CREATE OR REPLACE FUNCTION trigger_isr_blog_posts()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER AS $$
+BEGIN
+  PERFORM isr_notify(COALESCE(NEW.tenant_id, OLD.tenant_id), 'blog_posts', COALESCE(NEW.slug, OLD.slug));
+  RETURN COALESCE(NEW, OLD);
+END;
+$$;
+DROP TRIGGER IF EXISTS isr_blog_posts ON public.blog_posts;
+CREATE TRIGGER isr_blog_posts
+AFTER INSERT OR UPDATE OR DELETE ON public.blog_posts
+FOR EACH ROW EXECUTE FUNCTION trigger_isr_blog_posts();
+
+CREATE OR REPLACE FUNCTION trigger_isr_blog_categories()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER AS $$
+BEGIN
+  PERFORM isr_notify(COALESCE(NEW.tenant_id, OLD.tenant_id), 'blog_categories');
+  RETURN COALESCE(NEW, OLD);
+END;
+$$;
+DROP TRIGGER IF EXISTS isr_blog_categories ON public.blog_categories;
+CREATE TRIGGER isr_blog_categories
+AFTER INSERT OR UPDATE OR DELETE ON public.blog_categories
+FOR EACH ROW EXECUTE FUNCTION trigger_isr_blog_categories();
 ```
 
 Importante: `supabase_functions.http_request` no acepta argumentos posicionales en

@@ -123,7 +123,8 @@ export const sendContactForm = async (
 
     if (tenant.resend_api_key && tenant.contact_email) {
       const resend = new Resend(tenant.resend_api_key)
-      const baseHtml = (content: string) => `
+      const baseHtml = (content: string, preheader: string = '') => `
+        ${preheader ? `<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">${preheader}&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</div>` : ''}
         <div style="font-family:Arial,sans-serif;background:#f5f5f5;padding:24px;color:#111827">
           <div style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden">
             <div style="background:${primary};color:#ffffff;padding:20px 24px;font-size:20px;font-weight:700">${siteName}</div>
@@ -139,7 +140,7 @@ export const sendContactForm = async (
         from,
         to: tenant.contact_email,
         replyTo: email,
-        subject: `Nuevo mensaje de contacto — ${safeName}`,
+        subject: `📬 ${safeName} te escribió desde ${siteName}`,
         headers: { 'X-Entity-Ref-ID': `contact-${tenantId}-${Date.now()}` },
         html: baseHtml(`
           <h1 style="margin:0 0 16px;font-size:22px">Nuevo mensaje de contacto</h1>
@@ -149,14 +150,14 @@ export const sendContactForm = async (
           <p><strong>Mensaje:</strong></p>
           <blockquote style="border-left:4px solid ${primary};padding-left:16px;margin:16px 0">${safeMessage}</blockquote>
           <a href="mailto:${safeEmail}" style="display:inline-block;background:${primary};color:#ffffff;padding:12px 16px;border-radius:8px;text-decoration:none">Responder</a>
-        `),
+        `, `${safeName} escribió: "${safeMessage.slice(0, 60)}..."`),
       })
 
       await resend.emails.send({
         from,
         to: email,
         replyTo: tenant.contact_email,
-        subject: `Recibimos tu consulta — ${siteName}`,
+        subject: `✅ Recibimos tu consulta — ${siteName}`,
         headers: { 'X-Entity-Ref-ID': `contact-confirmation-${tenantId}-${Date.now()}` },
         html: baseHtml(`
           <h1 style="margin:0 0 16px;font-size:22px">Recibimos tu consulta</h1>
@@ -164,7 +165,7 @@ export const sendContactForm = async (
           <p><strong>Tu mensaje:</strong></p>
           <blockquote style="border-left:4px solid ${primary};padding-left:16px;margin:16px 0">${safeMessage}</blockquote>
           <a href="${siteUrl}" style="display:inline-block;background:${primary};color:#ffffff;padding:12px 16px;border-radius:8px;text-decoration:none">Volver al sitio</a>
-        `),
+        `, `Gracias por escribirnos, ${safeName}. Te respondemos pronto.`),
       })
     }
 
@@ -186,6 +187,8 @@ Reglas obligatorias:
 - Enviar dos emails por consulta: notificación al negocio y confirmación al visitante.
 - Nunca enviar emails solo con `text`; siempre incluir `html` con estilos inline.
 - Agregar `X-Entity-Ref-ID` único por email para reducir falsos positivos de spam.
+- **El diseño del email debe ser coherente con el diseño del sitio**: usar el color primario del design system como header del email, el nombre del negocio, y estilos que reflejen la identidad visual. El email de confirmación al visitante debe indicarle que va a recibir respuesta pronto.
+- **Siempre guardar en `contact_messages` primero**, independientemente de si Resend está configurado. Ningún lead se debe perder.
 
 ---
 

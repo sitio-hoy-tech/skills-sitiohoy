@@ -29,7 +29,8 @@ tipo: plan — cargar después del onboarding técnico cuando plan = emprendimie
 core/00-rol-identidad.md
 core/10-modo-silencioso.md
 core/18-skills-especializadas.md
-plans/emprendimiento/modulos.md
+plans/modulos-shared.md         ← pasos y verificaciones comunes a todos los planes
+plans/emprendimiento/modulos.md ← diferencias específicas de este plan
 ```
 
 ### CARGAR EN MÓDULO 0 — Setup técnico

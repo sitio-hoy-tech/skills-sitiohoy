@@ -41,6 +41,43 @@ export const generateMetadata = async ({ params }: Props): Promise<Metadata> => 
 | Catálogo | `ItemList`, `BreadcrumbList` |
 | Producto | `Product`, `Offer`, `BreadcrumbList` |
 | Blog/CMS | `Article`, `BreadcrumbList` |
+| Blog Listado | `CollectionPage`, `BreadcrumbList` |
+
+### Schema.org para Blog Post
+
+```typescript
+// components/seo/SchemaArticle.tsx
+export const SchemaArticle = ({ post, siteConfig }: Props) => {
+  const schema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.excerpt,
+    image: post.cover_image,
+    datePublished: post.published_at,
+    dateModified: post.updated_at,
+    author: {
+      '@type': 'Organization',
+      name: siteConfig.name,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: siteConfig.name,
+      logo: { '@type': 'ImageObject', url: siteConfig.logo_url },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${siteConfig.url}/blog/${post.slug}`,
+    },
+  }
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  )
+}
+```
 
 ```typescript
 // components/seo/SchemaProduct.tsx
@@ -79,14 +116,23 @@ import type { MetadataRoute } from 'next'
 const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
   const products = await getAllProducts()
 
+  const blogPosts = await getAllBlogPosts() // solo published
+
   return [
     { url: process.env.NEXT_PUBLIC_URL!, changeFrequency: 'daily', priority: 1.0 },
     { url: `${process.env.NEXT_PUBLIC_URL}/catalogo`, changeFrequency: 'daily', priority: 0.9 },
+    { url: `${process.env.NEXT_PUBLIC_URL}/blog`, changeFrequency: 'weekly', priority: 0.8 },
     ...products.map(p => ({
       url: `${process.env.NEXT_PUBLIC_URL}/catalogo/${p.slug}`,
       lastModified: p.updated_at,
       changeFrequency: 'daily' as const,
       priority: 0.8,
+    })),
+    ...blogPosts.map(post => ({
+      url: `${process.env.NEXT_PUBLIC_URL}/blog/${post.slug}`,
+      lastModified: post.updated_at,
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
     })),
   ]
 }

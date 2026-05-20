@@ -301,6 +301,38 @@ CREATE TABLE IF NOT EXISTS public.payment_events (
   created_at timestamptz DEFAULT now()
 );
 
+CREATE TABLE IF NOT EXISTS public.blog_categories (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  slug text NOT NULL,
+  description text,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now(),
+  UNIQUE (tenant_id, slug)
+);
+
+CREATE TABLE IF NOT EXISTS public.blog_posts (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid NOT NULL REFERENCES public.tenants(id) ON DELETE CASCADE,
+  category_id uuid REFERENCES public.blog_categories(id) ON DELETE SET NULL,
+  title text NOT NULL,
+  slug text NOT NULL,
+  excerpt text,
+  content text,
+  cover_image text,
+  status text DEFAULT 'draft' CHECK (status IN ('draft', 'published', 'archived')),
+  author_name text,
+  meta_title text,
+  meta_description text,
+  published_at timestamptz,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now(),
+  created_by uuid,
+  updated_by uuid,
+  UNIQUE (tenant_id, slug)
+);
+
 CREATE TABLE IF NOT EXISTS public.platform_config (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   correo_argentino_user text,
@@ -328,6 +360,14 @@ DROP TRIGGER IF EXISTS trg_platform_config_updated_at ON public.platform_config;
 CREATE TRIGGER trg_platform_config_updated_at BEFORE UPDATE ON public.platform_config
   FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
 
+DROP TRIGGER IF EXISTS trg_blog_categories_updated_at ON public.blog_categories;
+CREATE TRIGGER trg_blog_categories_updated_at BEFORE UPDATE ON public.blog_categories
+  FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
+
+DROP TRIGGER IF EXISTS trg_blog_posts_updated_at ON public.blog_posts;
+CREATE TRIGGER trg_blog_posts_updated_at BEFORE UPDATE ON public.blog_posts
+  FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
+
 CREATE INDEX IF NOT EXISTS idx_products_tenant_active ON public.products(tenant_id, active);
 CREATE INDEX IF NOT EXISTS idx_products_tenant_slug ON public.products(tenant_id, slug);
 CREATE INDEX IF NOT EXISTS idx_categories_tenant_slug ON public.categories(tenant_id, slug);
@@ -339,6 +379,9 @@ CREATE INDEX IF NOT EXISTS idx_product_variants_product ON public.product_varian
 CREATE INDEX IF NOT EXISTS idx_contact_messages_tenant_created ON public.contact_messages(tenant_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_payment_events_order ON public.payment_events(order_id);
 CREATE INDEX IF NOT EXISTS idx_user_tenants_tenant_id ON public.user_tenants(tenant_id);
+CREATE INDEX IF NOT EXISTS idx_blog_posts_tenant_published ON public.blog_posts(tenant_id, status) WHERE status = 'published';
+CREATE INDEX IF NOT EXISTS idx_blog_posts_tenant_slug ON public.blog_posts(tenant_id, slug);
+CREATE INDEX IF NOT EXISTS idx_blog_categories_tenant ON public.blog_categories(tenant_id);
 
 ALTER TABLE public.tenants ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_tenants ENABLE ROW LEVEL SECURITY;
@@ -354,6 +397,8 @@ ALTER TABLE public.shipping_zones ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.contact_messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.order_events ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.payment_events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.blog_categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.blog_posts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.platform_config ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "own_tenant_select" ON public.tenants;
@@ -375,7 +420,7 @@ BEGIN
   FOREACH table_name IN ARRAY ARRAY[
     'categories', 'subcategories', 'products', 'product_images', 'product_variants',
     'orders', 'order_items', 'coupons', 'shipping_zones', 'contact_messages',
-    'order_events', 'payment_events'
+    'order_events', 'payment_events', 'blog_categories', 'blog_posts'
   ]
   LOOP
     EXECUTE format('DROP POLICY IF EXISTS tenant_select ON public.%I', table_name);
@@ -497,6 +542,30 @@ DROP TRIGGER IF EXISTS isr_coupons ON public.coupons;
 CREATE TRIGGER isr_coupons
 AFTER INSERT OR UPDATE OR DELETE ON public.coupons
 FOR EACH ROW EXECUTE FUNCTION public.trigger_isr_coupons();
+
+CREATE OR REPLACE FUNCTION public.trigger_isr_blog_posts()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER AS $$
+BEGIN
+  PERFORM public.isr_notify(COALESCE(NEW.tenant_id, OLD.tenant_id), 'blog_posts', COALESCE(NEW.slug, OLD.slug));
+  RETURN COALESCE(NEW, OLD);
+END;
+$$;
+DROP TRIGGER IF EXISTS isr_blog_posts ON public.blog_posts;
+CREATE TRIGGER isr_blog_posts
+AFTER INSERT OR UPDATE OR DELETE ON public.blog_posts
+FOR EACH ROW EXECUTE FUNCTION public.trigger_isr_blog_posts();
+
+CREATE OR REPLACE FUNCTION public.trigger_isr_blog_categories()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER AS $$
+BEGIN
+  PERFORM public.isr_notify(COALESCE(NEW.tenant_id, OLD.tenant_id), 'blog_categories');
+  RETURN COALESCE(NEW, OLD);
+END;
+$$;
+DROP TRIGGER IF EXISTS isr_blog_categories ON public.blog_categories;
+CREATE TRIGGER isr_blog_categories
+AFTER INSERT OR UPDATE OR DELETE ON public.blog_categories
+FOR EACH ROW EXECUTE FUNCTION public.trigger_isr_blog_categories();
 `
 
 // Seed: tenant inicial + usuario admin

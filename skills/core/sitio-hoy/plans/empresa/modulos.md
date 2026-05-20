@@ -6,12 +6,9 @@ tipo: plan-empresa
 
 # Módulos — Plan Empresa
 
-Ejecutar secuencialmente. No avanzar al siguiente módulo sin:
-1. checklist funcional completo;
-2. `npm run build` sin errores cuando aplique;
-3. `npm run sitiohoy:validate` sin errores;
-4. QA manual documentado para pagos, envíos y eventos;
-5. `proyecto-tracking.json` actualizado.
+**Base compartida:** leer `plans/modulos-shared.md` para pasos y verificaciones comunes a todos los planes. Este archivo solo documenta diferencias del Plan Empresa.
+
+Ejecutar secuencialmente. No avanzar al siguiente módulo sin cumplir el **gate universal de cierre** (ver `modulos-shared.md`). Para módulos de pagos/envíos/eventos, agregar QA manual documentado.
 
 ---
 
@@ -30,7 +27,7 @@ Pasos:
    - `integrations.whatsapp: true`
 3. Instalar dependencias:
    ```bash
-   npm install @supabase/ssr @supabase/supabase-js lucide-react browser-image-compression zod
+   npm install @supabase/ssr @supabase/supabase-js lucide-react zod
    npm install mercadopago @mercadopago/sdk-react react-hook-form @hookform/resolvers zustand
    ```
 4. Si Resend está activado:
@@ -42,7 +39,7 @@ Pasos:
 7. Leer `.sitiohoy/design/DESIGN.md` como dirección creativa.
 8. El modelo AI genera design tokens y componentes directamente en código.
 9. Crear/ajustar `styles/tokens.css` con tokens generados por el modelo AI.
-8. Configurar `.env.local` desde `.env.example`.
+10. Configurar `.env.local` desde `.env.example`.
 
 Verificación ✅:
 - [ ] `sitiohoy.config.json` creado con plan Empresa
@@ -97,6 +94,10 @@ Igual que Plan Emprendimiento Módulo 3, más:
 - soporte para catálogos grandes.
 
 Verificación ✅:
+- [ ] Filtros por categoría visibles y funcionales
+- [ ] Paginación server-side implementada (crítico para catálogos grandes)
+- [ ] Submenú de categorías en header
+- [ ] NO usa `generateStaticParams()` (catálogo ilimitado → ISR on-demand)
 - [ ] Catálogo performante con muchos productos
 - [ ] Variantes, stock y carrito funcionan
 - [ ] Productos relacionados no incluyen el actual
@@ -128,7 +129,7 @@ Pasos:
 5. Crear pedido e items con `tenant_id`.
 6. Crear preferencia MP con idempotency key estable.
 7. Webhook MP:
-   - verificar firma si existe `MP_WEBHOOK_SECRET`;
+   - **verificar firma OBLIGATORIO** — `MP_WEBHOOK_SECRET` debe existir. Sin él, el webhook rechaza todos los requests;
    - registrar `payment_events`;
    - actualizar `orders` filtrando por `id` y `tenant_id`.
 8. Webhook Envia.com si aplica:

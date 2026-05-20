@@ -80,7 +80,24 @@ La columna "Manual ✅" queda vacía para que el humano la complete.
 
 ---
 
-## 3. FUNCIONALIDAD — CHECKOUT (Solo Emprendimiento y Empresa)
+## 3. FUNCIONALIDAD — BLOG (Solo si activado en brief)
+
+| Ítem | IA ✅ | Manual ✅ | Prioridad |
+|---|---|---|---|
+| Listado de blog carga con posts publicados | [auto] | | 🔴 |
+| Filtro por categoría de blog funciona | [auto] | | 🔴 |
+| Detalle de post carga correctamente | [auto] | | 🔴 |
+| Schema.org Article presente en detalle de post | [auto] | | 🔴 |
+| Posts con status `draft` NO aparecen en listado público | [auto] | | 🔴 |
+| Blog posts aparecen en sitemap.xml | [auto] | | 🔴 |
+| Metadata OG correcta en posts (título, descripción, imagen) | [auto] | | 🟡 |
+| Breadcrumbs en blog funcionan | [auto] | | 🟡 |
+| ISR on-demand invalida blog al publicar/editar post | | ← probar manualmente | 🔴 |
+| RLS habilitado en blog_posts y blog_categories | [auto] | | 🔴 |
+
+---
+
+## 4. FUNCIONALIDAD — CHECKOUT (Solo Emprendimiento y Empresa)
 
 | Ítem | IA ✅ | Manual ✅ | Prioridad |
 |---|---|---|---|
@@ -99,7 +116,7 @@ La columna "Manual ✅" queda vacía para que el humano la complete.
 
 ---
 
-## 4. EMAILS (Solo si Resend está activado)
+## 5. EMAILS (Solo si Resend está activado)
 
 | Ítem | IA ✅ | Manual ✅ | Prioridad |
 |---|---|---|---|
@@ -110,7 +127,7 @@ La columna "Manual ✅" queda vacía para que el humano la complete.
 
 ---
 
-## 5. SEO Y PERFORMANCE
+## 6. SEO Y PERFORMANCE
 
 > ⚠️ **Lighthouse siempre sobre build de producción.**
 > `npm run build && npm start` — nunca sobre `npm run dev`.
@@ -132,7 +149,7 @@ La columna "Manual ✅" queda vacía para que el humano la complete.
 
 ---
 
-## 6. SEGURIDAD Y TÉCNICO
+## 7. SEGURIDAD Y TÉCNICO
 
 | Ítem | IA ✅ | Manual ✅ | Prioridad |
 |---|---|---|---|
@@ -146,7 +163,23 @@ La columna "Manual ✅" queda vacía para que el humano la complete.
 
 ---
 
-## 7. DEPLOY FINAL
+## 8. ACCESIBILIDAD (a11y)
+
+| Ítem | IA ✅ | Manual ✅ | Prioridad |
+|---|---|---|---|
+| Todas las imágenes tienen `alt` descriptivo (nunca vacío) | [auto] | | 🔴 |
+| Contraste de texto cumple WCAG AA (ratio ≥ 4.5:1) | [auto] | | 🔴 |
+| Navegación por teclado funciona (Tab, Enter, Escape) | | ← probar manualmente | 🔴 |
+| Focus visible en todos los elementos interactivos | [auto] | | 🔴 |
+| Formularios tienen `label` asociado a cada input | [auto] | | 🔴 |
+| `aria-label` en botones de icono (hamburger, cerrar, carrito) | [auto] | | 🔴 |
+| Skip-to-content link presente | [auto] | | 🟡 |
+| `lang="es"` en `<html>` | [auto] | | 🔴 |
+| Roles ARIA correctos en landmarks (header, main, nav, footer) | [auto] | | 🟡 |
+
+---
+
+## 9. DEPLOY FINAL
 
 | Ítem | IA ✅ | Manual ✅ | Prioridad |
 |---|---|---|---|

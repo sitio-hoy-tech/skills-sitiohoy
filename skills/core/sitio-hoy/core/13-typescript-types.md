@@ -282,6 +282,47 @@ export interface UserTenant {
   created_at: string
 }
 
+// ─── BLOG ───────────────────────────────────────────────────────────────────
+
+export interface BlogCategory {
+  id: string
+  tenant_id: string
+  name: string
+  slug: string
+  description: string | null
+  position: number
+  active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export type BlogPostStatus = 'draft' | 'published' | 'archived'
+
+export interface BlogPost {
+  id: string
+  tenant_id: string
+  blog_category_id: string | null
+  title: string
+  slug: string
+  excerpt: string | null
+  content: string | null
+  cover_image: string | null
+  cover_image_alt: string | null
+  author: string | null
+  status: BlogPostStatus
+  published_at: string | null
+  seo_title: string | null
+  seo_description: string | null
+  featured: boolean
+  position: number
+  created_at: string
+  updated_at: string
+}
+
+export interface BlogPostWithCategory extends BlogPost {
+  blog_categories: Pick<BlogCategory, 'name' | 'slug'> | null
+}
+
 // ─── CART (estado local — no persiste en BD) ─────────────────────────────────
 
 export interface CartItem {

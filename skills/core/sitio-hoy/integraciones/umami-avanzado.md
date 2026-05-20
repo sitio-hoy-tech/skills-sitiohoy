@@ -48,20 +48,58 @@ export const trackEvent = (name: string, data?: EventData) => {
 }
 
 export const Analytics = {
-  productViewed:    (slug: string, name: string) =>
-    trackEvent('product_viewed', { slug, name }),
+  // Catálogo y productos
+  productViewed:    (slug: string, name: string, price: number) =>
+    trackEvent('product_viewed', { slug, name, price }),
 
-  addedToCart:      (productId: string, name: string, price: number) =>
-    trackEvent('add_to_cart', { product_id: productId, name, price }),
+  categoryViewed:   (slug: string, name: string) =>
+    trackEvent('category_viewed', { slug, name }),
 
+  searchPerformed:  (query: string, resultCount: number) =>
+    trackEvent('search_performed', { query, results: resultCount }),
+
+  filterApplied:    (filterType: string, value: string) =>
+    trackEvent('filter_applied', { type: filterType, value }),
+
+  // Carrito
+  addedToCart:      (productId: string, name: string, price: number, quantity: number) =>
+    trackEvent('add_to_cart', { product_id: productId, name, price, quantity }),
+
+  removedFromCart:  (productId: string, name: string) =>
+    trackEvent('remove_from_cart', { product_id: productId, name }),
+
+  cartViewed:       (total: number, itemCount: number) =>
+    trackEvent('cart_viewed', { total, items: itemCount }),
+
+  // Checkout
   checkoutStarted:  (total: number, itemCount: number) =>
     trackEvent('checkout_started', { total, items: itemCount }),
+
+  shippingSelected: (method: string, cost: number) =>
+    trackEvent('shipping_selected', { method, cost }),
 
   purchase:         (orderId: string, total: number, method: string) =>
     trackEvent('purchase', { order_id: orderId, total, method }),
 
   couponApplied:    (code: string, discount: number) =>
     trackEvent('coupon_applied', { code, discount }),
+
+  // Interacción general
+  ctaClicked:       (location: string, label: string) =>
+    trackEvent('cta_clicked', { location, label }),
+
+  whatsappClicked:  (location: string, productSlug?: string) =>
+    trackEvent('whatsapp_clicked', { location, ...(productSlug ? { product: productSlug } : {}) }),
+
+  contactFormSubmitted: () =>
+    trackEvent('contact_form_submitted'),
+
+  // Navegación
+  pageScrolled:     (page: string, percentage: number) =>
+    trackEvent('page_scrolled', { page, percentage }),
+
+  socialClicked:    (network: string) =>
+    trackEvent('social_clicked', { network }),
 }
 ```
 
@@ -79,18 +117,35 @@ interface Window {
 
 ## Puntos de tracking en el sitio
 
+**Regla: trackear todo lo máximo posible.** Cada interacción del usuario debe quedar registrada para análisis.
+
 | Evento | Dónde agregar |
 |---|---|
-| `product_viewed` | `app/(public)/catalogo/[slug]/page.tsx` — useEffect |
+| `product_viewed` | `app/(public)/catalogo/[slug]/page.tsx` — useEffect al montar |
+| `category_viewed` | `app/(public)/catalogo/page.tsx` — al filtrar por categoría |
+| `search_performed` | Componente de búsqueda — al ejecutar búsqueda |
+| `filter_applied` | Componente de filtros — al cambiar filtro |
 | `add_to_cart` | `components/catalog/AddToCartButton.tsx` — onClick |
+| `remove_from_cart` | `components/checkout/CartItem.tsx` — al eliminar |
+| `cart_viewed` | Al abrir el drawer/sidebar del carrito |
 | `checkout_started` | Al abrir el checkout — primer paso |
+| `shipping_selected` | Al elegir zona/método de envío |
 | `purchase` | En el callback `onSuccess` del PaymentBrick |
 | `coupon_applied` | En el Server Action que valida el cupón |
+| `cta_clicked` | En botones principales (hero CTA, "Ver catálogo", etc.) |
+| `whatsapp_clicked` | En todos los botones de WhatsApp (flotante, producto, hero) |
+| `contact_form_submitted` | Al enviar formulario de contacto |
+| `social_clicked` | En links de redes sociales del footer |
+| `page_scrolled` | En páginas importantes (home) — al 25%, 50%, 75%, 100% |
 
 ## Verificación ✅
 
 - [ ] Script Umami cargando en el sitio (verificar en Network tab)
 - [ ] Evento `product_viewed` registrado al visitar un producto
+- [ ] Evento `category_viewed` registrado al filtrar
 - [ ] Evento `add_to_cart` registrado al agregar al carrito
+- [ ] Evento `checkout_started` registrado
 - [ ] Evento `purchase` registrado al completar una compra de prueba
+- [ ] Evento `whatsapp_clicked` registrado
+- [ ] Evento `contact_form_submitted` registrado
 - [ ] Dashboard de Umami muestra las métricas en tiempo real

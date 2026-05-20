@@ -24,7 +24,7 @@ tipo: core — cargar siempre
 ```bash
 npx create-next-app@latest ./ --typescript --app --tailwind --src-dir=false --import-alias="@/*"
 
-npm install @supabase/ssr @supabase/supabase-js lucide-react browser-image-compression
+npm install @supabase/ssr @supabase/supabase-js lucide-react
 ```
 
 ## Variables de entorno base (`.env.local`)

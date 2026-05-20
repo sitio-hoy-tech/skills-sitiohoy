@@ -91,3 +91,27 @@ DROP TRIGGER IF EXISTS isr_coupons ON public.coupons;
 CREATE TRIGGER isr_coupons
 AFTER INSERT OR UPDATE OR DELETE ON public.coupons
 FOR EACH ROW EXECUTE FUNCTION trigger_isr_coupons();
+
+CREATE OR REPLACE FUNCTION trigger_isr_blog_posts()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER AS $$
+BEGIN
+  PERFORM isr_notify(COALESCE(NEW.tenant_id, OLD.tenant_id), 'blog_posts', COALESCE(NEW.slug, OLD.slug));
+  RETURN COALESCE(NEW, OLD);
+END;
+$$;
+DROP TRIGGER IF EXISTS isr_blog_posts ON public.blog_posts;
+CREATE TRIGGER isr_blog_posts
+AFTER INSERT OR UPDATE OR DELETE ON public.blog_posts
+FOR EACH ROW EXECUTE FUNCTION trigger_isr_blog_posts();
+
+CREATE OR REPLACE FUNCTION trigger_isr_blog_categories()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER AS $$
+BEGIN
+  PERFORM isr_notify(COALESCE(NEW.tenant_id, OLD.tenant_id), 'blog_categories');
+  RETURN COALESCE(NEW, OLD);
+END;
+$$;
+DROP TRIGGER IF EXISTS isr_blog_categories ON public.blog_categories;
+CREATE TRIGGER isr_blog_categories
+AFTER INSERT OR UPDATE OR DELETE ON public.blog_categories
+FOR EACH ROW EXECUTE FUNCTION trigger_isr_blog_categories();
