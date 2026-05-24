@@ -34,17 +34,58 @@ export const TAGS = {
 Todos los tags incluyen `NEXT_PUBLIC_TENANT_ID` para evitar colisiones entre tenants
 si dos sitios comparten instancia de Vercel o runtime.
 
+## Helper `withCache` — saltear cache en desarrollo
+
+`unstable_cache` cachea incluso en `next dev`, lo que impide ver cambios del admin
+en tiempo real. El webhook de Supabase `pg_net` no puede llamar a `localhost`.
+
+```typescript
+// lib/cache/with-cache.ts
+import { unstable_cache } from 'next/cache'
+
+const isDev = process.env.NODE_ENV === 'development'
+
+/**
+ * En desarrollo: ejecuta la función directamente (sin cache).
+ * En producción: usa unstable_cache con los tags de ISR.
+ */
+export function withCache<T>(
+  fn: () => Promise<T>,
+  keyParts: string[],
+  options: { tags: string[] },
+): () => Promise<T> {
+  if (isDev) return fn
+  return unstable_cache(fn, keyParts, options)
+}
+
+/**
+ * Variante con argumentos (ej: getProductBySlug).
+ * En dev retorna la función directamente; en prod la envuelve en unstable_cache.
+ */
+export function withCacheArgs<A extends unknown[], T>(
+  fn: (...args: A) => Promise<T>,
+  keyParts: (...args: A) => string[],
+  options: (...args: A) => { tags: string[] },
+): (...args: A) => Promise<T> {
+  if (isDev) return fn
+  return (...args: A) =>
+    unstable_cache(() => fn(...args), keyParts(...args), options(...args))()
+}
+```
+
+Usar `withCache` y `withCacheArgs` en **todos** los archivos `lib/data/*.ts`.
+
 ## Fetches cacheados
 
 ```typescript
 // lib/data/products.ts
-import { unstable_cache } from 'next/cache'
+import { withCache, withCacheArgs } from '@/lib/cache/with-cache'
 import { TAGS } from '@/lib/cache-tags'
 import { createServiceClient } from '@/lib/supabase/server'
 
 const tenantId = process.env.NEXT_PUBLIC_TENANT_ID!
 
-export const getAllProducts = unstable_cache(
+export const getAllProducts = withCache(
   async () => {
     const supabase = createServiceClient()
     const { data, error } = await supabase
@@ -52,6 +93,7 @@ export const getAllProducts = unstable_cache(
       .select(`
         id, name, slug, price, compare_at_price, stock, stock_unlimited, featured,
         product_images!product_images_product_id_fkey(url, alt, position),
+        product_variants!product_variants_product_id_fkey(id),
         categories(name, slug)
       `)
       .eq('tenant_id', tenantId)
@@ -64,29 +106,30 @@ export const getAllProducts = unstable_cache(
   { tags: [TAGS.PRODUCTS] },
 )
 
-export const getProductBySlug = (slug: string) =>
-  unstable_cache(
-    async () => {
-      const supabase = createServiceClient()
-      const { data, error } = await supabase
-        .from('products')
-        .select(`
-          id, name, slug, price, compare_at_price, stock, stock_unlimited, description,
-          product_images!product_images_product_id_fkey(url, alt, position),
-          product_variants!product_variants_product_id_fkey(id, name, stock, price, price_modifier),
-          categories(name, slug)
-        `)
-        .eq('tenant_id', tenantId)
-        .eq('slug', slug)
-        .single()
-      if (error) console.error('[getProductBySlug]', error)
-      return data
-    },
-    [`product-detail-${slug}`],
-    { tags: [TAGS.PRODUCTS, TAGS.PRODUCT(slug)] },
-  )()
+export const getProductBySlug = withCacheArgs(
+  async (slug: string) => {
+    const supabase = createServiceClient()
+    const { data, error } = await supabase
+      .from('products')
+      .select(`
+        id, name, slug, price, compare_at_price, stock, stock_unlimited, description,
+        product_images!product_images_product_id_fkey(url, alt, position),
+        product_variants!product_variants_product_id_fkey(id, name, stock, price, price_modifier),
+        categories(name, slug)
+      `)
+      .eq('tenant_id', tenantId)
+      .eq('slug', slug)
+      .single()
+    if (error) console.error('[getProductBySlug]', error)
+    return data
+  },
+  (slug) => [`product-detail-${slug}`],
+  (slug) => ({ tags: [TAGS.PRODUCT(slug), TAGS.PRODUCTS] }),
+  // ↑ Incluir TAGS.PRODUCTS como segundo tag para que invalidaciones masivas
+  //   también limpien el cache del detalle
+)
 
-export const getCategories = unstable_cache(
+export const getCategories = withCache(
   async () => {
     const supabase = createServiceClient()
     const { data, error } = await supabase
@@ -100,6 +143,45 @@ export const getCategories = unstable_cache(
   },
   ['categories'],
   { tags: [TAGS.CATEGORIES] },
+)
+
+/**
+ * Categorías con imagen del último producto subido.
+ * Filtra categorías sin productos activos.
+ * Usa Unsplash como fallback si el producto no tiene imagen.
+ */
+export const getCategoriesWithImages = withCache(
+  async () => {
+    const supabase = createServiceClient()
+    const { data: categories } = await supabase
+      .from('categories')
+      .select(`
+        id, name, slug, position,
+        products!inner(
+          id,
+          product_images!product_images_product_id_fkey(url, alt)
+        )
+      `)
+      .eq('tenant_id', tenantId)
+      .eq('active', true)
+      .eq('products.active', true)
+      .order('position')
+
+    return (categories ?? []).map((cat: any) => {
+      const lastProduct = cat.products?.[cat.products.length - 1]
+      const img = lastProduct?.product_images?.[0]
+      return {
+        id: cat.id,
+        name: cat.name,
+        slug: cat.slug,
+        position: cat.position,
+        image: img?.url ?? `https://images.unsplash.com/photo-placeholder?w=400&q=80`,
+        imageAlt: img?.alt ?? cat.name,
+      }
+    })
+  },
+  ['categories-with-images'],
+  { tags: [TAGS.CATEGORIES, TAGS.PRODUCTS] },
 )
 ```
 
@@ -358,6 +440,107 @@ AFTER INSERT OR UPDATE OR DELETE ON public.blog_categories
 FOR EACH ROW EXECUTE FUNCTION trigger_isr_blog_categories();
 ```
 
+-- Trigger ISR para tenants — OBLIGATORIO desde la migración base
+-- Cualquier cambio de config del negocio (MP, Resend, WhatsApp, nombre)
+-- debe invalidar el cache del tenant automáticamente
+CREATE OR REPLACE FUNCTION trigger_isr_tenants()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER AS $$
+BEGIN
+  PERFORM isr_notify(COALESCE(NEW.id, OLD.id), 'tenants');
+  RETURN COALESCE(NEW, OLD);
+END;
+$$;
+DROP TRIGGER IF EXISTS isr_tenants ON public.tenants;
+CREATE TRIGGER isr_tenants
+AFTER INSERT OR UPDATE OR DELETE ON public.tenants
+FOR EACH ROW EXECUTE FUNCTION trigger_isr_tenants();
+```
+
 Importante: `supabase_functions.http_request` no acepta argumentos posicionales en
 esta versión de Supabase. Usar siempre `net.http_post` con parámetros nombrados
 (`url :=`, `body :=`, `headers :=`).
+
+## `getTenantConfigFresh()` — sin cache para webhooks
+
+Los webhooks y Server Actions críticos necesitan credenciales frescas, no cacheadas.
+Si el cache de `getTenantConfig()` está desactualizado (ej: credenciales recién cambiadas),
+el webhook puede obtener `mp_access_token = null` y fallar silenciosamente.
+
+```typescript
+// lib/supabase/tenant.ts — agregar junto a getTenantConfig
+export const getTenantConfigFresh = async () => {
+  const supabase = createServiceClient()
+  const { data, error } = await supabase
+    .from('tenants')
+    .select(`
+      id, name, slug, plan, status, url, revalidation_secret,
+      mp_access_token, mp_public_key,
+      resend_api_key, contact_email, envia_access_token,
+      correo_argentino_customer_id,
+      umami_url, umami_website_id, whatsapp,
+      origin_name, origin_phone, origin_address,
+      origin_city, origin_state, origin_postal_code
+    `)
+    .eq('id', tenantId)
+    .single()
+
+  if (error || !data) throw new Error('Tenant no encontrado')
+  return data
+}
+```
+
+Usar `getTenantConfigFresh()` en:
+- `app/api/webhooks/mercadopago/route.ts` — siempre
+- `app/api/checkout/payment/route.ts` — siempre
+- Cualquier webhook o Server Action donde la frescura importa más que la velocidad
+
+## Datos del carrito en `localStorage` — patrón de refresco
+
+El ISR solo garantiza frescura en Server Components. Los datos persistidos en
+`localStorage` (carrito, wishlist) quedan desactualizados cuando cambian precios
+o stock en el admin.
+
+### Server Action para refrescar precios
+
+```typescript
+// lib/actions/cart.ts
+'use server'
+import { createServiceClient } from '@/lib/supabase/server'
+
+const tenantId = process.env.NEXT_PUBLIC_TENANT_ID!
+
+export async function refreshCartPrices(
+  items: { productId: string; variantId?: string }[],
+) {
+  const supabase = createServiceClient()
+  const productIds = [...new Set(items.map((i) => i.productId))]
+
+  const { data: products } = await supabase
+    .from('products')
+    .select(`
+      id, price, compare_at_price, stock, stock_unlimited, active,
+      product_variants!product_variants_product_id_fkey(id, price, stock)
+    `)
+    .eq('tenant_id', tenantId)
+    .in('id', productIds)
+
+  return products ?? []
+}
+```
+
+### Llamar `refreshCartPrices` en cada punto de entrada
+
+```typescript
+// En CartDrawer: refrescar al abrir
+useEffect(() => {
+  if (isOpen) refreshCartPrices(items).then(updatePrices)
+}, [isOpen])
+
+// En CheckoutForm: refrescar al montar
+useEffect(() => {
+  refreshCartPrices(items).then(updatePrices)
+}, [])
+```
+
+**Regla universal**: cualquier componente que muestre o calcule precios del carrito
+debe refrescar desde la BD al montar o al hacerse visible.

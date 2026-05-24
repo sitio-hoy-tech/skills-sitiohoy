@@ -80,6 +80,12 @@ tipo: core — referencia para ubicar y crear archivos
 │   │   └── emails/
 │   │       ├── order-confirmation.tsx
 │   │       └── order-status.tsx
+│   ├── email/
+│   │   └── templates.ts              # Templates HTML inline para todos los emails
+│   ├── cache/
+│   │   └── with-cache.ts             # Helper para saltear cache en dev
+│   ├── actions/
+│   │   └── cart.ts                    # refreshCartPrices Server Action
 │   ├── analytics/
 │   │   └── umami.ts                  # Solo Emprendimiento y Empresa
 │   ├── cache-tags.ts

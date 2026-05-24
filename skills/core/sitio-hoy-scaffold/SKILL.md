@@ -25,6 +25,8 @@ Crear una base consistente antes de escribir UI:
 - `app/api/revalidate/route.ts` con secret por tenant
 - `lib/config/env.ts`
 - `lib/resend/client.ts` (todos los planes con Resend activo)
+- `lib/email/templates.ts` (todos los planes con Resend activo — templates HTML inline)
+- `lib/cache/with-cache.ts` (helper para saltear cache en desarrollo)
 - `lib/data/shipping.ts` (Plan Emprendimiento y Empresa)
 - `lib/envia/provinces.ts` (Plan Empresa con Envia activo)
 - `lib/validations/contact.ts` (si página de contacto activa)
@@ -114,7 +116,8 @@ El modelo AI genera los tokens directamente a partir de DESIGN.md:
 - No deployar sin `SITE_URL=http://localhost:3000 npm run sitiohoy:e2e` OK y screenshots 375/768/1280/1920 revisados.
 - Los cache tags deben incluir `NEXT_PUBLIC_TENANT_ID`; no usar tags globales como `products` o `homepage`.
 - El endpoint `/api/revalidate` valida `Authorization: Bearer <secret>` contra `tenants.revalidation_secret`, con `REVALIDATION_SECRET` solo como fallback local.
-- No poner credenciales de MercadoPago, Resend o Envia.com en `.env`.
+- No poner credenciales de MercadoPago, Resend o Envia.com en `.env`. Tampoco `RESEND_API_KEY`, `RESEND_FROM_EMAIL` ni `RESEND_FROM_NAME` — los tres viven en `tenants`.
+- No poner `NEXT_PUBLIC_WA_NUMBER` en `.env` — el número de WhatsApp vive en `tenants.whatsapp`.
 - No commitear `.env.local` ni `proyecto-tracking.json`.
 - Si el proyecto no esta vacio, inspeccionar primero y copiar solo archivos faltantes.
 - Copiar también `.sitiohoy/checklists/module-checks.json`; es el checklist machine-readable que QA/auditoría usa para evitar cierres incompletos.
@@ -191,6 +194,9 @@ Si no, ejecutarlas en el orden del workflow para evitar conflictos de lockfile.
 - `lib/cache-tags.ts`
 - `lib/config/env.ts`
 - `lib/resend/client.ts` (si Resend activo)
+- `lib/email/templates.ts` (si Resend activo)
+- `lib/cache/with-cache.ts`
+- `lib/actions/cart.ts` (si plan Emprendimiento o Empresa — incluye `refreshCartPrices`)
 - `lib/data/shipping.ts` (si plan Emprendimiento o Empresa)
 - `lib/envia/provinces.ts` (si plan Empresa con Envia)
 - `lib/validations/contact.ts` (si página de contacto)

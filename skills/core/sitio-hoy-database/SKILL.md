@@ -87,10 +87,16 @@ fallback y upgrades.
 - `orders.status` con constraint completo desde el inicio:
   `pending`, `pending_payment`, `paid`, `payment_failed`, `processing`, `confirmed`, `shipped`, `delivered`, `cancelled`, `refunded`.
 - `tenants.contact_email` para formularios de contacto; no usar `RESEND_TO_EMAIL`.
+- `tenants.whatsapp` (tipo `text`) para el número de WhatsApp del negocio (formato `5491XXXXXXXX`). No usar `NEXT_PUBLIC_WA_NUMBER` en `.env`.
 - `tenants.url` y `tenants.revalidation_secret` para ISR on-demand multitenant.
 - Credenciales de acceso Correo Argentino en `platform_config`; solo `tenants.correo_argentino_customer_id` es por negocio.
 - Si el proyecto usa Correo Argentino/Envia, el seed del tenant debe incluir `origin_postal_code`; sin ese campo no se puede cotizar envío.
 - Crear los triggers ISR como migración dedicada `0XX_isr_webhooks.sql` cuando se agreguen a un proyecto existente.
+- La migración de triggers ISR **siempre debe incluir `tenants`**. Sin el trigger ISR en `tenants`, los cambios de configuración del negocio (MP, Resend, WhatsApp, nombre) no invalidan el cache.
+- El seed demo **no debe incluir `compare_at_price`** salvo en productos explícitamente marcados como oferta. Si se inserta en todos los productos, aparecen badges de descuento falsos.
+- El seed demo debe insertar productos con `stock_unlimited = false` y distintos valores de `stock` (incluyendo `0`) para poder hacer QA del flujo de sin stock desde el primer día.
+- Las queries de catálogo y home deben incluir `product_variants(id)` en el SELECT para que `ProductCard` pueda determinar si un producto tiene variantes.
+- Generar `getCategoriesWithImages()` desde el inicio en `lib/data/categories.ts`: filtra categorías sin productos activos y obtiene la imagen del último producto subido por categoría.
 
 ## Reglas de seguridad
 

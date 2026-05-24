@@ -26,18 +26,43 @@ Ejemplos:
 
 ---
 
+## Número de WhatsApp — desde `tenants`, no `.env`
+
+El número de WhatsApp se lee de `tenants.whatsapp` (columna `text`), nunca de
+`NEXT_PUBLIC_WA_NUMBER` ni hardcodeado en componentes.
+
+En `app/layout.tsx` o `app/page.tsx` (Server Components), leer con `getTenantConfig()`
+y pasar como prop a todos los componentes que lo necesiten:
+
+```tsx
+// app/layout.tsx
+const tenant = await getTenantConfig()
+// ...
+<WhatsAppButton waNumber={tenant.whatsapp ?? ''} />
+<Footer waNumber={tenant.whatsapp ?? ''} />
+```
+
+```tsx
+// app/page.tsx
+const tenant = await getTenantConfig()
+// ...
+<Hero waNumber={tenant.whatsapp ?? ''} businessName={tenant.name} />
+<FaqInline waNumber={tenant.whatsapp ?? ''} />
+```
+
+**Nunca hardcodear el número en componentes.** Siempre recibirlo como prop.
+
 ## Helper
 
 ```typescript
 // lib/whatsapp.ts
 
-const WA_NUMBER = process.env.NEXT_PUBLIC_WA_NUMBER!  // ej: 5491112345678
-
 /**
- * Genera URL de WhatsApp con mensaje pre-armado
+ * Genera URL de WhatsApp con mensaje pre-armado.
+ * El número viene como parámetro, leído de tenants.whatsapp.
  */
-export const waUrl = (message: string): string =>
-  `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`
+export const waUrl = (waNumber: string, message: string): string =>
+  `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`
 
 /**
  * Mensajes pre-armados por contexto
@@ -65,11 +90,6 @@ export const WA_MESSAGES = {
 }
 ```
 
-Agregar en `.env.local`:
-```env
-NEXT_PUBLIC_WA_NUMBER=5491112345678   # Número del cliente sin + ni espacios
-```
-
 ---
 
 ## Botón flotante (todos los planes)
@@ -79,9 +99,16 @@ NEXT_PUBLIC_WA_NUMBER=5491112345678   # Número del cliente sin + ni espacios
 import Link from 'next/link'
 import { waUrl, WA_MESSAGES } from '@/lib/whatsapp'
 
-export const WhatsAppButton = () => (
+interface Props {
+  waNumber: string  // Viene de tenants.whatsapp via props
+}
+
+export const WhatsAppButton = ({ waNumber }: Props) => {
+  if (!waNumber) return null  // Si no hay número configurado, no mostrar
+
+  return (
   <Link
-    href={waUrl(WA_MESSAGES.support())}
+    href={waUrl(waNumber, WA_MESSAGES.support())}
     target="_blank"
     rel="noopener noreferrer"
     aria-label="Contactar por WhatsApp"
@@ -92,7 +119,8 @@ export const WhatsAppButton = () => (
       <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.862L.057 23.428a.75.75 0 0 0 .916.916l5.566-1.476A11.943 11.943 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.717 9.717 0 0 1-4.964-1.358l-.356-.213-3.696.979.979-3.696-.213-.356A9.717 9.717 0 0 1 2.25 12C2.25 6.615 6.615 2.25 12 2.25S21.75 6.615 21.75 12 17.385 21.75 12 21.75z"/>
     </svg>
   </Link>
-)
+  )
+}
 ```
 
 ```css
@@ -140,13 +168,14 @@ import Link from 'next/link'
 import { waUrl, WA_MESSAGES } from '@/lib/whatsapp'
 
 interface Props {
+  waNumber: string   // Viene de tenants.whatsapp via props
   productName: string
   price: number
 }
 
-export const WhatsAppProductCTA = ({ productName, price }: Props) => (
+export const WhatsAppProductCTA = ({ waNumber, productName, price }: Props) => (
   <Link
-    href={waUrl(WA_MESSAGES.product(productName, price))}
+    href={waUrl(waNumber, WA_MESSAGES.product(productName, price))}
     target="_blank"
     rel="noopener noreferrer"
     className="btn-whatsapp-product"
@@ -167,9 +196,13 @@ export const WhatsAppProductCTA = ({ productName, price }: Props) => (
 ```tsx
 // En app/(public)/page.tsx — hero section
 import { waUrl, WA_MESSAGES } from '@/lib/whatsapp'
+import { getTenantConfig } from '@/lib/supabase/tenant'
 
-// Server Component — el link se genera en server
-const heroWaUrl = waUrl(WA_MESSAGES.hero('Nombre del Negocio'))
+// Server Component — leer número del tenant
+const tenant = await getTenantConfig()
+const heroWaUrl = tenant.whatsapp
+  ? waUrl(tenant.whatsapp, WA_MESSAGES.hero(tenant.name))
+  : '#'
 
 // En JSX:
 <a href={heroWaUrl} target="_blank" rel="noopener noreferrer" className="btn-primary">
@@ -181,8 +214,11 @@ const heroWaUrl = waUrl(WA_MESSAGES.hero('Nombre del Negocio'))
 
 ## Verificación ✅
 
-- [ ] `NEXT_PUBLIC_WA_NUMBER` configurado con el número correcto (formato `5491...`)
+- [ ] `tenants.whatsapp` configurado con el número correcto (formato `5491...`)
+- [ ] Número de WhatsApp NO está hardcodeado en ningún componente — siempre llega como prop
+- [ ] Número de WhatsApp NO está en `.env` — siempre se lee de `tenants`
 - [ ] Botón flotante visible en mobile sin tapar navegación inferior
+- [ ] Si `tenants.whatsapp` está vacío, el botón flotante no se renderiza
 - [ ] Link de producto abre WhatsApp con mensaje pre-armado correcto
 - [ ] `encodeURIComponent` aplicado — el mensaje no se rompe con caracteres especiales
 - [ ] Botón tiene `aria-label` para accesibilidad

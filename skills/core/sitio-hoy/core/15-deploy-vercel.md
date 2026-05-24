@@ -25,6 +25,28 @@ Todo lo que se suba a Supabase debe aplicarse con Supabase CLI (`supabase link`,
 
 ---
 
+## Paso 0.5 — Crear repositorio en GitHub (OBLIGATORIO)
+
+Siempre crear repositorios en la organización `Sitio-Hoy-Tech`, nunca en cuenta personal:
+
+```bash
+gh repo create Sitio-Hoy-Tech/nombre-repo --private
+```
+
+> **Cuentas Vercel Hobby / sin Pro de equipo**: los repos privados en org quedan con
+> build `UNKNOWN` que nunca completa. Hacer público antes de deployar:
+> ```bash
+> gh repo edit Sitio-Hoy-Tech/nombre-repo --visibility public --accept-visibility-change-consequences
+> ```
+> Si el cliente requiere privacidad, evaluar Vercel Pro antes del deploy.
+
+### README obligatorio antes del push
+
+El README no es opcional. **Antes de `git push` y `vercel --prod`**, generar `README.md`
+con: stack, arquitectura de carpetas, variables de entorno, comandos de desarrollo,
+integraciones activas y checklist pre-go-live. Ver el template en `sitio-hoy-scaffold/SKILL.md`.
+Un repo sin README adecuado no se considera listo para entregar.
+
 ## Paso 1 — Crear proyecto en Vercel
 
 ```bash
@@ -157,6 +179,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: '*.supabase.co',   // imágenes de Supabase Storage
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',  // Seeds usan Unsplash como placeholder
+      },
     ],
   },
   // Seguridad: headers HTTP
@@ -212,7 +238,9 @@ Antes de deployar, limpiar el proyecto sin romper comportamiento:
 
 **Infraestructura**
 - [ ] `.sitiohoy/launch/launch-plan.md` generado y revisado
-- [ ] Repo GitHub creado en la organización correcta
+- [ ] Repo GitHub creado en `Sitio-Hoy-Tech` (nunca cuenta personal)
+- [ ] `README.md` generado con stack, arquitectura, env vars y checklist
+- [ ] `tenants.url` actualizado con la URL de producción de Vercel
 - [ ] Migraciones Supabase aplicadas con Supabase CLI
 - [ ] Fila `tenants` creada/actualizada
 - [ ] Usuario admin `admin{slug-del-negocio}@sitiohoy.com.ar` creado con contraseña segura y asociado en `user_tenants`

@@ -89,8 +89,8 @@ No avanzar al siguiente módulo sin:
 
 **Secciones comunes:**
 1. Hero según brief y `core/04-design-system.md`.
-2. Categorías con links al catálogo filtrado.
-3. Productos destacados (`featured = true`, máximo 8 productos — `LIMIT 8` hardcodeado).
+2. Categorías con `getCategoriesWithImages()` — links al catálogo filtrado, imagen del último producto de cada categoría, sin categorías vacías.
+3. Productos destacados (`featured = true`, máximo 8 productos — `LIMIT 8` hardcodeado). Incluir `product_variants(id)` en la query.
 4. Propuesta de valor con 3-4 beneficios.
 5. CTA final.
 
@@ -119,9 +119,20 @@ No avanzar al siguiente módulo sin:
 3. `generateStaticParams()` solo si ≤50 productos. Para más, ISR on-demand (on-first-visit).
 4. `generateMetadata()` por producto.
 5. Schema.org `Product`, `Offer` y `BreadcrumbList`.
-6. Queries cacheadas con `unstable_cache` — ISR on-demand, nunca `revalidate = N`.
+6. Queries cacheadas con `withCache`/`withCacheArgs` — ISR on-demand, nunca `revalidate = N`. En dev se saltea el cache automáticamente.
 7. `loading.tsx`, `error.tsx` y `not-found.tsx` en segmentos de catálogo.
 8. Submenús de categorías en header si hay categorías.
+9. Todas las queries de listado (home, catálogo) deben incluir `product_variants(id)` en el SELECT.
+10. `CategoriesGrid` usa `getCategoriesWithImages()` — nunca un mapa de imágenes hardcodeado por slug.
+
+**Reglas de `ProductCard`:**
+- Si el producto tiene variantes (`product_variants.length > 0`): mostrar "Ver opciones" con Link al detalle en vez de `AddToCartButton`. El stock de variantes solo se gestiona en la página de detalle.
+- Si el producto NO tiene variantes: mostrar `AddToCartButton` directo.
+- Badge "Sin stock" solo si `!stock_unlimited && stock === 0`.
+
+**Reglas de detalle de producto:**
+- El selector de cantidad debe descontar lo que ya está en el carrito: `maxAddable = stock - cartQuantity`. Leer el carrito con `useCartStore` y mostrar "Ya tenés X en el carrito" cuando corresponda.
+- `compare_at_price` (precio tachado/oferta) debe evaluarse **siempre**, incluso cuando hay variante seleccionada. No usar `!selectedVariant &&` como condición. El descuento se calcula contra `effectivePrice` (precio de la variante o del producto).
 
 **Verificación compartida ✅:**
 - [ ] Filtros por categoría visibles y funcionales
@@ -129,6 +140,8 @@ No avanzar al siguiente módulo sin:
 - [ ] Submenú de categorías en header
 - [ ] Galería navegable
 - [ ] Variantes visibles con precio correcto
+- [ ] Productos con variantes muestran "Ver opciones" en el grid (no AddToCartButton)
+- [ ] Categorías sin productos activos no aparecen en el grid
 - [ ] URLs canónicas correctas
 - [ ] `npm run build` sin errores
 - [ ] `npm run sitiohoy:validate` sin errores

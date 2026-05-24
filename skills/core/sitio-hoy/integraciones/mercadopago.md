@@ -20,6 +20,7 @@ Credenciales: se leen desde `tenants.mp_access_token` y `tenants.mp_public_key`.
 | `property 'fontSizeBase' is not valid` | `fontSizeBase` no existe en `customVariables` | Removerla del objeto de customización. |
 | Brick duplicado en dev (React Strict Mode) | `useEffect` corre dos veces | Guardar instancia en `useRef`; al inicio `if (brickRef.current) return`; en cleanup: `brickRef.current?.unmount?.(); brickRef.current = null`. |
 | `auto_return invalid` | `auto_return: 'approved'` con `back_urls` en `http://` | Aplicar `auto_return` solo cuando `BASE_URL.startsWith('https://')`. |
+| `back_url.success must be defined` (400) | MP rechaza `back_urls`, `auto_return` y `notification_url` con `http://localhost` | Omitir los tres campos cuando `BASE_URL.startsWith('http://localhost')`. En producción se envían normalmente. |
 | Brick muestra "no configurado" | `process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY` vacío en Client Component | Leer `mp_public_key` con `getTenantConfig()` en Server Component y pasarla como prop. |
 
 ---
@@ -71,20 +72,24 @@ export const createMPPreference = async (orderId: string) => {
     })
   }
 
+  // MP rechaza back_urls, auto_return y notification_url con http://localhost
+  const isLocalhost = BASE_URL.startsWith('http://localhost')
+  const isHttps = BASE_URL.startsWith('https://')
+
   const preference = new Preference(mpClient)
   const result = await preference.create({
     body: {
       items,
       payer: { email: order.payer_email ?? '' },
-      notification_url: BASE_URL.startsWith('https://') ? `${BASE_URL}/api/webhooks/mercadopago` : undefined,
-      back_urls: BASE_URL
+      notification_url: isHttps ? `${BASE_URL}/api/webhooks/mercadopago` : undefined,
+      back_urls: !isLocalhost && BASE_URL
         ? {
             success: `${BASE_URL}/checkout/success`,
             failure: `${BASE_URL}/checkout/error`,
             pending: `${BASE_URL}/checkout/pending`,
           }
         : undefined,
-      ...(BASE_URL.startsWith('https://') ? { auto_return: 'approved' } : {}),
+      ...(isHttps ? { auto_return: 'approved' } : {}),
       external_reference: order.id,
       statement_descriptor: process.env.NEXT_PUBLIC_SITE_NAME,
     },
@@ -226,7 +231,7 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
 import { MercadoPagoConfig, Payment } from 'mercadopago'
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
-import { getTenantConfig } from '@/lib/supabase/tenant'
+import { getTenantConfigFresh } from '@/lib/supabase/tenant'
 import { revalidateTag } from 'next/cache'
 import { TAGS } from '@/lib/cache-tags'
 
@@ -264,10 +269,17 @@ export const POST = async (req: NextRequest): Promise<NextResponse> => {
   }
 
   const body = JSON.parse(rawBody)
-  if (body.type !== 'payment') return NextResponse.json({ received: true })
+
+  // Soporte dual: formato legacy (type: 'payment') y v2 (action: 'payment.created')
+  const isPaymentEvent =
+    body.type === 'payment' || body.action?.startsWith('payment')
+  if (!isPaymentEvent) return NextResponse.json({ received: true })
 
   const tenantId = process.env.NEXT_PUBLIC_TENANT_ID!
-  const config = await getTenantConfig(tenantId)
+  // IMPORTANTE: usar getTenantConfigFresh (sin cache) — el webhook necesita
+  // credenciales frescas. Si el cache está desactualizado, mp_access_token
+  // puede ser null y el webhook falla silenciosamente.
+  const config = await getTenantConfigFresh()
   const mpClient = new MercadoPagoConfig({ accessToken: config.mp_access_token! })
 
   const payment = new Payment(mpClient)
@@ -329,10 +341,13 @@ El script envía payloads con `_test: true` para que el handler pueda diferencia
 ## Verificación ✅
 
 - [ ] Credenciales TEST configuradas en `tenants` para desarrollo
-- [ ] Payment Brick renderiza en checkout
+- [ ] Payment Brick renderiza en checkout (NO Wallet Brick — el Wallet solo redirige fuera del sitio)
 - [ ] Pago con tarjeta de prueba es aprobado
+- [ ] Webhook usa `getTenantConfigFresh()` (sin cache), nunca `getTenantConfig()`
+- [ ] Webhook soporta formato legacy (`type: 'payment'`) y v2 (`action: 'payment.created'`)
 - [ ] Webhook actualiza `orders.status` y `orders.mp_payment_id` correctamente
 - [ ] Webhook guarda payload en `payment_events`
 - [ ] Webhook actualiza filtrando por `id` y `tenant_id`
+- [ ] En localhost: `back_urls`, `auto_return` y `notification_url` se omiten sin error
 - [ ] Credenciales cambiadas a PRODUCCIÓN antes del deploy final
 - [ ] Webhook apunta a URL de producción

@@ -25,6 +25,7 @@
 - `tenants.umami_url` es URL del script.
 - `tenants.umami_website_id` es el website id.
 - `tenants.revalidation_secret` es el secret de `/api/revalidate`, no una env var global.
+- `tenants.whatsapp` es el número de WhatsApp del negocio (formato `5491XXXXXXXX`), no una env var.
 - `platform_config.correo_argentino_user/password/token` son credenciales de plataforma, no por cliente.
 - `tenants.correo_argentino_customer_id` es por cliente.
 - `products.weight_grams`, no `weight` ni `peso`.

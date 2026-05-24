@@ -126,28 +126,36 @@ Pasos:
    - pago MercadoPago — el componente `PaymentBrick` debe llamar `initMercadoPago` en `useEffect` y renderizar `<Payment>` directamente sin guard de estado `ready`; agregar el guard causa que el brick quede en skeleton infinito;
    - confirmación.
 4. Recalcular subtotal, envío, descuentos y total en server.
-5. Crear pedido e items con `tenant_id`.
-6. Crear preferencia MP con idempotency key estable.
-7. Webhook MP:
+5. Llamar `refreshCartPrices` en `useEffect` al montar `CheckoutForm` para verificar precios vigentes.
+6. Crear pedido e items con `tenant_id`.
+7. Crear preferencia MP con idempotency key estable.
+   - En localhost: omitir `back_urls`, `auto_return` y `notification_url`.
+8. Usar **Payment Brick** (formulario embebido), NO Wallet Brick.
+9. Webhook MP:
    - **verificar firma OBLIGATORIO** — `MP_WEBHOOK_SECRET` debe existir. Sin él, el webhook rechaza todos los requests;
+   - usar `getTenantConfigFresh()` (sin cache), nunca `getTenantConfig()`;
+   - soportar formato legacy (`type: 'payment'`) y v2 (`action: 'payment.created'`);
    - registrar `payment_events`;
    - actualizar `orders` filtrando por `id` y `tenant_id`.
-8. Webhook Envia.com si aplica:
+10. Webhook Envia.com si aplica:
    - registrar evento;
    - actualizar tracking sin exponer credenciales.
-9. Página `/seguimiento` con Server Action/RPC por `tracking_token`.
-10. Emails Resend al aprobar pago y al cambiar estado.
+11. Página `/seguimiento` con Server Action/RPC por `tracking_token`.
+12. Emails Resend con template HTML inline de `lib/email/templates.ts` al aprobar pago y al cambiar estado.
 
 Verificación ✅:
 - [ ] Carrito persiste al recargar
+- [ ] Precios del carrito se refrescan al abrir el drawer y al montar el checkout
 - [ ] Campos de dirección obligatorios cuando deliveryType === 'delivery'
 - [ ] FormData del paso 1 guardada en estado y pasada a confirmOrder en paso 2
 - [ ] Envia.com cotiza o fallback funciona
 - [ ] Envío se suma correctamente al total
 - [ ] Totales se recalculan server-side
-- [ ] Payment Brick acepta tarjeta de prueba
+- [ ] Payment Brick (NO Wallet Brick) acepta tarjeta de prueba
+- [ ] En localhost: preferencia se crea sin error (back_urls omitidos)
+- [ ] Webhook usa `getTenantConfigFresh()` y soporta formato dual
 - [ ] Webhook registra `payment_events`
-- [ ] Email de confirmación llega si aplica
+- [ ] Email de confirmación llega si aplica (con template HTML inline)
 - [ ] Cupón aplica correctamente
 - [ ] `npm run build` sin errores
 - [ ] `npm run sitiohoy:validate` sin errores

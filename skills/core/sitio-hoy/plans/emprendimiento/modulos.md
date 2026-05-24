@@ -90,8 +90,11 @@ Verificación ✅:
 ## Módulo 3 — Catálogo y Detalle de Producto
 
 Igual que Plan Esencial Módulo 3, más:
-- botón "Agregar al carrito";
-- selector de variantes que actualiza precio/stock;
+- botón "Agregar al carrito" (solo si el producto NO tiene variantes);
+- productos CON variantes: mostrar "Ver opciones" (Link al detalle) en vez de `AddToCartButton`;
+- selector de variantes en el detalle que actualiza precio/stock;
+- selector de cantidad que descuenta lo que ya está en el carrito (`maxAddable = stock - cartQuantity`);
+- `compare_at_price` se evalúa siempre, incluso con variante seleccionada;
 - indicador "Últimas X unidades" si stock < 5;
 - validación de stock server-side antes de checkout.
 
@@ -99,8 +102,11 @@ Verificación ✅:
 - [ ] Filtros por categoría visibles y funcionales
 - [ ] Paginación server-side implementada
 - [ ] Submenú de categorías en header
+- [ ] Productos con variantes muestran "Ver opciones" en el grid
 - [ ] Agregar, editar cantidad y eliminar funciona
+- [ ] Cantidad máxima descuenta unidades ya en el carrito
 - [ ] Variantes actualizan precio/stock sin recarga
+- [ ] Descuento se muestra correctamente incluso con variante seleccionada
 - [ ] Stock crítico visible
 - [ ] Schema.org producto válido
 - [ ] `npm run build` sin errores
@@ -123,23 +129,31 @@ Pasos:
    - pago con MercadoPago Bricks;
    - confirmación.
 4. Recalcular subtotal, envío, descuentos y total en server.
-5. Crear pedido e items con `tenant_id`.
-6. Crear preferencia MercadoPago con idempotency key estable por pedido/intento.
-7. Webhook `/api/webhooks/mercadopago`:
+5. Llamar `refreshCartPrices` en `useEffect` al montar `CheckoutForm` para verificar precios vigentes contra la BD antes de que el usuario pueda pagar.
+6. Crear pedido e items con `tenant_id`.
+7. Crear preferencia MercadoPago con idempotency key estable por pedido/intento.
+   - En localhost: omitir `back_urls`, `auto_return` y `notification_url` (MP los rechaza).
+8. Usar **Payment Brick** (formulario embebido), NO Wallet Brick (redirect externo).
+9. Webhook `/api/webhooks/mercadopago`:
    - **verificar firma OBLIGATORIO** — `MP_WEBHOOK_SECRET` debe existir. Sin él, el webhook rechaza todos los requests;
+   - usar `getTenantConfigFresh()` (sin cache) — nunca `getTenantConfig()`;
+   - soportar formato legacy (`type: 'payment'`) y v2 (`action: 'payment.created'`);
    - guardar payload en `payment_events`;
    - actualizar `orders` filtrando por `id` y `tenant_id`.
-8. Página `/seguimiento` con Server Action/RPC por `tracking_token`, no RLS anon basada en JWT.
-9. Si Resend está activo: email de confirmación al pago aprobado.
+10. Página `/seguimiento` con Server Action/RPC por `tracking_token`, no RLS anon basada en JWT.
+11. Si Resend está activo: email de confirmación con template HTML inline de `lib/email/templates.ts`.
 
 Verificación ✅:
 - [ ] Carrito persiste al recargar
+- [ ] Precios del carrito se refrescan al abrir el drawer y al montar el checkout
 - [ ] Zonas de envío muestran precios correctos
 - [ ] Totales se recalculan server-side
-- [ ] Payment Brick renderiza
+- [ ] Payment Brick (NO Wallet Brick) renderiza
+- [ ] En localhost: preferencia se crea sin error (back_urls omitidos)
 - [ ] Pago con tarjeta de prueba documentado
+- [ ] Webhook usa `getTenantConfigFresh()` y soporta formato dual (legacy + v2)
 - [ ] Webhook actualiza estado y registra `payment_events`
-- [ ] Email llega si Resend está activo
+- [ ] Email llega si Resend está activo (con template HTML inline)
 - [ ] Cupón aplica con reglas server-side
 - [ ] `npm run build` sin errores
 - [ ] `npm run sitiohoy:validate` sin errores

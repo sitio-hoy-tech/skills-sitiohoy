@@ -138,6 +138,10 @@ Excepción: el deploy final de Vercel requiere que el repo de GitHub exista prim
 - La fila `tenants` y la fila `user_tenants` deben existir antes de entregar el proyecto.
 - Los productos demo deben poder borrarse o reemplazarse sin romper diseño.
 - Si faltan CLIs (`gh`, `vercel`, `supabase`), instalar/configurar antes de ejecutar. Para Supabase no usar Dashboard como camino normal.
+- Siempre crear repositorios en la organización `Sitio-Hoy-Tech` usando `gh repo create Sitio-Hoy-Tech/nombre-repo --private`. Nunca usar `gh repo create nombre-repo` sin prefijo de organización.
+- En proyectos con cuenta Vercel Hobby o team sin plan Pro, crear el repositorio directamente como público (`--public` o `gh repo edit --visibility public`).
+- Generar `README.md` como paso obligatorio antes del `git push` y `vercel --prod`. Un repo sin README adecuado no se considera listo para entregar.
+- Al hacer deploy a Vercel, actualizar `tenants.url` con la URL de producción: `UPDATE tenants SET url = 'https://...' WHERE id = '...'`. Sin esto, el ISR on-demand no funciona porque los triggers SQL no tienen URL a la cual llamar.
 
 ## Referencias
 

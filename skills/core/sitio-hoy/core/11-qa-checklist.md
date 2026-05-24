@@ -102,12 +102,16 @@ La columna "Manual ✅" queda vacía para que el humano la complete.
 | Ítem | IA ✅ | Manual ✅ | Prioridad |
 |---|---|---|---|
 | Carrito persiste al recargar la página | [auto] | | 🔴 |
+| Precios del carrito se refrescan al abrir drawer y al montar checkout | [auto] | | 🔴 |
+| Productos con variantes muestran "Ver opciones" en el grid | [auto] | | 🔴 |
+| Selector de cantidad descuenta unidades ya en el carrito | [auto] | | 🔴 |
+| Descuento se muestra correctamente con variante seleccionada | [auto] | | 🔴 |
 | Agregar producto al carrito funciona | [auto] | | 🔴 |
 | Eliminar producto del carrito funciona | [auto] | | 🔴 |
 | Paso 1 checkout — datos del comprador válida | [auto] | | 🔴 |
 | Paso 2 checkout — selección de envío funciona | [auto] | | 🔴 |
 | Tenant tiene `origin_postal_code` cargado para cotizar envío | [auto] | revisar Supabase | 🔴 |
-| Paso 3 checkout — Payment Brick se renderiza | [auto] | | 🔴 |
+| Paso 3 checkout — Payment Brick (NO Wallet) se renderiza | [auto] | | 🔴 |
 | Pago con tarjeta de prueba es aprobado | | ← probar manualmente | 🔴 |
 | Redirección a /checkout/success funciona | [auto] | | 🔴 |
 | Redirección a /checkout/error funciona | [auto] | | 🔴 |
@@ -121,6 +125,7 @@ La columna "Manual ✅" queda vacía para que el humano la complete.
 | Ítem | IA ✅ | Manual ✅ | Prioridad |
 |---|---|---|---|
 | Email de confirmación llega al comprador | [auto] | ← verificar inbox | 🔴 |
+| Email usa `html:` con template inline (no solo `text:`) | [auto] | | 🔴 |
 | Email NO cae en spam | | ← verificar inbox | 🔴 |
 | El email tiene el nombre y número de pedido correcto | | ← verificar contenido | 🔴 |
 | Link "seguir mi pedido" en el email funciona | | ← hacer click en el email | 🟡 |
@@ -184,6 +189,9 @@ La columna "Manual ✅" queda vacía para que el humano la complete.
 | Ítem | IA ✅ | Manual ✅ | Prioridad |
 |---|---|---|---|
 | `npm run build` sin errores | [auto] | | 🔴 |
+| Repo creado en `Sitio-Hoy-Tech` (no cuenta personal) | | ← verificar en GitHub | 🔴 |
+| `README.md` generado con stack y checklist | [auto] | | 🔴 |
+| `tenants.url` actualizado con URL de producción | | ← verificar en Supabase | 🔴 |
 | Deploy en Vercel exitoso | | ← verificar logs | 🔴 |
 | Dominio con SSL configurado | | ← verificar candado en browser | 🔴 |
 | Credenciales MP en PRODUCCIÓN (no TEST) | | ← verificar en MP dashboard | 🔴 |
