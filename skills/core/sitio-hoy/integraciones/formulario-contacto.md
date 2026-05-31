@@ -1,14 +1,14 @@
 ---
 skill: formulario-contacto
-descripcion: Formulario de contacto con Server Action, validación Zod, honeypot antispam y Resend opcional
+descripcion: Formulario de contacto con Server Action, validación Zod, honeypot antispam y SMTP opcional
 tipo: integración — todos los planes (si activado en briefing pregunta 21)
 ---
 
 # Formulario de Contacto
 
 Implementación estándar para la página `/contacto`. Funciona en los 3 planes.
-Si Resend está configurado en el tenant → envía email al negocio.
-Siempre guardar el lead en `contact_messages` para no perder consultas si Resend falla o no está configurado.
+Si SMTP está configurado en el tenant → envía email al negocio.
+Siempre guardar el lead en `contact_messages` para no perder consultas si SMTP falla o no está configurado.
 
 ---
 
@@ -50,7 +50,7 @@ export type ContactFormData = z.infer<typeof contactSchema>
 // app/(public)/contacto/actions.ts
 'use server'
 import { z } from 'zod'
-import { Resend } from 'resend'
+import nodemailer from 'nodemailer'
 import { contactSchema } from '@/lib/validations/contact'
 import { getTenantConfig } from '@/lib/supabase/tenant'
 import { createServiceClient } from '@/lib/supabase/server'
@@ -109,7 +109,7 @@ export const sendContactForm = async (
     const siteUrl = tenant.url ?? process.env.NEXT_PUBLIC_URL ?? 'https://sitiohoy.com.ar'
     const city = escapeHtml(tenant.origin_city ?? '')
     const primary = '#111827'
-    const from = `${siteName} <contacto@sitiohoy.com.ar>`
+    const from = `${siteName} <${tenant.smtp_user}>`
     const supabase = createServiceClient()
 
     await supabase.from('contact_messages').insert({
@@ -121,8 +121,13 @@ export const sendContactForm = async (
       source: 'contact_form',
     })
 
-    if (tenant.resend_api_key && tenant.contact_email) {
-      const resend = new Resend(tenant.resend_api_key)
+    if (tenant.smtp_user && tenant.smtp_pass && tenant.contact_email) {
+      const transporter = nodemailer.createTransport({
+        host: 'smtp.hostinger.com',
+        port: 465,
+        secure: true,
+        auth: { user: tenant.smtp_user, pass: tenant.smtp_pass },
+      })
       const baseHtml = (content: string, preheader: string = '') => `
         ${preheader ? `<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">${preheader}&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</div>` : ''}
         <div style="font-family:Arial,sans-serif;background:#f5f5f5;padding:24px;color:#111827">
@@ -136,12 +141,11 @@ export const sendContactForm = async (
         </div>
       `
 
-      await resend.emails.send({
+      await transporter.sendMail({
         from,
         to: tenant.contact_email,
         replyTo: email,
         subject: `📬 ${safeName} te escribió desde ${siteName}`,
-        headers: { 'X-Entity-Ref-ID': `contact-${tenantId}-${Date.now()}` },
         html: baseHtml(`
           <h1 style="margin:0 0 16px;font-size:22px">Nuevo mensaje de contacto</h1>
           <p><strong>Nombre:</strong> ${safeName}</p>
@@ -153,12 +157,11 @@ export const sendContactForm = async (
         `, `${safeName} escribió: "${safeMessage.slice(0, 60)}..."`),
       })
 
-      await resend.emails.send({
+      await transporter.sendMail({
         from,
         to: email,
         replyTo: tenant.contact_email,
         subject: `✅ Recibimos tu consulta — ${siteName}`,
-        headers: { 'X-Entity-Ref-ID': `contact-confirmation-${tenantId}-${Date.now()}` },
         html: baseHtml(`
           <h1 style="margin:0 0 16px;font-size:22px">Recibimos tu consulta</h1>
           <p>Hola ${safeName}, gracias por escribirnos. Te vamos a responder a la brevedad.</p>
@@ -181,14 +184,13 @@ export const sendContactForm = async (
 
 Reglas obligatorias:
 
-- `to` del negocio sale de `tenants.contact_email`; nunca `RESEND_TO_EMAIL`.
-- `resend_api_key` sale de `tenants.resend_api_key`.
-- `from` siempre usa el dominio verificado de SitioHoy: `contacto@sitiohoy.com.ar`.
+- `to` del negocio sale de `tenants.contact_email`.
+- `smtp_user` y `smtp_pass` salen de `tenants.smtp_user` y `tenants.smtp_pass`.
+- `from` usa el `smtp_user` del tenant como dirección de envío.
 - Enviar dos emails por consulta: notificación al negocio y confirmación al visitante.
 - Nunca enviar emails solo con `text`; siempre incluir `html` con estilos inline.
-- Agregar `X-Entity-Ref-ID` único por email para reducir falsos positivos de spam.
 - **El diseño del email debe ser coherente con el diseño del sitio**: usar el color primario del design system como header del email, el nombre del negocio, y estilos que reflejen la identidad visual. El email de confirmación al visitante debe indicarle que va a recibir respuesta pronto.
-- **Siempre guardar en `contact_messages` primero**, independientemente de si Resend está configurado. Ningún lead se debe perder.
+- **Siempre guardar en `contact_messages` primero**, independientemente de si SMTP está configurado. Ningún lead se debe perder.
 
 ---
 
@@ -355,8 +357,8 @@ const ip = headersList.get('x-forwarded-for')?.split(',')[0] ?? 'unknown'
 - [ ] Formulario valida en cliente (mensajes de error en español)
 - [ ] Honeypot presente y oculto (no visible en pantalla)
 - [ ] Rate limit: más de 3 envíos en 1 min muestra error
-- [ ] Si Resend configurado: email llega al negocio con reply-to del visitante
+- [ ] Si SMTP configurado: email llega al negocio con reply-to del visitante
 - [ ] Mensaje guardado en `contact_messages`
-- [ ] Si Resend no configurado: formulario igual funciona sin error visible y el lead queda guardado
+- [ ] Si SMTP no configurado: formulario igual funciona sin error visible y el lead queda guardado
 - [ ] Estado de éxito reemplaza el formulario (no toast — evita problemas de accesibilidad)
 - [ ] Mensaje de error tiene `role="alert"` para lectores de pantalla

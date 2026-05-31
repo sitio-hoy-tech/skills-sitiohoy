@@ -2,7 +2,7 @@
 name: sitio-hoy
 description: >
   Genera sitios web completos bajo los planes de SitioHoy (Esencial, Emprendimiento, Empresa).
-  Next.js 15+ App Router, Supabase multitenant con RLS, MercadoPago Bricks, Resend, Envia.com,
+  Next.js 15+ App Router, Supabase multitenant con RLS, MercadoPago Bricks, SMTP, Envia.com,
   Umami Analytics. ISR on-demand con cache tags quirúrgicos. SEO optimizado para IA y buscadores.
   Compatible con Claude Code, Cursor, Windsurf, VS Code + Copilot y cualquier IA del mercado.
   Usar cuando el cliente diga: "comenzar", "crear sitio", "nuevo proyecto", "arrancar",
@@ -195,7 +195,7 @@ Usar `sitio-hoy-launch-automation` solo cuando QA esté aprobado o documentado.
 - Al finalizar cada módulo: actualizar `README.md` si el módulo agrega una integración, patrón clave, variable de entorno o página nueva que no esté documentada. No reescribir secciones que no cambiaron.
 - Cada vez que se corrija un error durante una página o módulo, registrarlo en `.sitiohoy/errores-corregidos.md` con fecha `-03:00`, causa, solución y recomendación para skills futuras.
 - El tracking debe quedar audit-ready: timestamps ISO con offset Argentina `-03:00`, comandos ejecutados, archivos tocados, decisiones, datos estimados, credenciales pendientes, proveedor de imágenes, resultados de QA y bloqueos externos.
-- Antes de marcar cualquier módulo como completo, repasar el checklist del plan activo y confirmar explícitamente MercadoPago, Correo Argentino/Envia.com, Resend, Umami, env vars, RLS y productos según corresponda.
+- Antes de marcar cualquier módulo como completo, repasar el checklist del plan activo y confirmar explícitamente MercadoPago, Correo Argentino/Envia.com, SMTP, Umami, env vars, RLS y productos según corresponda.
 
 **Técnicas (aplicar siempre sin excepción):**
 - Server Components por defecto — `'use client'` solo para estado/efectos/eventos
@@ -260,7 +260,7 @@ integraciones/
   mercadopago.md           — Emprendimiento + Empresa
   envios-fijos.md          — solo Emprendimiento
   envia.md                 — solo Empresa
-  resend.md                — Emprendimiento + Empresa (opcional)
+  smtp.md                  — Emprendimiento + Empresa (opcional)
   umami-avanzado.md        — solo Empresa
   whatsapp.md              — todos los planes
 ```

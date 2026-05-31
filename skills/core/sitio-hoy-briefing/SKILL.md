@@ -78,7 +78,7 @@ node .opencode/skills/sitio-hoy-briefing/scripts/briefing-server.mjs
 - Si el cliente eligió "solo retiro" o "sin envíos", todos quedan en `false` y el checkout no muestra paso de envío.
 - **Nunca asumir proveedor de envíos en Plan Empresa** — preguntar siempre.
 - **Correcciones automáticas:** Si los datos del formulario no coinciden con los del tenant en Supabase (ej: plan diferente, nombre diferente), el servidor corrige automáticamente usando el tenant como fuente de verdad. Las correcciones se registran en `intake.corrections[]` con campo, valor anterior, valor nuevo y razón.
-- `resend` depende de onboarding.
+- `smtp` depende de onboarding.
 - `umami` es `true` para Emprendimiento y Empresa.
 - `whatsapp` siempre es `true`.
 - Si falta dominio, usar `domain.status = "pending_purchase"`.
@@ -87,7 +87,7 @@ node .opencode/skills/sitio-hoy-briefing/scripts/briefing-server.mjs
 - Si falta logo o hero, marcarlo en `assets.missing`.
 - Si faltan fotos de productos, marcar `productos` en `assets.missing` y agregar una nota: usar imágenes Unsplash relacionadas al rubro/categoría/producto hasta que el cliente envíe fotos reales.
 - Si el catálogo tiene productos físicos o mixtos, `catalog.defaultWeightGrams` debe existir. Si el cliente no lo informó, usar `500` como estimación inicial, marcar `catalog.weightEstimated = true` y registrar el motivo en `notes`.
-- Para MercadoPago, Correo Argentino, Envia.com y Resend, no inventar credenciales. Marcar el proveedor como activo solo si corresponde por plan/elección, pero dejar las credenciales como pendientes hasta que se carguen en Supabase.
+- Para MercadoPago, Correo Argentino, Envia.com y SMTP, no inventar credenciales. Marcar el proveedor como activo solo si corresponde por plan/elección, pero dejar las credenciales como pendientes hasta que se carguen en Supabase.
 
 ## Criterio de salida
 

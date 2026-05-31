@@ -162,13 +162,13 @@ Páginas comunes:
 
 Reglas:
 - Crear solo lo pedido.
-- Si hay formulario, guardar lead en `contact_messages` siempre. Si Resend está configurado, enviar email branded.
+- Si hay formulario, guardar lead en `contact_messages` siempre. Si SMTP está configurado, enviar email branded.
 - Páginas estáticas puras pueden usar ISR on-demand (sin `revalidate = N`).
 
 **Verificación compartida ✅:**
 - [ ] Solo páginas pedidas implementadas
 - [ ] FAQ con Schema.org si existe
-- [ ] Formulario valida, no pierde mensajes y envía email si Resend activo
+- [ ] Formulario valida, no pierde mensajes y envía email si SMTP activo
 - [ ] Páginas incluidas en sitemap
 - [ ] `npm run sitiohoy:validate` sin errores
 

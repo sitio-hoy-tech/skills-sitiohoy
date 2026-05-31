@@ -13,7 +13,7 @@
     "fixedShipping": false,
     "correoArgentino": false,
     "envia": false,
-    "resend": false,
+    "smtp": false,
     "umami": false,
     "whatsapp": true
   },

@@ -23,7 +23,7 @@ const project = config.project ?? 'SitioHoy'
 const integrations = config.integrations ?? {}
 const hasCheckout = plan === 'emprendimiento' || plan === 'empresa'
 const hasEnvios = integrations.envia || integrations.fixedShipping
-const hasResend = Boolean(integrations.resend)
+const hasSmtp = Boolean(integrations.smtp)
 const hasUmami = Boolean(integrations.umami)
 
 const outContext = path.join(root, '.sitiohoy', 'context')
@@ -173,7 +173,7 @@ await write(path.join(outContext, 'project-context.md'), `
 - MercadoPago: ${integrations.mercadopago ? 'si' : 'no'}
 - Envia.com: ${integrations.envia ? 'si' : 'no'}
 - Envios fijos: ${integrations.fixedShipping ? 'si' : 'no'}
-- Resend: ${hasResend ? 'si' : 'no'}
+- SMTP: ${hasSmtp ? 'si' : 'no'}
 - Umami: ${hasUmami ? 'si' : 'no'}
 - WhatsApp: ${integrations.whatsapp ? 'si' : 'no'}
 
@@ -281,7 +281,7 @@ if (hasCheckout) {
 - MercadoPago: ${integrations.mercadopago ? 'activo' : 'inactivo'}
 - Envia.com: ${integrations.envia ? 'activo' : 'inactivo'}
 - Envios fijos: ${integrations.fixedShipping ? 'activo' : 'inactivo'}
-- Resend: ${hasResend ? 'activo' : 'inactivo'}
+- SMTP: ${hasSmtp ? 'activo' : 'inactivo'}
 
 ## Reglas criticas
 
@@ -297,7 +297,7 @@ if (hasCheckout) {
 
 - \`integraciones/mercadopago.md\`
 - ${integrations.fixedShipping ? '`integraciones/envios-fijos.md`' : integrations.envia ? '`integraciones/envia.md`' : 'shipping fallback en plan'}
-- ${hasResend ? '`integraciones/resend.md`' : 'Resend no activo'}
+- ${hasSmtp ? '`integraciones/smtp.md`' : 'SMTP no activo'}
 `)
 }
 

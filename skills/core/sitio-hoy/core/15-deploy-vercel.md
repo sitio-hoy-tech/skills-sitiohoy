@@ -68,6 +68,23 @@ Al conectar el repositorio, Vercel detecta Next.js automáticamente.
 
 ---
 
+### Paso 1.5 — Registrar Vercel Project ID
+
+Después de crear el proyecto, registrar el ID en la tabla `tenants`:
+
+```bash
+# Obtener el project ID
+vercel inspect --json | jq -r '.projectId'
+```
+
+```sql
+UPDATE tenants SET vercel_project_id = 'prj_XXXXX' WHERE id = 'UUID_DEL_TENANT';
+```
+
+Este paso es necesario para que la plataforma pueda vincular el tenant con su deployment de Vercel.
+
+---
+
 ## Paso 2 — Región de deploy
 
 > Seleccionar región **SAO1 (São Paulo)** para mínima latencia en Argentina.
@@ -158,7 +175,7 @@ Hacer una compra real con tarjeta de débito o crédito (monto mínimo):
 - [ ] PaymentBrick renderiza en producción
 - [ ] El pago se aprueba en MP
 - [ ] El webhook llega y actualiza el estado del pedido en Supabase
-- [ ] El email de confirmación llega (si Resend activado)
+- [ ] El email de confirmación llega (si SMTP activado)
 - [ ] El pedido aparece en la tabla `orders` con `payment_status = 'approved'`
 - [ ] Reembolsar el pago desde el dashboard de MercadoPago
 
@@ -214,7 +231,7 @@ npm run sitiohoy:test-supabase
 npm run sitiohoy:test-mercadopago
 npm run sitiohoy:test-envia
 npm run sitiohoy:test-correo-argentino
-npm run sitiohoy:test-resend
+npm run sitiohoy:test-smtp
 SITE_URL=http://localhost:3000 npm run sitiohoy:visual-audit
 SITE_URL=http://localhost:3000 npm run sitiohoy:e2e
 npm run sitiohoy:audit
@@ -259,13 +276,13 @@ Antes de deployar, limpiar el proyecto sin romper comportamiento:
 - [ ] `ENVIA_API_URL` sin `-test` (solo Plan Empresa)
 - [ ] Smoke test MercadoPago ejecutado si está activo
 - [ ] Smoke test Envia/Correo Argentino ejecutado según proveedor activo
-- [ ] Smoke test Resend ejecutado si está activo
+- [ ] Smoke test SMTP ejecutado si está activo
 
 **Funcionalidad**
 - [ ] Home carga en < 3s en mobile (red 4G)
 - [ ] Catálogo muestra productos reales del cliente
 - [ ] Compra de prueba real completada y reembolsada
-- [ ] Email de confirmación recibido (si Resend)
+- [ ] Email de confirmación recibido (si SMTP)
 - [ ] Página de seguimiento funciona con el `tracking_token` del pedido de prueba
 
 **SEO**

@@ -134,7 +134,7 @@ const SHIPPING_FALLBACK = {
 // app/api/webhooks/envia/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
-import { sendOrderStatusUpdate } from '@/lib/resend/emails/order-status'
+import { sendOrderStatusUpdate } from '@/lib/smtp/emails/order-status'
 
 const TENANT_ID = process.env.NEXT_PUBLIC_TENANT_ID!
 
@@ -191,7 +191,7 @@ export async function POST(req: NextRequest) {
       .eq('id', order.id)
       .eq('tenant_id', TENANT_ID)
 
-    // Notificar al comprador si Resend está configurado
+    // Notificar al comprador si SMTP está configurado
     await sendOrderStatusUpdate(order.id, newStatus, trackingNumber, 'Correo Argentino').catch(() => {})
   }
 

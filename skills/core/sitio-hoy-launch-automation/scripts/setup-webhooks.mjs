@@ -12,7 +12,7 @@
  *
  * Env vars opcionales:
  *   SITE_URL              URL del sitio (override de sitiohoy.config.json)
- *   RESEND_API_KEY        Para verificar que Resend está configurado (solo check)
+ *   SMTP_USER             Para verificar que SMTP está configurado (solo check)
  *   ENVIA_API_KEY         Para verificar que Envia está configurado (solo check, Plan Empresa)
  */
 
@@ -135,29 +135,17 @@ async function setupMercadoPagoWebhook() {
   }
 }
 
-// ── Resend (verificación de configuración, no webhook real) ───────────────────
-async function checkResend() {
-  const apiKey = process.env.RESEND_API_KEY
-  if (!apiKey) {
-    log.warn('RESEND_API_KEY no definido — verificá que Resend esté configurado en Vercel.')
-    results.webhooks.push({ service: 'resend', status: 'skipped', reason: 'RESEND_API_KEY no definido' })
+// ── SMTP (verificación de configuración) ─────────────────────────────────────
+async function checkSmtp() {
+  const smtpUser = process.env.SMTP_USER
+  if (!smtpUser) {
+    log.warn('SMTP_USER no definido — verificá que SMTP esté configurado en Vercel.')
+    results.webhooks.push({ service: 'smtp', status: 'skipped', reason: 'SMTP_USER no definido' })
     return
   }
 
-  log.info('Verificando API key de Resend...')
-  const res = await fetch('https://api.resend.com/domains', {
-    headers: { Authorization: `Bearer ${apiKey}` },
-  })
-
-  if (res.ok) {
-    const data = await res.json()
-    const domains = data.data ?? []
-    log.ok(`Resend OK — ${domains.length} dominio(s) configurado(s): ${domains.map((d) => d.name).join(', ') || 'ninguno aún'}`)
-    results.webhooks.push({ service: 'resend', status: 'ok', domains: domains.map((d) => d.name) })
-  } else {
-    log.warn(`Resend respondió ${res.status} — verificá la API key.`)
-    results.webhooks.push({ service: 'resend', status: 'warn', code: res.status })
-  }
+  log.ok(`SMTP configurado (usuario: ${smtpUser})`)
+  results.webhooks.push({ service: 'smtp', status: 'ok', user: smtpUser })
 }
 
 // ── Envia.com (solo Plan Empresa) ─────────────────────────────────────────────
@@ -197,7 +185,7 @@ console.log(`  Sitio : ${siteUrl}`)
 console.log(`  Plan  : ${plan}\n`)
 
 await setupMercadoPagoWebhook()
-await checkResend()
+await checkSmtp()
 await checkEnvia()
 
 // Guardar resultados

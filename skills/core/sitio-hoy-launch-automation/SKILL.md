@@ -45,7 +45,7 @@ No ejecutar deploy real si faltan QA, env vars o credenciales. Primero generar e
    MP_ACCESS_TOKEN=... SITE_URL=https://tusitio.com node .claude/skills/sitio-hoy-launch-automation/scripts/setup-webhooks.mjs
    ```
    El script registra el webhook de MercadoPago (planes Emprendimiento y Empresa),
-   verifica Resend y Envia.com según plan, y guarda resultados en `.sitiohoy/launch/webhook-results.json`.
+   verifica SMTP y Envia.com según plan, y guarda resultados en `.sitiohoy/launch/webhook-results.json`.
 7. Completar `launch-plan.md` antes de go-live.
 8. Ejecutar smoke tests de integraciones activas:
    ```bash
@@ -53,7 +53,7 @@ No ejecutar deploy real si faltan QA, env vars o credenciales. Primero generar e
    npm run sitiohoy:test-mercadopago
    npm run sitiohoy:test-envia
    npm run sitiohoy:test-correo-argentino
-   npm run sitiohoy:test-resend
+   npm run sitiohoy:test-smtp
    ```
 9. Ejecutar auditoría visual con servidor local/preview activo:
    ```bash
@@ -131,7 +131,7 @@ Excepción: el deploy final de Vercel requiere que el repo de GitHub exista prim
 ## Reglas
 
 - Nunca commitear secretos reales.
-- `SUPABASE_SERVICE_ROLE_KEY`, tokens MercadoPago, Resend y Envia van en env vars o tabla `tenants`, no en Git.
+- `SUPABASE_SERVICE_ROLE_KEY`, tokens MercadoPago, SMTP y Envia van en env vars o tabla `tenants`, no en Git.
 - Usar Supabase CLI para migraciones, seeds y storage. No subir SQL o datos por Dashboard salvo bloqueo documentado.
 - El usuario admin se crea con Supabase Admin API, no insertando directo en `auth.users`.
 - El email admin debe ser `admin{slug-del-negocio}@sitiohoy.com.ar` y la contraseña debe ser aleatoria segura.
@@ -142,6 +142,7 @@ Excepción: el deploy final de Vercel requiere que el repo de GitHub exista prim
 - En proyectos con cuenta Vercel Hobby o team sin plan Pro, crear el repositorio directamente como público (`--public` o `gh repo edit --visibility public`).
 - Generar `README.md` como paso obligatorio antes del `git push` y `vercel --prod`. Un repo sin README adecuado no se considera listo para entregar.
 - Al hacer deploy a Vercel, actualizar `tenants.url` con la URL de producción: `UPDATE tenants SET url = 'https://...' WHERE id = '...'`. Sin esto, el ISR on-demand no funciona porque los triggers SQL no tienen URL a la cual llamar.
+- Al hacer deploy a Vercel, actualizar `tenants.vercel_project_id` con el ID del proyecto Vercel. Obtener el ID con `vercel inspect` o desde el dashboard. Sin esto, la plataforma no puede vincular el tenant con su deployment.
 
 ## Referencias
 

@@ -55,7 +55,7 @@ const lines = [
   `- Plan: ${intake.plan ?? 'sin datos'}`,
   `- MercadoPago: ${yesNo(tech.mercadoPagoActive)}`,
   `- Envíos: ${shipping}`,
-  `- Resend: ${yesNo(tech.resendRequested)}`,
+  `- SMTP: ${yesNo(tech.smtpRequested)}`,
   `- Dominio: ${tech.domain?.value || tech.domain?.status || 'sin datos'}`,
   `- Editor/IA: ${tech.editor ?? 'sin datos'}`,
   `- Supabase MCP: ${yesNo(tech.supabaseMcp)}`,

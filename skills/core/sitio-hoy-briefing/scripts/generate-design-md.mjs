@@ -399,7 +399,7 @@ function buildDesignMd() {
   if (plan === 'empresa' && technical.enviaRequested) lines.push(`- ✅ Envia.com badge`)
   if (plan === 'emprendimiento') lines.push(`- ✅ Envíos badge`)
   lines.push(`- ✅ WhatsApp botón flotante verde`)
-  if (hasCheckout && technical.resendRequested) lines.push(`- ✅ Email icono footer`)
+  if (hasCheckout && technical.smtpRequested) lines.push(`- ✅ Email icono footer`)
   if (Array.isArray(contact.socials) && contact.socials.length) lines.push(`- ✅ Redes sociales: ${list(contact.socials)}`)
   lines.push(``)
 

@@ -44,7 +44,7 @@ NEXT_PUBLIC_TENANT_ID=uuid-del-tenant
 REVALIDATION_SECRET=string-aleatorio-largo
 ```
 
-> **Regla**: Las credenciales de integraciones (MercadoPago, Resend, Envia, Umami) se leen en runtime desde la tabla `tenants`, NO desde `.env`. Solo las variables de Supabase van en `.env`.
+> **Regla**: Las credenciales de integraciones (MercadoPago, SMTP, Envia, Umami) se leen en runtime desde la tabla `tenants`, NO desde `.env`. Solo las variables de Supabase van en `.env`.
 
 ## Clientes Supabase
 
@@ -111,5 +111,5 @@ export default nextConfig
 npm install mercadopago @mercadopago/sdk-react react-hook-form zod @hookform/resolvers zustand
 
 # Empresa — emails
-npm install resend
+npm install nodemailer
 ```

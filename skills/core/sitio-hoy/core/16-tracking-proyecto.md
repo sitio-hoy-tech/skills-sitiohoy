@@ -100,7 +100,7 @@ node scripts/update-tracking.mjs \
   --nombre "Nombre del Módulo" \
   --comandos "npm run build|npm run sitiohoy:validate|supabase db push" \
   --checks "config_valid,brief_exists,supabase_schema_ready,validate_ok" \
-  --integraciones "mercadopago,correo-argentino,resend" \
+  --integraciones "mercadopago,correo-argentino,smtp" \
   --qa "build ok; validate ok" \
   --datos-estimados "peso productos: 500g por defecto|imagenes Unsplash: keyword ferreteria herramientas" \
   --decisiones "envios: Correo Argentino por cuenta del cliente" \

@@ -16,7 +16,7 @@ const skipFiles = new Set(['package-lock.json', 'pnpm-lock.yaml', 'yarn.lock', '
 const patterns = [
   { name: 'Supabase service role JWT', regex: /eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}/g },
   { name: 'MercadoPago token', regex: /\b(?:APP_USR|TEST)-[A-Za-z0-9_-]{20,}\b/g },
-  { name: 'Resend API key', regex: /\bre_[A-Za-z0-9_-]{20,}\b/g },
+  { name: 'SMTP credentials', regex: /\bre_[A-Za-z0-9_-]{20,}\b/g },
   { name: 'Generic bearer token', regex: /\bBearer\s+[A-Za-z0-9._-]{30,}\b/g },
   { name: 'Private key block', regex: /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/g },
   { name: 'Password assignment', regex: /\b(?:password|passwd|correo_argentino_password)\s*[:=]\s*['"][^'"]{8,}['"]/gi },

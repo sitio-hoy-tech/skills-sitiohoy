@@ -15,7 +15,7 @@
   "technical": {
     "mercadoPagoActive": true,
     "enviaRequested": false,
-    "resendRequested": true,
+    "smtpRequested": true,
     "domain": {
       "status": "owned",
       "value": "https://www.ferreteriadoncarlos.com.ar"

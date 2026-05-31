@@ -22,7 +22,7 @@ Pasos:
    - `plan: "empresa"`
    - `integrations.mercadopago: true`
    - `integrations.envia` según onboarding
-   - `integrations.resend` según onboarding
+   - `integrations.smtp` según onboarding
    - `integrations.umami: true`
    - `integrations.whatsapp: true`
 3. Instalar dependencias:
@@ -30,9 +30,9 @@ Pasos:
    npm install @supabase/ssr @supabase/supabase-js lucide-react zod
    npm install mercadopago @mercadopago/sdk-react react-hook-form @hookform/resolvers zustand
    ```
-4. Si Resend está activado:
+4. Si SMTP está activado:
    ```bash
-   npm install resend
+   npm install nodemailer
    ```
 5. Usar `sitio-hoy-database` para generar y aplicar schema completo.
 6. Confirmar columnas `origin_*`, `envia_access_token`, `umami_url` y `umami_website_id` en `tenants`.
@@ -111,7 +111,7 @@ Verificación ✅:
 
 **Objetivo**: flujo completo con MercadoPago + Envia.com + emails transaccionales.
 
-Leer: `integraciones/mercadopago.md`, `integraciones/envia.md` si aplica, `integraciones/resend.md` si aplica.
+Leer: `integraciones/mercadopago.md`, `integraciones/envia.md` si aplica, `integraciones/smtp.md` si aplica.
 
 Pasos:
 1. Store de carrito con Zustand + persistencia en `localStorage`.
@@ -141,7 +141,7 @@ Pasos:
    - registrar evento;
    - actualizar tracking sin exponer credenciales.
 11. Página `/seguimiento` con Server Action/RPC por `tracking_token`.
-12. Emails Resend con template HTML inline de `lib/email/templates.ts` al aprobar pago y al cambiar estado.
+12. Emails SMTP con template HTML inline de `lib/email/templates.ts` al aprobar pago y al cambiar estado.
 
 Verificación ✅:
 - [ ] Carrito persiste al recargar

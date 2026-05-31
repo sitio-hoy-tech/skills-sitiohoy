@@ -29,7 +29,7 @@ La IA debe convertir respuestas del cliente a este JSON y guardarlo en
     "mercadoPagoActive": false,
     "correoArgentinoRequested": false,
     "enviaRequested": false,
-    "resendRequested": false,
+    "smtpRequested": false,
     "domain": {
       "status": "owned",
       "value": "https://www.ejemplo.com"

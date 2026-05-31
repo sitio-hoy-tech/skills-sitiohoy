@@ -15,7 +15,7 @@ tipo: plan — cargar después del onboarding técnico cuando plan = emprendimie
 | MercadoPago Bricks | ✅ |
 | Envíos por zona fija | ✅ |
 | Envia.com | ❌ |
-| Resend emails | ✅ (si activado en onboarding) |
+| SMTP emails | ✅ (si activado en onboarding) |
 | Umami Analytics | ✅ (básico) |
 | Cupones de descuento | ✅ |
 | WhatsApp redirect | ✅ |
@@ -69,7 +69,7 @@ core/14-copy-textos.md
 ```
 integraciones/mercadopago.md
 integraciones/envios-fijos.md
-integraciones/resend.md         ← solo si Resend activo en sitiohoy.config.json
+integraciones/smtp.md           ← solo si SMTP activo en sitiohoy.config.json
 ```
 
 ### CARGAR AL INICIO DE CADA MÓDULO si aplica

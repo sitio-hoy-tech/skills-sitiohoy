@@ -75,7 +75,7 @@ tipo: core — referencia para ubicar y crear archivos
 │   ├── envia/                        # Solo Empresa
 │   │   ├── client.ts
 │   │   └── provinces.ts
-│   ├── resend/                       # Solo si se activó en onboarding
+│   ├── smtp/                         # Solo si se activó en onboarding
 │   │   ├── client.ts
 │   │   └── emails/
 │   │       ├── order-confirmation.tsx

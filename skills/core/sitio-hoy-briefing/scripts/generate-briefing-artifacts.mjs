@@ -56,7 +56,7 @@ const integrations = {
   correoArgentino,
   fixedShipping: plan === 'emprendimiento' || (plan === 'empresa' && !correoArgentino && !envia),
   envia,
-  resend: hasCheckout && Boolean(technical.resendRequested),
+  smtp: hasCheckout && Boolean(technical.smtpRequested),
   umami: hasCheckout,
   whatsapp: true,
 }
@@ -117,7 +117,7 @@ const tenantLookupBlock = isExistingClient ? `
 - URL cargada: ${existingTenant?.url ?? 'sin datos'}
 - Contact email cargado: ${existingTenant?.contactEmail ?? 'sin datos'}
 - MercadoPago configurado: ${yesNo(existingTenant?.mercadoPagoConfigured)}
-- Resend configurado: ${yesNo(existingTenant?.resendConfigured)}
+- SMTP configurado: ${yesNo(existingTenant?.smtpConfigured)}
 - Envia configurado: ${yesNo(existingTenant?.enviaConfigured)}
 - Correo Argentino configurado: ${yesNo(existingTenant?.correoArgentinoConfigured)}
 - Umami configurado: ${yesNo(existingTenant?.umamiConfigured)}
@@ -137,7 +137,7 @@ ${tenantLookupBlock}
 - MCP AIDesigner: ${yesNo(technical.aiDesignerMcp)}
 - MercadoPago activo: ${yesNo(technical.mercadoPagoActive)}
 - Envia.com: ${yesNo(integrations.envia)}
-- Resend emails: ${yesNo(integrations.resend)}
+- SMTP emails: ${yesNo(integrations.smtp)}
 - Umami: ${yesNo(integrations.umami)}
 - WhatsApp: ${yesNo(integrations.whatsapp)}
 

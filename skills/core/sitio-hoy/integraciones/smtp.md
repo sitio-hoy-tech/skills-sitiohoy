@@ -1,36 +1,47 @@
 ---
-skill: resend
-descripcion: Emails transaccionales con Resend — confirmación de compra y cambio de estado
+skill: smtp
+descripcion: Emails transaccionales con SMTP (Hostinger) via nodemailer
 tipo: integración — Emprendimiento y Empresa (Módulo 4, si activado en onboarding)
 ---
 
-# Integración Resend
+# Integración SMTP (nodemailer)
 
 ```bash
-npm install resend
+npm install nodemailer
+npm install -D @types/nodemailer
 ```
 
-Credencial: `tenants.resend_api_key` (no en `.env`).
+Credenciales: `tenants.smtp_user` y `tenants.smtp_pass` (no en `.env`).
 
-El remitente (`from`) de todos los emails transaccionales debe usar el dominio
-verificado de SitioHoy en Resend: `contacto@sitiohoy.com.ar`. No usar el dominio
-del cliente como remitente salvo que SPF, DKIM y DMARC estén verificados para ese dominio.
+El remitente (`from`) usa directamente el `smtp_user` del tenant (ej. `contacto@sitiohoy.com.ar`
+o el email que tenga configurado en Hostinger). Como el envío se hace desde el mismo servidor
+SMTP autenticado, SPF/DKIM se resuelven automáticamente por Hostinger.
 
 ## Cliente base
 
 ```typescript
-// lib/resend/client.ts
-import { Resend } from 'resend'
-import { getTenantConfig } from '@/lib/supabase/tenant'
+// lib/smtp/client.ts
+import nodemailer from 'nodemailer'
+import type { Transporter } from 'nodemailer'
+import { getTenantConfig } from '@/lib/config/tenant'
 
-const tenantId = process.env.NEXT_PUBLIC_TENANT_ID!
+export async function getSmtpTransporter(): Promise<{ transporter: Transporter; from: string } | null> {
+  const config = await getTenantConfig()
+  if (!config.smtp_user || !config.smtp_pass) return null
 
-export const getResendClient = async () => {
-  const config = await getTenantConfig(tenantId)
-  if (!config.resend_api_key) return null
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.hostinger.com',
+    port: 465,
+    secure: true,
+    auth: {
+      user: config.smtp_user,
+      pass: config.smtp_pass,
+    },
+  })
+
   return {
-    resend: new Resend(config.resend_api_key),
-    from: `${config.name} <contacto@sitiohoy.com.ar>`,
+    transporter,
+    from: `${config.name} <${config.smtp_user}>`,
   }
 }
 ```
@@ -38,12 +49,12 @@ export const getResendClient = async () => {
 ## Email de confirmación de compra
 
 ```typescript
-// lib/resend/emails/order-confirmation.ts
-import { getResendClient } from '../client'
+// lib/smtp/emails/order-confirmation.ts
+import { getSmtpTransporter } from '../client'
 import { createServiceClient } from '@/lib/supabase/server'
 
 export const sendOrderConfirmation = async (orderId: string) => {
-  const client = await getResendClient()
+  const client = await getSmtpTransporter()
   if (!client) return  // Silently skip if not configured
 
   const supabase = createServiceClient()
@@ -64,7 +75,7 @@ export const sendOrderConfirmation = async (orderId: string) => {
     </tr>
   `).join('')
 
-  await client.resend.emails.send({
+  await client.transporter.sendMail({
     from: client.from,
     to: order.payer_email,     // ← columna correcta: payer_email
     subject: `Pedido confirmado — ${process.env.NEXT_PUBLIC_SITE_NAME}`,
@@ -89,8 +100,8 @@ export const sendOrderConfirmation = async (orderId: string) => {
 ## Email de cambio de estado
 
 ```typescript
-// lib/resend/emails/order-status.ts
-import { getResendClient } from '../client'
+// lib/smtp/emails/order-status.ts
+import { getSmtpTransporter } from '../client'
 import { createServiceClient } from '@/lib/supabase/server'
 
 const STATUS_LABELS: Record<string, string> = {
@@ -102,7 +113,7 @@ const STATUS_LABELS: Record<string, string> = {
 }
 
 export const sendOrderStatusUpdate = async (orderId: string, newStatus: string, trackingNumber?: string, carrier?: string) => {
-  const client = await getResendClient()
+  const client = await getSmtpTransporter()
   if (!client) return
 
   const supabase = createServiceClient()
@@ -121,7 +132,7 @@ export const sendOrderStatusUpdate = async (orderId: string, newStatus: string, 
     ? `<p>Transportista: <strong>${carrier}</strong><br>Número de seguimiento: <strong>${trackingNumber}</strong></p>`
     : ''
 
-  await client.resend.emails.send({
+  await client.transporter.sendMail({
     from: client.from,
     to: order.payer_email,
     subject: `Tu pedido está: ${label} — ${process.env.NEXT_PUBLIC_SITE_NAME}`,
@@ -295,15 +306,16 @@ Siempre incluir texto de preheader invisible (aparece en la preview del cliente 
 - Siempre incluir botón `mailto:${email}` para responder al remitente con un click
 - Color `#25D366` si la alternativa es WhatsApp, color primario si es email
 
-## Verificación ✅
+## Verificación
 
-- [ ] `resend_api_key` configurada en tabla `tenants`
+- [ ] `smtp_user` y `smtp_pass` configurados en tabla `tenants`
 - [ ] Email de confirmación llega al comprar en modo TEST
 - [ ] El email tiene nombre, número de pedido y total correcto
-- [ ] No cae en spam (SPF/DKIM configurados en el dominio)
-- [ ] El dominio `sitiohoy.com.ar` tiene SPF, DKIM y DMARC verificados en Resend
-- [ ] El `from` usa `contacto@sitiohoy.com.ar`, no un dominio del cliente sin verificar
-- [ ] Si `resend_api_key` está vacío, el flujo no lanza error (silently skips)
+- [ ] No cae en spam (SPF/DKIM gestionados automáticamente por Hostinger)
+- [ ] El `from` usa `config.smtp_user` (ej. `contacto@sitiohoy.com.ar`)
+- [ ] Si `smtp_user` o `smtp_pass` están vacíos, el flujo no lanza error (silently skips)
+- [ ] Conexión SMTP funciona: `transporter.verify()` no lanza error en desarrollo
+- [ ] Puerto 465 con `secure: true` (SSL directo, no STARTTLS en 587)
 - [ ] Todos los emails usan `html:` generado por `lib/email/templates.ts`, nunca solo `text:`
 - [ ] `lib/email/templates.ts` existe y exporta los 3 templates: `contactConfirmationEmail`, `contactNotificationEmail`, `orderConfirmationEmail`
 - [ ] Estilos del email son 100% inline — ningún `<style>` ni CSS externo

@@ -63,8 +63,8 @@ ${integrations.mercadopago ? `### MercadoPago
 - **Webhook**: activo y verificado
 - **Importante**: No modificar el Access Token sin coordinación técnica
 ` : ''}
-${integrations.resend ? `### Email Transaccional (Resend)
-- **Dashboard**: https://resend.com
+${integrations.smtp ? `### Email Transaccional (SMTP)
+- **Configuración**: ver variables SMTP en Vercel env vars
 - **Emails configurados**: confirmación de pedido, contacto
 ` : ''}
 ${integrations.umami ? `### Analytics (Umami)
@@ -115,7 +115,7 @@ ${plan === 'esencial' ? `- Catálogo de hasta 50 productos
 
 ### Mensajes de contacto
 - Supabase Dashboard → Tabla \`contact_messages\`
-- También llegan por email si Resend está configurado
+- También llegan por email si SMTP está configurado
 
 ### Cambiar contenido (textos, imágenes)
 - Requiere acceso al repositorio y un deploy
@@ -139,7 +139,7 @@ ${plan === 'esencial' ? `- Catálogo de hasta 50 productos
 - **Hosting**: Vercel
 - **CDN**: Vercel Edge Network
 - **SSL**: automático
-${integrations.mercadopago ? '- **Pagos**: MercadoPago Checkout Bricks\n' : ''}${integrations.correoArgentino ? '- **Envíos**: Correo Argentino (MiCorreo API)\n' : ''}${integrations.envia ? '- **Envíos**: Envia.com API\n' : ''}${integrations.resend ? '- **Email**: Resend\n' : ''}${integrations.umami ? '- **Analytics**: Umami (self-hosted)\n' : ''}- **Validación**: QA automatizado + Lighthouse + E2E tests
+${integrations.mercadopago ? '- **Pagos**: MercadoPago Checkout Bricks\n' : ''}${integrations.correoArgentino ? '- **Envíos**: Correo Argentino (MiCorreo API)\n' : ''}${integrations.envia ? '- **Envíos**: Envia.com API\n' : ''}${integrations.smtp ? '- **Email**: SMTP\n' : ''}${integrations.umami ? '- **Analytics**: Umami (self-hosted)\n' : ''}- **Validación**: QA automatizado + Lighthouse + E2E tests
 
 ---
 

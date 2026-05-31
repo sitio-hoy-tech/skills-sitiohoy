@@ -441,7 +441,7 @@ FOR EACH ROW EXECUTE FUNCTION trigger_isr_blog_categories();
 ```
 
 -- Trigger ISR para tenants — OBLIGATORIO desde la migración base
--- Cualquier cambio de config del negocio (MP, Resend, WhatsApp, nombre)
+-- Cualquier cambio de config del negocio (MP, SMTP, WhatsApp, nombre)
 -- debe invalidar el cache del tenant automáticamente
 CREATE OR REPLACE FUNCTION trigger_isr_tenants()
 RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER AS $$
@@ -475,7 +475,7 @@ export const getTenantConfigFresh = async () => {
     .select(`
       id, name, slug, plan, status, url, revalidation_secret,
       mp_access_token, mp_public_key,
-      resend_api_key, contact_email, envia_access_token,
+      smtp_user, smtp_pass, contact_email, envia_access_token,
       correo_argentino_customer_id,
       umami_url, umami_website_id, whatsapp,
       origin_name, origin_phone, origin_address,

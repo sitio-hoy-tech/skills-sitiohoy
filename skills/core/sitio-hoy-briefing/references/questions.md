@@ -16,7 +16,7 @@ un dato bloqueante para decidir plan, checkout, envíos o dominio.
   - Precios fijos por zona: sin integración externa.
   - Sin envíos: retiro, coordinación manual o digital.
 - MercadoPago activo.
-- Emails automáticos con Resend.
+- Emails automáticos con SMTP.
 - Dominio: existente o pendiente de compra.
 - IA/editor y MCPs disponibles: Supabase y AIDesigner.
 

@@ -25,7 +25,7 @@ const requiredTables = [
 ]
 
 const requiredColumns = {
-  tenants: ['id', 'name', 'slug', 'plan', 'url', 'revalidation_secret', 'mp_access_token', 'mp_public_key', 'resend_api_key', 'contact_email', 'envia_access_token', 'correo_argentino_customer_id', 'origin_postal_code'],
+  tenants: ['id', 'name', 'slug', 'plan', 'url', 'revalidation_secret', 'mp_access_token', 'mp_public_key', 'smtp_user', 'smtp_pass', 'contact_email', 'envia_access_token', 'correo_argentino_customer_id', 'origin_postal_code'],
   products: ['id', 'tenant_id', 'name', 'slug', 'price', 'compare_at_price', 'stock', 'stock_unlimited', 'weight_grams', 'length_cm', 'width_cm', 'height_cm', 'shipping_required'],
   orders: ['id', 'tenant_id', 'mp_payment_id', 'total', 'payer_email', 'tracking_token'],
   payment_events: ['id', 'tenant_id', 'order_id', 'provider', 'payload'],

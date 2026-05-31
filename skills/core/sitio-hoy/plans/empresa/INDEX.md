@@ -16,7 +16,7 @@ tipo: plan — cargar después del onboarding técnico cuando plan = empresa
 | Correo Argentino (MiCorreo directo) | ✅ (si activado en onboarding) |
 | Envia.com (multicarrier) | ✅ (si activado en onboarding) |
 | Envíos zona fija | ❌ |
-| Resend emails | ✅ (si activado) |
+| SMTP emails | ✅ (si activado) |
 | Umami Analytics avanzado | ✅ (conversiones, e-commerce) |
 | Cupones de descuento | ✅ |
 | WhatsApp redirect | ✅ |
@@ -72,7 +72,7 @@ integraciones/mercadopago.md
 integraciones/correo-argentino.md  ← solo si correoArgentino activo en sitiohoy.config.json
 integraciones/envia.md             ← solo si envia activo en sitiohoy.config.json
 integraciones/envios-fijos.md      ← solo si ninguno de los anteriores activo (fallback zonas fijas)
-integraciones/resend.md            ← solo si Resend activo
+integraciones/smtp.md              ← solo si SMTP activo
 ```
 
 ### CARGAR EN MÓDULO 7 — Analytics avanzado

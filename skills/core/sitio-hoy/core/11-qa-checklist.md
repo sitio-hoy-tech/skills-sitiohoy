@@ -120,7 +120,7 @@ La columna "Manual ✅" queda vacía para que el humano la complete.
 
 ---
 
-## 5. EMAILS (Solo si Resend está activado)
+## 5. EMAILS (Solo si SMTP está activado)
 
 | Ítem | IA ✅ | Manual ✅ | Prioridad |
 |---|---|---|---|
@@ -221,7 +221,7 @@ La columna "Manual ✅" queda vacía para que el humano la complete.
 - [ ] `NEXT_PUBLIC_URL` usa `https://` del dominio final
 - [ ] MercadoPago usa credenciales de producción en `tenants`
 - [ ] Webhook MercadoPago apunta a producción y tiene `MP_WEBHOOK_SECRET`
-- [ ] Resend tiene SPF, DKIM y DMARC verificados para `sitiohoy.com.ar`
+- [ ] SMTP tiene SPF, DKIM y DMARC verificados para `sitiohoy.com.ar`
 - [ ] Envia/Correo Argentino configurados en modo producción si aplica
 - [ ] Dominio y SSL activos
 - [ ] Compra real de prueba realizada y reembolsada

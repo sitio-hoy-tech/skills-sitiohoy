@@ -190,7 +190,7 @@ const lines = [
   `- MercadoPago: ${integrations.mercadopago ? 'activo' : 'no activo'}`,
   `- Correo Argentino: ${integrations.correoArgentino ? 'activo' : 'no activo'}`,
   `- Envia.com: ${integrations.envia ? 'activo' : 'no activo'}`,
-  `- Resend: ${integrations.resend ? 'activo' : 'no activo'}`,
+  `- SMTP: ${integrations.smtp ? 'activo' : 'no activo'}`,
   `- Umami: ${integrations.umami ? 'activo' : 'no activo'}`,
   '',
 ]

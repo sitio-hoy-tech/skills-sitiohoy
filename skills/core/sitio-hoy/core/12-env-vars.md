@@ -8,7 +8,7 @@ tipo: core — consultar en Módulo 0 al configurar el proyecto y antes de cualq
 
 ## Principio fundamental
 
-> Las credenciales de cada cliente (MercadoPago, Resend, Envia.com) **NO van en `.env`**.
+> Las credenciales de cada cliente (MercadoPago, SMTP, Envia.com) **NO van en `.env`**.
 > Viven en la tabla `tenants` y se leen en runtime con `getTenantConfig()`.
 > Las credenciales de acceso de plataforma para Correo Argentino viven en `platform_config`;
 > el `customer_id` específico de cada negocio vive en `tenants.correo_argentino_customer_id`.
@@ -59,13 +59,15 @@ Estas se obtienen llamando `getTenantConfig(tenantId)` en el server:
 | `revalidation_secret` | Secret único por tenant para `/api/revalidate` |
 | `mp_access_token` | Crear preferencias y procesar pagos en MercadoPago |
 | `mp_public_key` | Inicializar MercadoPago Bricks en el cliente |
-| `resend_api_key` | Enviar emails transaccionales con Resend |
+| `smtp_user` | Usuario SMTP para emails transaccionales |
+| `smtp_pass` | Contraseña SMTP para emails transaccionales |
 | `contact_email` | Email destino del negocio para formularios de contacto |
 | `envia_access_token` | Cotizar y generar guías en Envia.com |
 | `correo_argentino_customer_id` | Customer ID MiCorreo específico del negocio |
 | `umami_url` | URL del script de Umami Analytics |
 | `umami_website_id` | Website ID de Umami Analytics |
 | `whatsapp` | Número de WhatsApp del negocio (formato `5491XXXXXXXX`) |
+| `vercel_project_id` | ID del proyecto en Vercel |
 | `origin_name/phone/address/city/state/postal_code` | Datos de origen para cotización Envia.com |
 
 Estas se obtienen desde `platform_config` con service role, nunca desde `.env`:
@@ -97,9 +99,9 @@ export const getTenantConfig = unstable_cache(
       .select(`
         id, name, slug, plan, status, url, revalidation_secret,
         mp_access_token, mp_public_key,
-        resend_api_key, contact_email, envia_access_token,
+        smtp_user, smtp_pass, contact_email, envia_access_token,
         correo_argentino_customer_id,
-        umami_url, umami_website_id, whatsapp,
+        umami_url, umami_website_id, whatsapp, vercel_project_id,
         origin_name, origin_phone, origin_address,
         origin_city, origin_state, origin_postal_code
       `)
@@ -124,9 +126,9 @@ export const getTenantConfigFresh = async () => {
     .select(`
       id, name, slug, plan, status, url, revalidation_secret,
       mp_access_token, mp_public_key,
-      resend_api_key, contact_email, envia_access_token,
+      smtp_user, smtp_pass, contact_email, envia_access_token,
       correo_argentino_customer_id,
-      umami_url, umami_website_id, whatsapp,
+      umami_url, umami_website_id, whatsapp, vercel_project_id,
       origin_name, origin_phone, origin_address,
       origin_city, origin_state, origin_postal_code
     `)

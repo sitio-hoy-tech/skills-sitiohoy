@@ -39,7 +39,7 @@
 ## Integraciones
 
 - MercadoPago: tokens de test antes de producción, webhook configurado.
-- Resend: dominio verificado si aplica.
+- SMTP: dominio verificado si aplica.
 - Envia.com: ambiente test antes de producción.
 - Umami: `umami_url` y `umami_website_id` guardados por tenant.
 - WhatsApp: links con mensaje y teléfono correctos.

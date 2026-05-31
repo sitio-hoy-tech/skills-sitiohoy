@@ -76,7 +76,7 @@ Plan: [esencial | emprendimiento | empresa]
 MercadoPago: [sí/no]
 Envia.com: [sí/no]
 Correo Argentino: [sí/no]
-Emails Resend: [sí/no]
+Emails SMTP: [sí/no]
 Dominio: [url o "por comprar"]
 Editor: [claude-code | cursor | otro]
 MCP Supabase: [activo | inactivo → modo manual]
@@ -91,7 +91,7 @@ MCP AIDesigner: [activo | inactivo → modo manual]
 | Envíos fijos por zona | ❌ | ✅ | ❌ |
 | Correo Argentino | ❌ | ❌ | ✅ (si activó y tiene usuario MiCorreo propio) |
 | Envia.com | ❌ | ❌ | ✅ (si activó) |
-| Resend emails | ❌ | ✅ (si activó) | ✅ (si activó) |
+| SMTP emails | ❌ | ✅ (si activó) | ✅ (si activó) |
 | Umami Analytics | ❌ | ✅ básico | ✅ avanzado |
 | Cupones de descuento | ❌ | ✅ | ✅ |
 

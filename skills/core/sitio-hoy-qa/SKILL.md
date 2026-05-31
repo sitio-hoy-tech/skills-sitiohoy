@@ -33,7 +33,7 @@ Copiar `scripts/` a la raiz del proyecto y agregar al `package.json`:
     "sitiohoy:test-mercadopago": "node scripts/test-mercadopago.mjs",
     "sitiohoy:test-envia": "node scripts/test-envia.mjs",
     "sitiohoy:test-correo-argentino": "node scripts/test-correo-argentino.mjs",
-    "sitiohoy:test-resend": "node scripts/test-resend.mjs",
+    "sitiohoy:test-smtp": "node scripts/test-smtp.mjs",
     "sitiohoy:qa": "node scripts/run-qa.mjs",
     "sitiohoy:qa-report": "node scripts/generate-qa-report.mjs",
     "sitiohoy:audit": "node scripts/audit.mjs"
@@ -70,7 +70,7 @@ Antes de cerrar módulos visuales (1-6):
 5. `SITE_URL=http://localhost:3000 npm run sitiohoy:visual-audit` con servidor local activo para módulos visuales y antes de deploy.
 6. `SITE_URL=http://localhost:3000 npm run sitiohoy:e2e` antes de deploy.
 7. `npm run lighthouse` si existe
-8. Smoke tests de integraciones activas cuando existan credenciales: `sitiohoy:test-mercadopago`, `sitiohoy:test-envia`, `sitiohoy:test-correo-argentino`, `sitiohoy:test-resend`.
+8. Smoke tests de integraciones activas cuando existan credenciales: `sitiohoy:test-mercadopago`, `sitiohoy:test-envia`, `sitiohoy:test-correo-argentino`, `sitiohoy:test-smtp`.
 9. `npm run sitiohoy:qa-report`
 10. `npm run sitiohoy:audit` antes de deploy/entrega.
 

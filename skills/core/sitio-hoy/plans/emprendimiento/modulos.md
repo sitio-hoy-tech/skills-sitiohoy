@@ -23,16 +23,16 @@ Pasos:
    - `integrations.mercadopago: true`
    - `integrations.fixedShipping: true`
    - `integrations.whatsapp: true`
-   - `integrations.resend` según onboarding
+   - `integrations.smtp` según onboarding
    - `integrations.umami: true`
 3. Instalar dependencias:
    ```bash
    npm install @supabase/ssr @supabase/supabase-js lucide-react zod
    npm install mercadopago @mercadopago/sdk-react react-hook-form @hookform/resolvers zustand
    ```
-4. Si Resend está activado:
+4. Si SMTP está activado:
    ```bash
-   npm install resend
+   npm install nodemailer
    ```
 5. Usar `sitio-hoy-database` para generar y aplicar schema completo.
 6. Crear zonas iniciales en `shipping_zones`: CABA, GBA, Interior.
@@ -118,7 +118,7 @@ Verificación ✅:
 
 **Objetivo**: flujo de compra completo con MercadoPago y envíos por zona fija.
 
-Leer: `integraciones/mercadopago.md`, `integraciones/envios-fijos.md`, `integraciones/resend.md` si aplica.
+Leer: `integraciones/mercadopago.md`, `integraciones/envios-fijos.md`, `integraciones/smtp.md` si aplica.
 
 Pasos:
 1. Store de carrito con Zustand + persistencia en `localStorage`.
@@ -141,7 +141,7 @@ Pasos:
    - guardar payload en `payment_events`;
    - actualizar `orders` filtrando por `id` y `tenant_id`.
 10. Página `/seguimiento` con Server Action/RPC por `tracking_token`, no RLS anon basada en JWT.
-11. Si Resend está activo: email de confirmación con template HTML inline de `lib/email/templates.ts`.
+11. Si SMTP está activo: email de confirmación con template HTML inline de `lib/email/templates.ts`.
 
 Verificación ✅:
 - [ ] Carrito persiste al recargar
@@ -153,7 +153,7 @@ Verificación ✅:
 - [ ] Pago con tarjeta de prueba documentado
 - [ ] Webhook usa `getTenantConfigFresh()` y soporta formato dual (legacy + v2)
 - [ ] Webhook actualiza estado y registra `payment_events`
-- [ ] Email llega si Resend está activo (con template HTML inline)
+- [ ] Email llega si SMTP está activo (con template HTML inline)
 - [ ] Cupón aplica con reglas server-side
 - [ ] `npm run build` sin errores
 - [ ] `npm run sitiohoy:validate` sin errores
@@ -166,7 +166,7 @@ Igual que Plan Esencial Módulo 4. Solo las páginas pedidas en el brief.
 
 Verificación ✅:
 - [ ] Páginas pedidas implementadas
-- [ ] Formulario no pierde mensajes si no hay Resend
+- [ ] Formulario no pierde mensajes si no hay SMTP
 - [ ] Páginas incluidas en sitemap
 - [ ] `npm run sitiohoy:validate` sin errores
 

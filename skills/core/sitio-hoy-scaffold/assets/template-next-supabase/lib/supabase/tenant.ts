@@ -11,7 +11,7 @@ export const getTenantConfig = unstable_cache(
       .select(`
         id, name, slug, plan, status, url, revalidation_secret,
         mp_access_token, mp_public_key,
-        resend_api_key, contact_email, envia_access_token,
+        smtp_user, smtp_pass, contact_email, envia_access_token,
         correo_argentino_customer_id,
         umami_url, umami_website_id,
         origin_name, origin_phone, origin_address,

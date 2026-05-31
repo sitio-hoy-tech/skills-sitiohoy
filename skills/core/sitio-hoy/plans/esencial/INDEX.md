@@ -14,7 +14,7 @@ tipo: plan — cargar después del onboarding técnico cuando plan = esencial
 |---|---|
 | MercadoPago | ❌ |
 | Envíos | ❌ |
-| Resend | ❌ |
+| SMTP | ❌ |
 | Umami Analytics | ❌ |
 | WhatsApp redirect | ✅ (botón en productos) |
 

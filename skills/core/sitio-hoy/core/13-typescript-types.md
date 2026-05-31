@@ -28,8 +28,15 @@ export interface Tenant {
   revalidation_secret: string | null
   mp_access_token: string | null
   mp_public_key: string | null
-  resend_api_key: string | null
   contact_email: string | null
+  smtp_user: string | null
+  smtp_pass: string | null
+  whatsapp: string | null
+  vercel_project_id: string | null
+  suspended_at: string | null
+  updated_at: string
+  correo_argentino_token: string | null
+  correo_argentino_token_expires_at: string | null
   envia_access_token: string | null
   correo_argentino_customer_id: string | null
   umami_url: string | null
@@ -87,6 +94,10 @@ export interface Product {
   width_cm: number | null
   height_cm: number | null
   shipping_required: boolean | null
+  is_sale: boolean | null
+  sale_price: number | null
+  position: number
+  subcategory_id: string | null
   category_id: string | null
   active: boolean
   featured: boolean
@@ -116,11 +127,30 @@ export interface ProductVariant {
   price_modifier: number          // se suma al producto.price si price es null
 }
 
+export interface ProductAttribute {
+  id: string
+  tenant_id: string
+  product_id: string
+  name: string
+  position: number
+  created_at: string
+}
+
+export interface ProductAttributeValue {
+  id: string
+  tenant_id: string
+  product_attribute_id: string
+  value: string
+  position: number
+}
+
 // Producto con relaciones (para página de detalle y catálogo)
 export interface ProductWithRelations extends Product {
   product_images: ProductImage[]
   product_variants: ProductVariant[]
+  product_attributes?: (ProductAttribute & { product_attribute_values: ProductAttributeValue[] })[]
   categories: Pick<Category, 'name' | 'slug'> | null
+  subcategories?: Pick<Subcategory, 'name' | 'slug'> | null
 }
 
 // ─── ORDERS ──────────────────────────────────────────────────────────────────
@@ -233,8 +263,13 @@ export interface ContactMessage {
   phone: string | null
   message: string
   source: string | null
+  subject: string | null
   status: 'new' | 'read' | 'archived' | null
   created_at: string
+  updated_at: string | null
+  last_message_at: string | null
+  assigned_user_id: string | null
+  labels: string[] | null
 }
 
 // ─── EVENTS / AUDIT ─────────────────────────────────────────────────────────
@@ -321,6 +356,13 @@ export interface BlogPost {
 
 export interface BlogPostWithCategory extends BlogPost {
   blog_categories: Pick<BlogCategory, 'name' | 'slug'> | null
+}
+
+// ─── CRM WEBHOOK CONFIG ────────────────────────────────────────────────────
+
+export interface CrmWebhookConfig {
+  key: string
+  value: string
 }
 
 // ─── CART (estado local — no persiste en BD) ─────────────────────────────────

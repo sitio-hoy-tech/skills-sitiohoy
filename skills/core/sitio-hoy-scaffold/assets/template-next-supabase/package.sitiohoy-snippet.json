@@ -14,7 +14,7 @@
     "sitiohoy:test-mercadopago": "node scripts/test-mercadopago.mjs",
     "sitiohoy:test-envia": "node scripts/test-envia.mjs",
     "sitiohoy:test-correo-argentino": "node scripts/test-correo-argentino.mjs",
-    "sitiohoy:test-resend": "node scripts/test-resend.mjs",
+    "sitiohoy:test-smtp": "node scripts/test-smtp.mjs",
     "sitiohoy:qa": "node scripts/run-qa.mjs",
     "sitiohoy:qa-report": "node scripts/generate-qa-report.mjs",
     "sitiohoy:tracking": "node scripts/update-tracking.mjs",

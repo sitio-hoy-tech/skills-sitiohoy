@@ -23,7 +23,7 @@ Pasos:
 2. Crear `sitiohoy.config.json` con:
    - `plan: "esencial"`
    - `integrations.whatsapp: true`
-   - pagos, envíos, Resend y Umami en `false`
+   - pagos, envíos, SMTP y Umami en `false`
 3. Instalar dependencias base:
    ```bash
    npm install @supabase/ssr @supabase/supabase-js lucide-react zod
@@ -150,7 +150,7 @@ Páginas comunes:
 
 Reglas:
 - Crear solo lo pedido.
-- Si hay formulario, guardar lead en `contact_messages` cuando Resend no esté configurado.
+- Si hay formulario, guardar lead en `contact_messages` cuando SMTP no esté configurado.
 - Páginas estáticas puras NO usan `revalidate = N` — se invalidan via ISR on-demand como el resto del sitio.
 
 Verificación ✅:

@@ -58,9 +58,12 @@ y aplicar con `supabase db push`. No usar SQL Editor salvo bloqueo documentado.
 15. platform_config
 16. blog_categories
 17. blog_posts
+18. product_attributes
+19. product_attribute_values
+20. crm_webhook_config
 ```
 
-> **Schema version: 2.2** — Incluye blog_posts/blog_categories. Los proyectos existentes pueden actualizarse con migraciones diferenciales.
+> **Schema version: 2.3** — Incluye blog_posts/blog_categories. Los proyectos existentes pueden actualizarse con migraciones diferenciales.
 > Regla SitioHoy v2.2: el schema base se crea completo en todos los planes.
 > Las funcionalidades se activan o desactivan por configuración del tenant, no borrando tablas.
 > Para generar la migración canónica, preferir `sitio-hoy-database`.
@@ -81,8 +84,11 @@ y aplicar con `supabase db push`. No usar SQL Editor salvo bloqueo documentado.
 | `revalidation_secret` | text | YES | — | Secret único por tenant para `/api/revalidate` |
 | `mp_access_token` | text | YES | — | MercadoPago Access Token |
 | `mp_public_key` | text | YES | — | MercadoPago Public Key |
-| `resend_api_key` | text | YES | — | API key de Resend |
 | `contact_email` | text | YES | — | Email destino del negocio para formularios de contacto |
+| `smtp_user` | text | YES | — | Usuario SMTP para emails transaccionales |
+| `smtp_pass` | text | YES | — | Contraseña SMTP para emails transaccionales |
+| `whatsapp` | text | YES | — | Número WhatsApp del negocio (formato `5491XXXXXXXX`) |
+| `vercel_project_id` | text | YES | — | ID del proyecto en Vercel, se actualiza al deployar |
 | `envia_access_token` | text | YES | — | Token Envia.com |
 | `correo_argentino_customer_id` | text | YES | — | Customer ID MiCorreo específico del negocio; se carga desde admin |
 | `umami_url` | text | YES | — | URL script Umami |
@@ -96,6 +102,10 @@ y aplicar con `supabase db push`. No usar SQL Editor salvo bloqueo documentado.
 | `subscription_id` | text | YES | — | ID suscripción MP |
 | `subscription_status` | text | YES | — | Estado suscripción |
 | `current_period_end` | timestamptz | YES | — | Fin del período activo |
+| `suspended_at` | timestamptz | YES | — | Fecha de suspensión del tenant |
+| `updated_at` | timestamptz | YES | now() | Última actualización |
+| `correo_argentino_token` | text | YES | — | Token MiCorreo cacheado por tenant |
+| `correo_argentino_token_expires_at` | timestamptz | YES | — | Vencimiento del token MiCorreo |
 | `created_at` | timestamptz | YES | now() | — |
 
 Migración incremental si el proyecto ya existe:
@@ -104,6 +114,14 @@ Migración incremental si el proyecto ya existe:
 ALTER TABLE public.tenants ADD COLUMN IF NOT EXISTS url text;
 ALTER TABLE public.tenants ADD COLUMN IF NOT EXISTS revalidation_secret text;
 ALTER TABLE public.tenants ADD COLUMN IF NOT EXISTS contact_email text;
+ALTER TABLE public.tenants ADD COLUMN IF NOT EXISTS smtp_user text;
+ALTER TABLE public.tenants ADD COLUMN IF NOT EXISTS smtp_pass text;
+ALTER TABLE public.tenants ADD COLUMN IF NOT EXISTS whatsapp text;
+ALTER TABLE public.tenants ADD COLUMN IF NOT EXISTS vercel_project_id text;
+ALTER TABLE public.tenants ADD COLUMN IF NOT EXISTS suspended_at timestamptz;
+ALTER TABLE public.tenants ADD COLUMN IF NOT EXISTS updated_at timestamptz DEFAULT now();
+ALTER TABLE public.tenants ADD COLUMN IF NOT EXISTS correo_argentino_token text;
+ALTER TABLE public.tenants ADD COLUMN IF NOT EXISTS correo_argentino_token_expires_at timestamptz;
 
 UPDATE public.tenants
 SET
@@ -173,7 +191,11 @@ Generar el secret con `openssl rand -hex 32`. Debe ser distinto por tenant.
 | `width_cm` | numeric | YES | 15 | Ancho del paquete en cm |
 | `height_cm` | numeric | YES | 8 | Alto del paquete en cm |
 | `shipping_required` | boolean | YES | true | `false` para digital/servicio |
+| `is_sale` | boolean | YES | false | Producto en oferta |
+| `sale_price` | numeric(10,2) | YES | — | Precio de oferta |
+| `position` | integer | YES | 0 | Orden manual |
 | `category_id` | uuid | YES | — (FK → categories.id) |
+| `subcategory_id` | uuid | YES | — (FK → subcategories.id) | Subcategoría |
 | `active` | boolean | YES | true |
 | `featured` | boolean | YES | false |
 | `created_at` | timestamptz | YES | now() |
@@ -316,7 +338,7 @@ ALTER TABLE public.orders
 
 ## Tabla: `contact_messages`
 
-> Guarda leads del formulario. Nunca perder mensajes si Resend no está configurado.
+> Guarda leads del formulario. Nunca perder mensajes si SMTP no está configurado.
 
 | Columna | Tipo | Nullable | Default |
 |---|---|---|---|
@@ -327,8 +349,13 @@ ALTER TABLE public.orders
 | `phone` | text | YES | — |
 | `message` | text | NO | — |
 | `source` | text | YES | `'contact_form'` |
+| `subject` | text | YES | — |
 | `status` | text | YES | `'new'` |
 | `created_at` | timestamptz | YES | now() |
+| `updated_at` | timestamptz | YES | now() |
+| `last_message_at` | timestamptz | YES | — |
+| `assigned_user_id` | uuid | YES | — |
+| `labels` | text[] | YES | — |
 
 ---
 
@@ -432,6 +459,46 @@ Unique: `(tenant_id, slug)`.
 
 ---
 
+## Tabla: `product_attributes`
+
+Atributos personalizados de productos (ej: Material, Talle, Color). Se gestionan desde el admin.
+
+| Columna | Tipo | Nullable | Default | Descripción |
+|---|---|---|---|---|
+| `id` | uuid | NO | gen_random_uuid() | PK |
+| `tenant_id` | uuid | NO | — | FK → tenants.id |
+| `product_id` | uuid | NO | — | FK → products.id |
+| `name` | text | NO | — | Nombre del atributo |
+| `position` | integer | NO | 0 | Orden de aparición |
+| `created_at` | timestamptz | NO | now() | — |
+
+---
+
+## Tabla: `product_attribute_values`
+
+Valores posibles de cada atributo (ej: "Algodón", "Poliéster" para el atributo "Material").
+
+| Columna | Tipo | Nullable | Default | Descripción |
+|---|---|---|---|---|
+| `id` | uuid | NO | gen_random_uuid() | PK |
+| `tenant_id` | uuid | NO | — | FK → tenants.id |
+| `product_attribute_id` | uuid | NO | — | FK → product_attributes.id |
+| `value` | text | NO | — | Valor del atributo |
+| `position` | integer | NO | 0 | Orden de aparición |
+
+---
+
+## Tabla: `crm_webhook_config`
+
+Configuración de webhooks del CRM. Key-value global (no por tenant).
+
+| Columna | Tipo | Nullable | Default |
+|---|---|---|---|
+| `key` | text | NO | — | PK |
+| `value` | text | NO | — | Valor de configuración |
+
+---
+
 ## Relaciones
 
 ```
@@ -459,6 +526,10 @@ order_items (N) ─ (1) product_variants
 blog_categories (1) ─ (N) blog_posts
 tenants (1) ──── (N) blog_categories
 tenants (1) ──── (N) blog_posts
+
+products (1) ──── (N) product_attributes
+product_attributes (1) ── (N) product_attribute_values
+products (N) ──── (1) subcategories
 ```
 
 ---
@@ -542,8 +613,11 @@ CREATE TABLE tenants (
   revalidation_secret text,
   mp_access_token text,
   mp_public_key text,
-  resend_api_key text,
   contact_email text,
+  smtp_user text,
+  smtp_pass text,
+  whatsapp text,
+  vercel_project_id text,
   envia_access_token text,
   correo_argentino_customer_id text,
   umami_url text,
@@ -551,6 +625,10 @@ CREATE TABLE tenants (
   origin_name text, origin_phone text, origin_address text,
   origin_city text, origin_state text, origin_postal_code text,
   subscription_id text, subscription_status text, current_period_end timestamptz,
+  suspended_at timestamptz,
+  updated_at timestamptz DEFAULT now(),
+  correo_argentino_token text,
+  correo_argentino_token_expires_at timestamptz,
   created_at timestamptz DEFAULT now()
 );
 
@@ -603,7 +681,11 @@ CREATE TABLE products (
   width_cm numeric(10,2) DEFAULT 15 CHECK (width_cm IS NULL OR width_cm > 0),
   height_cm numeric(10,2) DEFAULT 8 CHECK (height_cm IS NULL OR height_cm > 0),
   shipping_required boolean DEFAULT true,
+  is_sale boolean DEFAULT false,
+  sale_price numeric(10,2),
+  position integer DEFAULT 0,
   category_id uuid REFERENCES categories(id),
+  subcategory_id uuid REFERENCES subcategories(id),
   active boolean DEFAULT true,
   featured boolean DEFAULT false,
   created_at timestamptz DEFAULT now(),
@@ -718,9 +800,14 @@ CREATE TABLE contact_messages (
   email text NOT NULL,
   phone text,
   message text NOT NULL,
+  subject text,
   source text DEFAULT 'contact_form',
   status text DEFAULT 'new' CHECK (status IN ('new', 'read', 'archived')),
-  created_at timestamptz DEFAULT now()
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now(),
+  last_message_at timestamptz,
+  assigned_user_id uuid,
+  labels text[]
 );
 
 CREATE TABLE order_events (
@@ -791,6 +878,31 @@ CREATE TABLE blog_posts (
   UNIQUE(tenant_id, slug)
 );
 
+-- 18. Product attributes
+CREATE TABLE product_attributes (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+  product_id uuid NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  position integer NOT NULL DEFAULT 0,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+-- 19. Product attribute values
+CREATE TABLE product_attribute_values (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  tenant_id uuid NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+  product_attribute_id uuid NOT NULL REFERENCES product_attributes(id) ON DELETE CASCADE,
+  value text NOT NULL,
+  position integer NOT NULL DEFAULT 0
+);
+
+-- 20. CRM webhook config
+CREATE TABLE crm_webhook_config (
+  key text PRIMARY KEY,
+  value text NOT NULL
+);
+
 -- 13. Trigger updated_at automático
 CREATE OR REPLACE FUNCTION set_updated_at()
 RETURNS TRIGGER LANGUAGE plpgsql AS $$
@@ -826,4 +938,17 @@ CREATE TRIGGER trg_blog_posts_updated_at
 CREATE TRIGGER trg_blog_categories_updated_at
   BEFORE UPDATE ON blog_categories
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+CREATE TRIGGER trg_contact_messages_updated_at
+  BEFORE UPDATE ON contact_messages
+  FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+CREATE TRIGGER trg_tenants_updated_at
+  BEFORE UPDATE ON tenants
+  FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+CREATE INDEX idx_product_attributes_product ON product_attributes(product_id);
+CREATE INDEX idx_product_attribute_values_attribute ON product_attribute_values(product_attribute_id);
+CREATE INDEX idx_products_subcategory ON products(subcategory_id);
+CREATE INDEX idx_contact_messages_assigned ON contact_messages(assigned_user_id) WHERE assigned_user_id IS NOT NULL;
 ```
