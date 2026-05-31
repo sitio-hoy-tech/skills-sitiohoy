@@ -636,6 +636,8 @@
         <div class="metric"><strong>3</strong><span>planes de sitio</span></div>
         <div class="metric"><strong>5</strong><span>viewports de QA visual</span></div>
         <div class="metric"><strong>E2E</strong><span>Playwright antes de deploy</span></div>
+        <div class="metric"><strong>SMTP</strong><span>nodemailer via Hostinger</span></div>
+        <div class="metric"><strong>CRM</strong><span>contact_messages + webhooks</span></div>
       </div>
     </aside>
   </div>
@@ -719,13 +721,13 @@
         </article>
         <article class="card">
           <h3>sitio-hoy-scaffold</h3>
-          <p>Crea la base tecnica: Next.js, Supabase clients, env validation, tokens, carpetas, scripts QA, error states y checklist machine-readable.</p>
-          <div class="tag-row"><span class="tag">Next.js</span><span class="tag">scripts</span><span class="tag">tokens</span></div>
+          <p>Crea la base tecnica: Next.js, Supabase clients, env validation, tokens, carpetas, scripts QA, error states, SMTP client con nodemailer y checklist machine-readable.</p>
+          <div class="tag-row"><span class="tag">Next.js</span><span class="tag">scripts</span><span class="tag">tokens</span><span class="tag">SMTP</span></div>
         </article>
         <article class="card">
           <h3>sitio-hoy-database</h3>
-          <p>Genera el schema Supabase multitenant, RLS, storage, seeds, usuario admin seguro, productos con peso/dimensiones y campos de envios.</p>
-          <div class="tag-row"><span class="tag">Supabase CLI</span><span class="tag">RLS</span><span class="tag">migrations</span></div>
+          <p>Genera el schema Supabase multitenant, RLS, storage, seeds, usuario admin seguro, productos con peso/dimensiones, campos de envios, atributos de producto, CRM y config SMTP por tenant.</p>
+          <div class="tag-row"><span class="tag">Supabase CLI</span><span class="tag">RLS</span><span class="tag">migrations</span><span class="tag">CRM</span></div>
         </article>
         <article class="card">
           <h3>sitio-hoy-qa</h3>
@@ -807,7 +809,7 @@
           <div><span class="module-id">M0</span></div>
           <div><h3>Scaffold, base tecnica e identidad visual</h3><p>Todos los planes.</p></div>
           <div><ul><li>sitio-hoy-scaffold</li><li>sitio-hoy-database</li><li>sitio-hoy-qa</li></ul></div>
-          <div><ul><li>Next.js, tokens, Supabase clients, scripts QA.</li><li>Migraciones con Supabase CLI.</li><li>Admin `admin{empresa}@sitiohoy.com.ar` con password segura.</li></ul></div>
+          <div><ul><li>Next.js, tokens, Supabase clients, scripts QA, `lib/smtp/client.ts`.</li><li>Migraciones con Supabase CLI (product_attributes, CRM, SMTP config).</li><li>Admin `admin{empresa}@sitiohoy.com.ar` con password segura.</li></ul></div>
         </article>
         <article class="module-row">
           <div><span class="module-id">M1</span></div>
@@ -876,7 +878,7 @@
         <article class="tech-row">
           <h3>Supabase</h3>
           <p>PostgreSQL, Auth, Storage y RLS multitenant en una instancia compartida.</p>
-          <ul><li>Todo cambio se aplica con Supabase CLI.</li><li>RLS separa datos por `tenant_id`.</li><li>Triggers SQL `pg_net` llaman `/api/revalidate` leyendo `url` y `revalidation_secret` desde `tenants`.</li><li>Service role solo en server, nunca publico.</li></ul>
+          <ul><li>Todo cambio se aplica con Supabase CLI.</li><li>RLS separa datos por `tenant_id`.</li><li>Triggers SQL `pg_net` llaman `/api/revalidate` leyendo `url` y `revalidation_secret` desde `tenants`.</li><li>Service role solo en server, nunca publico.</li><li>Tablas extendidas: `product_attributes`, `product_attribute_values`, `crm_webhook_config`.</li><li>Columnas clave en tenants: `smtp_user`, `smtp_pass`, `whatsapp`, `vercel_project_id`, `suspended_at`.</li><li>Columnas clave en products: `is_sale`, `sale_price`, `position`, `subcategory_id`.</li><li>Columnas CRM en contact_messages: `subject`, `assigned_user_id`, `labels`, `last_message_at`.</li></ul>
         </article>
         <article class="tech-row">
           <h3>MercadoPago Bricks</h3>
@@ -889,9 +891,9 @@
           <ul><li>Productos fisicos requieren `weight_grams`.</li><li>Credenciales por cliente en `tenants`.</li><li>Smoke tests por proveedor.</li></ul>
         </article>
         <article class="tech-row">
-          <h3>Resend</h3>
-          <p>Email transaccional para confirmaciones y seguimiento cuando el plan lo incluye.</p>
-          <ul><li>Templates con identidad visual.</li><li>Prueba de inbox antes de go-live.</li><li>No se marca OK si no se recibio realmente.</li></ul>
+          <h3>SMTP / nodemailer</h3>
+          <p>Email transaccional via Hostinger SMTP (puerto 465/SSL) con nodemailer. Reemplaza Resend desde mayo 2026.</p>
+          <ul><li>Credenciales `smtp_user` y `smtp_pass` por tenant en tabla `tenants`.</li><li>Templates HTML inline en `lib/email/templates.ts`.</li><li>Prueba de inbox antes de go-live.</li><li>No se marca OK si no se recibio realmente.</li></ul>
         </article>
         <article class="tech-row">
           <h3>Umami</h3>
@@ -953,6 +955,10 @@
 
       <div class="note" style="margin-top: 14px;">
         <strong>Aprendizaje continuo:</strong> cada bug corregido durante una pagina o modulo se registra en `.sitiohoy/errores-corregidos.md` con causa, solucion y recomendacion para actualizar skills.
+      </div>
+
+      <div class="note" style="margin-top: 14px;">
+        <strong>Patterns incorporados del primer deploy:</strong> `withCache` helper para saltear cache en dev, WhatsApp desde `tenants.whatsapp` (no hardcodeado), `getTenantConfigFresh` sin cache para webhooks, ISR trigger obligatorio para tabla tenants, double-tag en queries de detalle, `refreshCartPrices` para sincronizar precios, Unsplash en `remotePatterns`, MercadoPago Payment Brick (no Wallet), email templates HTML inline, repo publico para Vercel Hobby, seed sin `compare_at_price` falso, `getCategoriesWithImages` dinamico y paso 1.5 en deploy para registrar `vercel_project_id`.
       </div>
     </section>
 
@@ -1039,7 +1045,7 @@
       <details>
         <summary>4. Smoke tests reales por sandbox</summary>
         <div class="details-body">
-          Preparar fixtures para MercadoPago, Envia, Correo Argentino y Resend con credenciales sandbox y resultados auditables.
+          Preparar fixtures para MercadoPago, Envia, Correo Argentino y SMTP con credenciales sandbox y resultados auditables.
         </div>
       </details>
       <details>
@@ -1065,7 +1071,7 @@
             <li>Una skill o su `SKILL.md`.</li>
             <li>El orden de modulos de cualquier plan.</li>
             <li>Un script de QA, audit, launch o tracking.</li>
-            <li>Una integracion: MercadoPago, Resend, Envia, Correo Argentino, Umami o Supabase.</li>
+            <li>Una integracion: MercadoPago, SMTP/nodemailer, Envia, Correo Argentino, Umami o Supabase.</li>
             <li>Una tecnologia base o libreria obligatoria.</li>
             <li>Una regla transversal de diseno, E2E, seguridad pre-deploy o registro de errores corregidos.</li>
           </ul>
@@ -1085,7 +1091,7 @@
   </main>
 
   <footer class="footer">
-    SitioHoy Skills - Documento vivo del flujo de generacion de sitios. Ultima revision manual: 2026-05-16.
+    SitioHoy Skills - Documento vivo del flujo de generacion de sitios. Ultima revision manual: 2026-05-31.
   </footer>
 </body>
 </html>

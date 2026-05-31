@@ -25,6 +25,9 @@ El documento explica:
 - que cada sitio debe tener direccion visual propia, tipografias acordes al cliente y animaciones con proposito;
 - que antes de deployar se limpian `console.log`, secretos y datos sensibles;
 - que el reporte QA debe listar pendientes de produccion y pruebas manuales como compra, formulario, emails, envios y webhooks;
+- que el email transaccional usa SMTP/nodemailer vía Hostinger (no Resend), con credenciales `smtp_user`/`smtp_pass` por tenant;
+- que el schema incluye tablas extendidas: `product_attributes`, `product_attribute_values`, `crm_webhook_config`;
+- que se incorporaron 20+ patterns del primer deploy real (withCache, getTenantConfigFresh, double-tag ISR, Payment Brick, etc.);
 - qué mejoras futuras conviene evaluar para hacer el flujo más robusto.
 
 Abrir localmente:
