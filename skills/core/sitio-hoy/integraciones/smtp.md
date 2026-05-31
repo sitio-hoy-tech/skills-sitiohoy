@@ -19,20 +19,31 @@ SMTP autenticado, SPF/DKIM se resuelven automáticamente por Hostinger.
 
 ## Cliente base
 
+Host, puerto y SSL se leen de `platform_config` para poder cambiar de proveedor SMTP
+sin redeploy. Si la fila no existe, usa los defaults de Hostinger.
+
 ```typescript
 // lib/smtp/client.ts
 import nodemailer from 'nodemailer'
 import type { Transporter } from 'nodemailer'
 import { getTenantConfig } from '@/lib/config/tenant'
+import { createServiceClient } from '@/lib/supabase/server'
 
 export async function getSmtpTransporter(): Promise<{ transporter: Transporter; from: string } | null> {
   const config = await getTenantConfig()
   if (!config.smtp_user || !config.smtp_pass) return null
 
+  const supabase = createServiceClient()
+  const { data: platform } = await supabase
+    .from('platform_config')
+    .select('smtp_host, smtp_port, smtp_secure')
+    .limit(1)
+    .single()
+
   const transporter = nodemailer.createTransport({
-    host: 'smtp.hostinger.com',
-    port: 465,
-    secure: true,
+    host: platform?.smtp_host ?? 'smtp.hostinger.com',
+    port: platform?.smtp_port ?? 465,
+    secure: platform?.smtp_secure ?? true,
     auth: {
       user: config.smtp_user,
       pass: config.smtp_pass,
@@ -315,7 +326,7 @@ Siempre incluir texto de preheader invisible (aparece en la preview del cliente 
 - [ ] El `from` usa `config.smtp_user` (ej. `contacto@sitiohoy.com.ar`)
 - [ ] Si `smtp_user` o `smtp_pass` están vacíos, el flujo no lanza error (silently skips)
 - [ ] Conexión SMTP funciona: `transporter.verify()` no lanza error en desarrollo
-- [ ] Puerto 465 con `secure: true` (SSL directo, no STARTTLS en 587)
+- [ ] Puerto y host se leen de `platform_config` (default: Hostinger 465/SSL)
 - [ ] Todos los emails usan `html:` generado por `lib/email/templates.ts`, nunca solo `text:`
 - [ ] `lib/email/templates.ts` existe y exporta los 3 templates: `contactConfirmationEmail`, `contactNotificationEmail`, `orderConfirmationEmail`
 - [ ] Estilos del email son 100% inline — ningún `<style>` ni CSS externo

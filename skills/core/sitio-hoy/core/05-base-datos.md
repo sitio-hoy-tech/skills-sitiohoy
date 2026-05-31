@@ -396,10 +396,14 @@ ALTER TABLE public.orders
 > Configuración privada de la plataforma SitioHoy. No es por tenant.
 > Las credenciales de acceso de Correo Argentino viven acá, no en `tenants` ni `.env`.
 > `tenants.correo_argentino_customer_id` sigue siendo específico de cada negocio.
+> La configuración SMTP de servidor (host, puerto, SSL) también vive acá para poder cambiar de proveedor sin redeploy.
 
 | Columna | Tipo | Nullable | Default |
 |---|---|---|---|
 | `id` | uuid | NO | gen_random_uuid() |
+| `smtp_host` | text | YES | `'smtp.hostinger.com'` |
+| `smtp_port` | int4 | YES | `465` |
+| `smtp_secure` | boolean | YES | `true` |
 | `correo_argentino_user` | text | YES | — |
 | `correo_argentino_password` | text | YES | — |
 | `correo_argentino_customer_id` | text | YES | — |
@@ -832,6 +836,9 @@ CREATE TABLE payment_events (
 
 CREATE TABLE platform_config (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  smtp_host text DEFAULT 'smtp.hostinger.com',
+  smtp_port int4 DEFAULT 465,
+  smtp_secure boolean DEFAULT true,
   correo_argentino_user text,
   correo_argentino_password text,
   correo_argentino_customer_id text,
